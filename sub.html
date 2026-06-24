@@ -252,6 +252,88 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(100vw - 16px, 1020px);
+        margin: 8px auto;
+        padding: 16px 12px;
+        border-radius: 24px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        justify-items: center;
+        text-align: center;
+        margin-bottom: 18px;
+      }
+
+      .hero img {
+        width: 84px;
+        height: 84px;
+        border-radius: 22px;
+        padding: 10px;
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .panel {
+        padding: 16px 12px;
+        border-radius: 22px;
+      }
+
+      .ring-card,
+      .bt-box {
+        padding: 14px 12px;
+        border-radius: 20px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .ring-cluster {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .ring-wrap,
+      .ring-svg {
+        width: 96px;
+        height: 96px;
+      }
+
+      .bt-device,
+      .notice {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .shell {
+        width: calc(100vw - 10px);
+        padding: 14px 10px;
+      }
+
+      .panel {
+        padding: 14px 10px;
+      }
+
+      .device-state,
+      .status-flag {
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 <body>
