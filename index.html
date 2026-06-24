@@ -257,7 +257,7 @@
     }
 
     .top-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.05fr 0.95fr;
     }
 
     .bottom-grid {
@@ -352,13 +352,6 @@
       margin: 0 0 14px;
       color: var(--muted);
       line-height: 1.6;
-    }
-
-    .user-list {
-      display: grid;
-      gap: 12px;
-      max-height: 420px;
-      overflow: auto;
     }
 
     .foot {
@@ -486,17 +479,16 @@
             </div>
           </div>
 
-          <div class="links">
-            <button id="openDomBtn" class="link-card" type="button" hidden>打开 DOM 控制页</button>
-            <button id="openSubBtn" class="link-card secondary" type="button" hidden>打开 SUB 查看页</button>
-            <a class="link-card planet" href="./planet.html">打开小狗星球</a>
-          </div>
         </section>
 
         <section class="panel">
-          <div class="chip">User List</div>
-          <p class="muted">只有登录后才能查看。列表中的账户也会作为 `dom/sub` 输入候选项。</p>
-          <div id="userList" class="user-list"></div>
+          <div class="chip">Quick Access</div>
+          <p class="muted">登录后右侧只保留业务入口，不再显示用户列表。</p>
+          <div class="links" style="margin-top:0;">
+            <button id="sideOpenDomBtn" class="link-card" type="button" hidden>打开 DOM 控制页</button>
+            <button id="sideOpenSubBtn" class="link-card secondary" type="button" hidden>打开 SUB 查看页</button>
+            <a class="link-card planet" href="./planet.html">打开小狗星球</a>
+          </div>
         </section>
       </section>
     </section>
@@ -527,15 +519,14 @@
     const deleteBtn = document.getElementById("deleteBtn");
     const saveProfileBtn = document.getElementById("saveProfileBtn");
     const toggleSettingsBtn = document.getElementById("toggleSettingsBtn");
-    const openDomBtn = document.getElementById("openDomBtn");
-    const openSubBtn = document.getElementById("openSubBtn");
     const settingsEditor = document.getElementById("settingsEditor");
     const editDom = document.getElementById("editDom");
     const editSub = document.getElementById("editSub");
     const authStatus = document.getElementById("authStatus");
     const profileCard = document.getElementById("profileCard");
-    const userList = document.getElementById("userList");
     const accountOptions = document.getElementById("accountOptions");
+    const sideOpenDomBtn = document.getElementById("sideOpenDomBtn");
+    const sideOpenSubBtn = document.getElementById("sideOpenSubBtn");
     let currentUser = null;
     let currentUsers = [];
 
@@ -592,27 +583,13 @@
       `;
       editDom.value = user.dom || "";
       editSub.value = user.sub || "";
-      openDomBtn.hidden = role !== "DOM";
-      openSubBtn.hidden = role !== "SUB";
+      sideOpenDomBtn.hidden = role !== "DOM";
+      sideOpenSubBtn.hidden = role !== "SUB";
     }
 
     function renderUsers(users) {
       currentUsers = users;
       accountOptions.innerHTML = users.map((user) => `<option value="${user.account}"></option>`).join("");
-      if (!users.length) {
-        userList.innerHTML = '<div class="user-item">当前没有用户。</div>';
-        return;
-      }
-
-      userList.innerHTML = users.map((user) => `
-        <div class="user-item">
-          <div><strong>${user.account}</strong></div>
-          <div>DOM: ${user.dom || "未设置"}</div>
-          <div>SUB: ${user.sub || "未设置"}</div>
-          <div>自动删除: ${user.autoDeleteDays} 天</div>
-          <div>删除时间: ${user.deleteAt}</div>
-        </div>
-      `).join("");
     }
 
     async function refreshDashboard() {
@@ -629,12 +606,11 @@
       if (!token) {
         setLoggedInView(false);
         authStatus.textContent = "未登录。";
-        userList.innerHTML = "";
         accountOptions.innerHTML = "";
         currentUser = null;
         currentUsers = [];
-        openDomBtn.hidden = true;
-        openSubBtn.hidden = true;
+        sideOpenDomBtn.hidden = true;
+        sideOpenSubBtn.hidden = true;
         settingsEditor.hidden = true;
         toggleSettingsBtn.textContent = "设置";
         return;
@@ -646,12 +622,11 @@
         clearSession();
         setLoggedInView(false);
         authStatus.textContent = "登录已失效，请重新登录。";
-        userList.innerHTML = "";
         accountOptions.innerHTML = "";
         currentUser = null;
         currentUsers = [];
-        openDomBtn.hidden = true;
-        openSubBtn.hidden = true;
+        sideOpenDomBtn.hidden = true;
+        sideOpenSubBtn.hidden = true;
         settingsEditor.hidden = true;
         toggleSettingsBtn.textContent = "设置";
       }
@@ -756,8 +731,8 @@
       toggleSettingsBtn.textContent = settingsEditor.hidden ? "设置" : "收起设置";
     });
 
-    openDomBtn.addEventListener("click", () => openRelationPage("dom"));
-    openSubBtn.addEventListener("click", () => openRelationPage("sub"));
+    sideOpenDomBtn.addEventListener("click", () => openRelationPage("dom"));
+    sideOpenSubBtn.addEventListener("click", () => openRelationPage("sub"));
 
     logoutBtn.addEventListener("click", async () => {
       try {

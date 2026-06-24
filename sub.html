@@ -386,8 +386,13 @@
     }
 
     function renderProfile(user) {
+      if (!user.sub) {
+        redirectToPortal("当前账户不是 SUB 角色");
+        return;
+      }
       profileCard.innerHTML = `
         <div><strong>账户:</strong> ${user.account}</div>
+        <div><strong>角色:</strong> SUB</div>
         <div><strong>DOM 字段:</strong> ${user.dom}</div>
         <div><strong>SUB 字段:</strong> ${user.sub}</div>
         <div><strong>自动删号时间:</strong> ${user.deleteAt}</div>
@@ -525,6 +530,10 @@
 
     function renderState(state) {
       currentState = state;
+      if (!state.user.sub) {
+        redirectToPortal("当前账户不能打开 SUB 查看页");
+        return;
+      }
       renderProfile(state.user);
       refreshPayloadPreview();
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
