@@ -339,11 +339,11 @@
     let currentState = null;
 
     function getSession() {
-      return localStorage.getItem(SESSION_KEY);
+      return sessionStorage.getItem(SESSION_KEY);
     }
 
     function clearSession() {
-      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
     }
 
     function redirectToPortal(message) {
@@ -424,7 +424,7 @@
     }
 
     function renderProfile(user) {
-      if (!user.dom) {
+      if (!user.sub) {
         redirectToPortal("当前账户不是 DOM 角色");
         return;
       }
@@ -440,7 +440,7 @@
 
     function renderState(state) {
       currentState = state;
-      if (!state.user.dom) {
+      if (!state.user.sub) {
         redirectToPortal("当前账户不能打开 DOM 控制页");
         return;
       }

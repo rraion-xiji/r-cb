@@ -531,15 +531,15 @@
     let currentUsers = [];
 
     function setSession(token) {
-      localStorage.setItem(SESSION_KEY, token);
+      sessionStorage.setItem(SESSION_KEY, token);
     }
 
     function getSession() {
-      return localStorage.getItem(SESSION_KEY);
+      return sessionStorage.getItem(SESSION_KEY);
     }
 
     function clearSession() {
-      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
     }
 
     function setTab(mode) {
@@ -571,7 +571,7 @@
     }
 
     function renderProfile(user) {
-      const role = user.dom ? "DOM" : user.sub ? "SUB" : "未绑定";
+      const role = user.sub ? "DOM" : user.dom ? "SUB" : "未绑定";
       currentUser = user;
       profileCard.innerHTML = `
         <div><strong>账户</strong>${user.account}</div>
@@ -641,14 +641,14 @@
         authStatus.textContent = "请先登录。";
         return;
       }
-      const role = currentUser.dom ? "dom" : currentUser.sub ? "sub" : "";
+      const role = currentUser.sub ? "dom" : currentUser.dom ? "sub" : "";
       if (role !== kind) {
         authStatus.textContent = kind === "dom"
           ? "当前账户不是 DOM 角色，只能打开 SUB 查看页。"
           : "当前账户不是 SUB 角色，只能打开 DOM 控制页。";
         return;
       }
-      const relation = kind === "dom" ? currentUser.dom : currentUser.sub;
+      const relation = kind === "dom" ? currentUser.sub : currentUser.dom;
       if (!relation) {
         authStatus.textContent = `当前账户还没有设置对应的 ${kind.toUpperCase()}。`;
         return;
@@ -658,12 +658,12 @@
         authStatus.textContent = `数据库中找不到对应的 ${kind.toUpperCase()} 账户: ${relation}`;
         return;
       }
-      if (kind === "dom" && targetUser.sub !== currentUser.account) {
-        authStatus.textContent = `对应的 DOM 账户 ${relation} 没有与当前账户形成一对一绑定。`;
+      if (kind === "dom" && targetUser.dom !== currentUser.account) {
+        authStatus.textContent = `对应的 SUB 账户 ${relation} 没有与当前账户形成一对一绑定。`;
         return;
       }
-      if (kind === "sub" && targetUser.dom !== currentUser.account) {
-        authStatus.textContent = `对应的 SUB 账户 ${relation} 没有与当前账户形成一对一绑定。`;
+      if (kind === "sub" && targetUser.sub !== currentUser.account) {
+        authStatus.textContent = `对应的 DOM 账户 ${relation} 没有与当前账户形成一对一绑定。`;
         return;
       }
       window.location.href = kind === "dom" ? "./dom.html" : "./sub.html";

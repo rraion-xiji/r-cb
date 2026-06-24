@@ -10,7 +10,6 @@
       --line: rgba(255, 255, 255, 0.12);
       --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
       --dom: #d9a84d;
-      --sub: #ffffff;
     }
 
     * { box-sizing: border-box; }
@@ -92,14 +91,7 @@
       border-radius: 999px;
       margin-right: 8px;
       vertical-align: middle;
-    }
-
-    .legend .dom::before {
       background: var(--dom);
-    }
-
-    .legend .sub::before {
-      background: var(--sub);
     }
 
     .planet {
@@ -140,7 +132,7 @@
     <section class="topbar">
       <div>
         <h1>小狗星球</h1>
-        <p class="subtitle">Three.js 版本的小狗星球。左键拖动画布，滚轮缩放，直接拖动星球节点可重新排布关系。</p>
+        <p class="subtitle">只显示一种关系：DOM 指向 SUB。左键拖动画布，滚轮缩放，直接拖动星球节点可重新排布。</p>
       </div>
       <div class="nav">
         <a href="./index.html">返回首页</a>
@@ -150,8 +142,7 @@
     </section>
 
     <div class="legend">
-      <span class="dom">DOM 单向箭头</span>
-      <span class="sub">SUB 单向箭头</span>
+      <span>DOM to SUB</span>
     </div>
 
     <section id="planet" class="planet"></section>
@@ -193,9 +184,7 @@
     controls.zoomSpeed = 1.1;
     controls.screenSpacePanning = true;
 
-    const ambient = new THREE.AmbientLight(0xffffff, 1.35);
-    scene.add(ambient);
-
+    scene.add(new THREE.AmbientLight(0xffffff, 1.35));
     const rim = new THREE.DirectionalLight(0xf5e8d1, 1.1);
     rim.position.set(120, 200, 180);
     scene.add(rim);
@@ -215,11 +204,11 @@
     };
 
     function getSession() {
-      return localStorage.getItem(SESSION_KEY);
+      return sessionStorage.getItem(SESSION_KEY);
     }
 
     function redirectToPortal(message) {
-      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
       window.location.href = `./index.html#${encodeURIComponent(message || "请先登录")}`;
     }
 
@@ -311,7 +300,7 @@
         new THREE.SphereGeometry(24, 32, 32),
         new THREE.MeshStandardMaterial({
           color: 0xf2e5d3,
-          emissive: new THREE.Color(node.dom || node.sub ? 0x2a2114 : 0x171717),
+          emissive: new THREE.Color(node.sub || node.dom ? 0x2a2114 : 0x171717),
           emissiveIntensity: 0.5,
           roughness: 0.38,
           metalness: 0.08
@@ -322,7 +311,7 @@
       const halo = new THREE.Mesh(
         new THREE.RingGeometry(30, 35, 48),
         new THREE.MeshBasicMaterial({
-          color: node.dom ? 0xd9a84d : 0xffffff,
+          color: node.sub ? 0xd9a84d : 0xffffff,
           transparent: true,
           opacity: 0.8,
           side: THREE.DoubleSide
@@ -331,13 +320,11 @@
       halo.rotation.x = Math.PI / 2;
       group.add(halo);
 
+      const roleLabel = node.sub ? "Role: DOM" : node.dom ? "Role: SUB" : "Role: Unbound";
+      const relationLabel = node.sub ? `SUB: ${node.sub}` : node.dom ? `DOM: ${node.dom}` : "Relation: none";
       const labelTexture = createLabelTexture(
-        [
-          node.label,
-          `DOM: ${node.dom || "未设置"}`,
-          `SUB: ${node.sub || "未设置"}`
-        ],
-        node.dom ? "#d9a84d" : "#111111"
+        [node.label, roleLabel, relationLabel],
+        node.sub ? "#d9a84d" : "#111111"
       );
       const label = new THREE.Sprite(
         new THREE.SpriteMaterial({
@@ -387,13 +374,8 @@
           target.position.x, target.position.y, target.position.z
         );
 
-        const color = link.type === "dom"
-          ? new THREE.Color(0xd9a84d)
-          : new THREE.Color(0xffffff);
-        colors.push(
-          color.r, color.g, color.b,
-          color.r, color.g, color.b
-        );
+        const color = new THREE.Color(0xd9a84d);
+        colors.push(color.r, color.g, color.b, color.r, color.g, color.b);
       }
 
       const geometry = new THREE.BufferGeometry();
@@ -418,15 +400,13 @@
 
         const direction = new THREE.Vector3().subVectors(target.position, source.position);
         const fullLength = direction.length();
-        const length = Math.max(fullLength - 36, 8);
         const normalized = direction.clone().normalize();
-        const color = link.type === "dom" ? 0xd9a84d : 0xffffff;
         const arrowOrigin = source.position.clone().add(normalized.clone().multiplyScalar(Math.max(fullLength - 46, 18)));
         const arrow = new THREE.ArrowHelper(
           normalized,
           arrowOrigin,
           18,
-          color,
+          0xd9a84d,
           18,
           10
         );
@@ -534,7 +514,7 @@
         }
 
         rebuildGraph();
-        status.textContent = `已加载 ${graphState.nodes.length} 个用户节点，${graphState.links.length} 条单向关系。`;
+        status.textContent = `已加载 ${graphState.nodes.length} 个用户节点，${graphState.links.length} 条 DOM 到 SUB 的单向关系。`;
       } catch (error) {
         status.textContent = `加载失败: ${error.message}`;
       }

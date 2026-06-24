@@ -332,11 +332,11 @@
     let autoSendTimer = null;
 
     function getSession() {
-      return localStorage.getItem(SESSION_KEY);
+      return sessionStorage.getItem(SESSION_KEY);
     }
 
     function clearSession() {
-      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
     }
 
     function redirectToPortal(message) {
@@ -386,7 +386,7 @@
     }
 
     function renderProfile(user) {
-      if (!user.sub) {
+      if (!user.dom) {
         redirectToPortal("当前账户不是 SUB 角色");
         return;
       }
@@ -530,7 +530,7 @@
 
     function renderState(state) {
       currentState = state;
-      if (!state.user.sub) {
+      if (!state.user.dom) {
         redirectToPortal("当前账户不能打开 SUB 查看页");
         return;
       }

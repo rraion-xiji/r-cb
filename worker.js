@@ -503,18 +503,11 @@ async function handlePlanet(request, env) {
   const links = [];
 
   for (const user of users) {
-    if (user.dom && knownAccounts.has(user.dom)) {
-      links.push({
-        source: user.account,
-        target: user.dom,
-        type: "dom"
-      });
-    }
     if (user.sub && knownAccounts.has(user.sub)) {
       links.push({
         source: user.account,
         target: user.sub,
-        type: "sub"
+        type: "dom_to_sub"
       });
     }
   }
