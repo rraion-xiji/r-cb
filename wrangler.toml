@@ -1,6 +1,9 @@
 name = "cb-lock-console"
 compatibility_date = "2026-06-24"
-pages_build_output_dir = "."
+main = "worker.js"
+
+[assets]
+directory = "."
 
 [[d1_databases]]
 binding = "DB"
