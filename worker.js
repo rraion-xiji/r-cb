@@ -1,6 +1,4 @@
 const SESSION_TTL_DAYS = 30;
-const DEFAULT_AUTO_DELETE_DAYS = 30;
-const MAX_AUTO_DELETE_DAYS = 365;
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -50,14 +48,6 @@ function normalizeAccount(value) {
 
 function normalizeProfileField(value) {
   return normalizeAccount(value);
-}
-
-function normalizeAutoDeleteDays(value) {
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed)) {
-    return DEFAULT_AUTO_DELETE_DAYS;
-  }
-  return Math.min(Math.max(parsed, 1), MAX_AUTO_DELETE_DAYS);
 }
 
 async function sha256Hex(value) {
@@ -151,23 +141,7 @@ async function validateOneToOneTargets(db, currentUser, dom, sub) {
 
 async function cleanupExpiredRecords(db) {
   const now = nowIso();
-  await db.batch([
-    db.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(now),
-    db.prepare(
-      `UPDATE users
-       SET dom = ''
-       WHERE dom IN (SELECT account FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)`
-    ).bind(now),
-    db.prepare(
-      `UPDATE users
-       SET sub = ''
-       WHERE sub IN (SELECT account FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)`
-    ).bind(now),
-    db.prepare("DELETE FROM lock_events WHERE user_id IN (SELECT id FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)").bind(now),
-    db.prepare("DELETE FROM lock_state WHERE user_id IN (SELECT id FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)").bind(now),
-    db.prepare("DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)").bind(now),
-    db.prepare("DELETE FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?").bind(now)
-  ]);
+  await db.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(now).run();
 }
 
 async function ensureUserState(db, userId) {
@@ -188,28 +162,12 @@ async function createSession(db, userId) {
   return { token, expiresAt };
 }
 
-async function touchUserRetention(db, user) {
-  const refreshedDeleteAt = isoAfterDays(user.auto_delete_days || DEFAULT_AUTO_DELETE_DAYS);
-  await db.prepare(
-    `UPDATE users
-     SET delete_at = ?, updated_at = ?
-     WHERE id = ?`
-  ).bind(refreshedDeleteAt, nowIso(), user.id).run();
-
-  return {
-    ...user,
-    delete_at: refreshedDeleteAt
-  };
-}
-
 function serializeUser(user) {
   return {
     id: user.id,
     account: user.account,
     dom: user.dom,
     sub: user.sub,
-    autoDeleteDays: user.auto_delete_days,
-    deleteAt: user.delete_at,
     createdAt: user.created_at,
     updatedAt: user.updated_at
   };
@@ -265,7 +223,7 @@ async function authenticate(request, db) {
     });
   }
 
-  const user = await touchUserRetention(db, {
+  const user = {
     id: session.user_id,
     account: session.account,
     dom: session.dom,
@@ -274,7 +232,7 @@ async function authenticate(request, db) {
     delete_at: session.delete_at,
     created_at: session.created_at,
     updated_at: session.updated_at
-  });
+  };
 
   return { token, user };
 }
@@ -355,8 +313,6 @@ async function handleRegister(request, env) {
   const password = String(body.password || "");
   const dom = normalizeProfileField(body.dom);
   const sub = normalizeProfileField(body.sub);
-  const autoDeleteDays = normalizeAutoDeleteDays(body.autoDeleteDays);
-
   if (!account || account.length < 3) {
     return errorResponse(400, "account must be at least 3 characters");
   }
@@ -376,13 +332,12 @@ async function handleRegister(request, env) {
   }
 
   const currentIso = nowIso();
-  const deleteAt = isoAfterDays(autoDeleteDays);
   const salt = crypto.randomUUID();
   const passwordHash = await hashPassword(password, salt);
   const insertResult = await env.DB.prepare(
     `INSERT INTO users (account, password_salt, password_hash, dom, sub, auto_delete_days, delete_at, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(account, salt, passwordHash, dom, sub, autoDeleteDays, deleteAt, currentIso, currentIso).run();
+  ).bind(account, salt, passwordHash, dom, sub, 0, "manual-only", currentIso, currentIso).run();
 
   const userId = insertResult.meta.last_row_id;
   await ensureUserState(env.DB, userId);
@@ -430,14 +385,13 @@ async function handleLogin(request, env) {
     return errorResponse(401, "invalid account or password");
   }
 
-  const refreshedUser = await touchUserRetention(env.DB, user);
   const session = await createSession(env.DB, user.id);
   await ensureUserState(env.DB, user.id);
 
   return json({
     token: session.token,
     sessionExpiresAt: session.expiresAt,
-    user: serializeUser(refreshedUser)
+    user: serializeUser(user)
   });
 }
 
