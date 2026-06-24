@@ -7,16 +7,15 @@
   <style>
     :root {
       --bg: #0a0a0a;
-      --panel: rgba(255, 255, 255, 0.96);
+      --panel: rgba(255, 255, 255, 0.88);
       --panel-soft: rgba(255, 248, 239, 0.9);
       --ink: #141414;
       --muted: #6d655d;
-      --line: rgba(20, 20, 20, 0.16);
+      --line: rgba(20, 20, 20, 0.08);
       --cream: #efe1cc;
       --danger-bg: #fff0f1;
       --danger-ink: #8f2435;
       --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
-      --shadow-card: 0 16px 32px rgba(17, 17, 17, 0.12);
     }
 
     * { box-sizing: border-box; }
@@ -30,14 +29,14 @@
         radial-gradient(circle at 80% 0%, rgba(240, 225, 204, 0.14), transparent 22%),
         linear-gradient(180deg, #090909 0%, #111111 100%);
       color: #fff;
-      padding: 28px 18px 40px;
+      padding: 24px 16px 36px;
     }
 
     .shell {
       width: min(1180px, 100%);
       margin: 0 auto;
-      padding: 32px;
-      border-radius: 36px;
+      padding: 28px;
+      border-radius: 28px;
       background:
         radial-gradient(circle at top right, rgba(240, 225, 204, 0.18), transparent 24%),
         linear-gradient(180deg, rgba(26, 26, 26, 0.97), rgba(15, 15, 15, 0.98));
@@ -50,7 +49,7 @@
       grid-template-columns: 108px 1fr;
       gap: 22px;
       align-items: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .hero img {
@@ -80,18 +79,21 @@
     .auth-shell {
       display: grid;
       justify-items: center;
-      margin: 30px 0 24px;
+      margin: 26px 0 20px;
     }
 
-    .auth-shell[hidden] {
+    .auth-shell[hidden],
+    .dashboard[hidden],
+    .editor[hidden],
+    .work-card[hidden] {
       display: none;
     }
 
     .auth-card,
     .panel {
-      background: rgba(255, 255, 255, 0.88);
+      background: var(--panel);
       color: var(--ink);
-      border: 1px solid rgba(20, 20, 20, 0.08);
+      border: 1px solid var(--line);
       box-shadow: none;
     }
 
@@ -112,11 +114,11 @@
       letter-spacing: -0.04em;
     }
 
-    .auth-head p {
+    .auth-head p,
+    .muted {
       margin: 0;
       color: var(--muted);
       line-height: 1.6;
-      font-size: 14px;
     }
 
     .tabs {
@@ -143,7 +145,6 @@
     .tab.active {
       background: #111;
       color: #fff;
-      box-shadow: 0 8px 18px rgba(17, 17, 17, 0.14);
     }
 
     .form-panel[hidden] {
@@ -173,18 +174,20 @@
       line-height: 1.5;
     }
 
-    input {
+    input,
+    .work-input {
       width: 100%;
       padding: 14px 16px;
       border-radius: 16px;
-      border: 1px solid rgba(20, 20, 20, 0.22);
+      border: 1px solid rgba(20, 20, 20, 0.18);
       background: #fffdf9;
       font-size: 15px;
       color: var(--ink);
       outline: none;
     }
 
-    input:focus {
+    input:focus,
+    .work-input:focus {
       border-color: rgba(17, 17, 17, 0.7);
       box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
     }
@@ -207,25 +210,17 @@
       color: #fff;
     }
 
-    .aux-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .aux-actions button,
-    .small-button {
-      border: 1px solid rgba(20, 20, 20, 0.18);
+    .small-button,
+    .link-card {
+      border: 1px solid rgba(20, 20, 20, 0.12);
       background: #f6eee3;
       color: var(--ink);
       padding: 13px 16px;
+      text-decoration: none;
+      text-align: center;
     }
 
-    .aux-actions button {
-      flex: 1;
-    }
-
-    .aux-actions .danger {
+    .danger {
       background: var(--danger-bg);
       color: var(--danger-ink);
     }
@@ -243,25 +238,13 @@
     .dashboard {
       display: grid;
       gap: 18px;
-      margin-top: 20px;
-    }
-
-    .dashboard[hidden] {
-      display: none;
-    }
-
-    .top-grid,
-    .bottom-grid {
-      display: grid;
-      gap: 18px;
+      margin-top: 18px;
     }
 
     .top-grid {
-      grid-template-columns: 1.05fr 0.95fr;
-    }
-
-    .bottom-grid {
-      grid-template-columns: 1fr;
+      display: grid;
+      grid-template-columns: 0.98fr 1.02fr;
+      gap: 18px;
     }
 
     .panel {
@@ -282,8 +265,10 @@
     }
 
     .profile,
-    .user-item,
-    .editor {
+    .editor,
+    .work-card,
+    .ring-card,
+    .device-box {
       padding: 14px 15px;
       border-radius: 16px;
       background: rgba(255, 251, 245, 0.72);
@@ -300,16 +285,14 @@
       margin-top: 14px;
     }
 
-    .editor[hidden] {
-      display: none;
-    }
-
-    .editor h3 {
+    .editor h3,
+    .work-card h3 {
       margin: 0 0 12px;
       font-size: 18px;
     }
 
-    .editor-actions {
+    .editor-actions,
+    .work-actions {
       display: flex;
       gap: 10px;
       margin-top: 14px;
@@ -319,39 +302,125 @@
     .links {
       display: grid;
       gap: 12px;
-      margin-top: 14px;
-    }
-
-    .link-card {
-      display: block;
-      text-decoration: none;
-      padding: 15px 18px;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      border: 0;
-      width: 100%;
-    }
-
-    .link-card.secondary {
-      background: #f5ecdf;
-      color: var(--ink);
-      border: 1px solid rgba(20, 20, 20, 0.14);
-    }
-
-    .link-card:disabled {
-      cursor: not-allowed;
-      opacity: 0.48;
     }
 
     .link-card.planet {
       background: linear-gradient(135deg, #111, #40331f);
+      color: #fff;
+      border: 0;
     }
 
-    .muted {
-      margin: 0 0 14px;
+    .workbench {
+      display: grid;
+      gap: 14px;
+    }
+
+    .status-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      border: 1px solid rgba(20, 20, 20, 0.1);
+      background: rgba(255, 255, 255, 0.55);
       color: var(--muted);
-      line-height: 1.6;
+    }
+
+    .pill.online,
+    .pill.unlocked {
+      color: #1d8b57;
+      background: rgba(29, 139, 87, 0.12);
+      border-color: rgba(29, 139, 87, 0.22);
+    }
+
+    .work-field-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ring-card {
+      margin-top: 14px;
+    }
+
+    .ring-cluster {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+
+    .ring-unit {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+    }
+
+    .ring-svg {
+      width: 96px;
+      height: 96px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track,
+    .ring-progress {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .ring-track {
+      stroke: rgba(20, 20, 20, 0.12);
+    }
+
+    .ring-progress {
+      stroke: #111;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 900ms linear;
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .ring-value {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .ring-unit-label,
+    .ring-note {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .device-box {
+      font-size: 14px;
+      color: var(--ink);
     }
 
     .foot {
@@ -369,11 +438,11 @@
 
     @media (max-width: 680px) {
       body {
-        padding: 16px 10px 28px;
+        padding: 14px 10px 28px;
       }
 
       .shell {
-        padding: 18px 12px;
+        padding: 16px 12px;
         border-radius: 24px;
       }
 
@@ -382,7 +451,6 @@
         gap: 14px;
         justify-items: center;
         text-align: center;
-        margin-bottom: 20px;
       }
 
       .hero img {
@@ -392,96 +460,59 @@
         padding: 10px;
       }
 
-      h1 {
-        font-size: 38px;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        line-height: 1.6;
-      }
-
-      .auth-card {
-        padding: 18px 14px;
-        border-radius: 24px;
-      }
-
-      .auth-head h2 {
-        font-size: 24px;
-      }
-
-      .tabs {
-        gap: 8px;
-        padding: 4px;
-      }
-
-      .tab {
-        padding: 11px 10px;
-        font-size: 14px;
-      }
-
-      input {
-        padding: 13px 14px;
-        font-size: 14px;
-      }
-
+      .auth-card,
       .panel {
         padding: 16px 14px;
-        border-radius: 22px;
       }
 
-      .profile,
-      .editor {
-        padding: 13px 14px;
-      }
-
-      .profile strong {
-        min-width: 72px;
-      }
-
-      .aux-actions,
-      .editor-actions {
+      .editor-actions,
+      .work-actions {
         flex-direction: column;
       }
 
-      .aux-actions button,
       .small-button,
-      .link-card {
+      .link-card,
+      .work-actions .small-button {
         width: 100%;
       }
 
-      .editor-actions {
+      .ring-cluster {
         gap: 8px;
       }
 
-      .foot {
-        margin-top: 14px;
-        font-size: 14px;
-        line-height: 1.6;
+      .ring-wrap,
+      .ring-svg {
+        width: 78px;
+        height: 78px;
+      }
+
+      .ring-center {
+        padding: 12px;
+      }
+
+      .ring-value {
+        font-size: 18px;
       }
     }
 
     @media (max-width: 420px) {
-      body {
-        padding: 12px 8px 24px;
-      }
-
       .shell {
         padding: 14px 10px;
       }
 
-      .fields,
-      .fields.two {
-        gap: 10px;
+      .ring-wrap,
+      .ring-svg {
+        width: 72px;
+        height: 72px;
       }
 
-      .chip {
-        font-size: 11px;
+      .ring-value {
+        font-size: 16px;
       }
 
-      .status {
-        padding: 12px 13px;
-        font-size: 14px;
+      .status,
+      .device-box {
+        font-size: 13px;
       }
     }
   </style>
@@ -492,7 +523,7 @@
       <img src="./logo.png" alt="Logo">
       <div>
         <h1>CB Lock Portal</h1>
-        <p class="subtitle">先登录或注册账户，再进入 DOM 控制页和 SUB 查看页。登录后才能看到用户列表、资料编辑和小狗星球关系图。</p>
+        <p class="subtitle">登录后会直接在当前页面显示 DOM 控制或 SUB 查看面板，不再跳转到单独页面。</p>
       </div>
     </section>
 
@@ -500,7 +531,7 @@
       <section class="auth-card">
         <div class="auth-head">
           <h2>账户入口</h2>
-          <p>登录后这里会自动收起，只保留用户资料和业务入口。</p>
+          <p>注册或登录后，页面会自动切换到当前用户工作台。</p>
         </div>
 
         <div class="tabs">
@@ -517,7 +548,7 @@
               <input id="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码">
             </label>
           </div>
-          <button class="submit" id="loginBtn" type="button">登录</button>
+          <button id="loginBtn" class="submit" type="button">登录</button>
         </section>
 
         <section id="registerPanel" class="form-panel" hidden>
@@ -540,7 +571,7 @@
           <div class="fields" style="margin-top:14px;">
             <div class="hint">`dom` 和 `sub` 如果填写，必须指向数据库里已存在的账户。</div>
           </div>
-          <button class="submit" id="registerBtn" type="button">注册并登录</button>
+          <button id="registerBtn" class="submit" type="button">注册并登录</button>
         </section>
 
         <div id="authStatus" class="status">未登录。</div>
@@ -553,10 +584,10 @@
           <div class="chip">Current User</div>
           <div id="profileCard" class="profile"></div>
 
-          <div class="editor-actions" style="margin-top:14px;">
+          <div class="editor-actions">
             <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
             <button id="logoutBtn" class="small-button" type="button">退出登录</button>
-            <button id="deleteBtn" class="small-button" type="button">删除当前账户</button>
+            <button id="deleteBtn" class="small-button danger" type="button">删除当前账户</button>
           </div>
 
           <div id="settingsEditor" class="editor" hidden>
@@ -574,15 +605,115 @@
               <button id="saveProfileBtn" class="small-button" type="button">保存关系</button>
             </div>
           </div>
-
         </section>
 
         <section class="panel">
-          <div class="chip">Quick Access</div>
-          <p class="muted">登录后右侧只保留业务入口，不再显示用户列表。</p>
-          <div class="links" style="margin-top:0;">
-            <button id="sideOpenDomBtn" class="link-card" type="button" hidden>打开 DOM 控制页</button>
-            <button id="sideOpenSubBtn" class="link-card secondary" type="button" hidden>打开 SUB 查看页</button>
+          <div class="chip">Workbench</div>
+          <div id="workIntro" class="muted">登录后会直接在这里显示当前账户对应的控制面板，不再跳转到单独页面。</div>
+
+          <section id="domWorkbench" class="work-card" hidden>
+            <h3>DOM 控制面板</h3>
+            <div class="status-pills">
+              <div id="domDeviceState" class="pill">锁状态：不在线</div>
+            </div>
+            <div class="work-field-row">
+              <label for="domUnlockTime" style="flex:1;min-width:220px;">
+                <span style="display:block;margin-bottom:6px;">自动开锁时间</span>
+                <span class="hint">到点后服务器会把目标 SUB 账户的状态自动切为已开锁。</span>
+              </label>
+              <input id="domUnlockTime" class="work-input" type="datetime-local">
+            </div>
+            <div class="work-actions">
+              <button id="domApplyBtn" class="small-button" type="button">应用策略</button>
+              <button id="domUnlockNowBtn" class="small-button" type="button">立即开锁</button>
+            </div>
+            <div class="ring-card">
+              <div class="ring-cluster">
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="domRingHoursProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="domRingHoursValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Hours</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="domRingMinutesProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="domRingMinutesValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Minutes</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="domRingSecondsProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="domRingSecondsValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Seconds</div>
+                </div>
+              </div>
+              <div id="domRingNote" class="ring-note">等待设置自动开锁时间。</div>
+            </div>
+          </section>
+
+          <section id="subWorkbench" class="work-card" hidden>
+            <h3>SUB 查看面板</h3>
+            <div class="status-pills">
+              <div id="subLockState" class="pill">当前已上锁</div>
+              <div id="subDeviceState" class="pill">锁状态：不在线</div>
+            </div>
+            <div class="ring-card">
+              <div class="ring-cluster">
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="subRingHoursProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="subRingHoursValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Hours</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="subRingMinutesProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="subRingMinutesValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Minutes</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="subRingSecondsProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="subRingSecondsValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Seconds</div>
+                </div>
+              </div>
+              <div id="subRingNote" class="ring-note">等待 DOM 设置时间。</div>
+            </div>
+            <div class="muted" style="margin-top:14px;">蓝牙连接后会按当前账户状态每秒发送一次。</div>
+            <div class="work-actions">
+              <button id="subScanBtBtn" class="small-button" type="button">搜索蓝牙</button>
+              <button id="subConnectBtBtn" class="small-button" type="button">连接蓝牙</button>
+            </div>
+            <div id="subBtDeviceInfo" class="device-box">尚未选择蓝牙设备。</div>
+          </section>
+
+          <div class="links" style="margin-top:14px;">
             <a class="link-card planet" href="./planet.html">打开小狗星球</a>
           </div>
         </section>
@@ -590,12 +721,16 @@
     </section>
 
     <datalist id="accountOptions"></datalist>
-
-    <p class="foot">登录后，DOM 和 SUB 页面会复用当前浏览器中的会话令牌。同一账户下，两个页面会绑定到同一份锁状态。</p>
+    <p class="foot">当前页面会直接复用本浏览器中的会话令牌。DOM 只显示 DOM 控制面板，SUB 只显示 SUB 查看面板。</p>
   </main>
 
   <script>
     const SESSION_KEY = "cb-lock-session";
+    const API_DEVICE_STATUS = "/api/device-status";
+    const API_DOM_STATE = "/api/state?mode=dom_control";
+    const API_SUB_STATE = "/api/state?mode=sub_view";
+    const ringCircumference = 2 * Math.PI * 40;
+
     const authShell = document.getElementById("authShell");
     const dashboard = document.getElementById("dashboard");
     const tabLogin = document.getElementById("tabLogin");
@@ -620,10 +755,44 @@
     const authStatus = document.getElementById("authStatus");
     const profileCard = document.getElementById("profileCard");
     const accountOptions = document.getElementById("accountOptions");
-    const sideOpenDomBtn = document.getElementById("sideOpenDomBtn");
-    const sideOpenSubBtn = document.getElementById("sideOpenSubBtn");
+    const workIntro = document.getElementById("workIntro");
+    const domWorkbench = document.getElementById("domWorkbench");
+    const subWorkbench = document.getElementById("subWorkbench");
+
+    const domUnlockTime = document.getElementById("domUnlockTime");
+    const domApplyBtn = document.getElementById("domApplyBtn");
+    const domUnlockNowBtn = document.getElementById("domUnlockNowBtn");
+    const domDeviceState = document.getElementById("domDeviceState");
+    const domRingHoursProgress = document.getElementById("domRingHoursProgress");
+    const domRingMinutesProgress = document.getElementById("domRingMinutesProgress");
+    const domRingSecondsProgress = document.getElementById("domRingSecondsProgress");
+    const domRingHoursValue = document.getElementById("domRingHoursValue");
+    const domRingMinutesValue = document.getElementById("domRingMinutesValue");
+    const domRingSecondsValue = document.getElementById("domRingSecondsValue");
+    const domRingNote = document.getElementById("domRingNote");
+
+    const subLockState = document.getElementById("subLockState");
+    const subDeviceState = document.getElementById("subDeviceState");
+    const subScanBtBtn = document.getElementById("subScanBtBtn");
+    const subConnectBtBtn = document.getElementById("subConnectBtBtn");
+    const subBtDeviceInfo = document.getElementById("subBtDeviceInfo");
+    const subRingHoursProgress = document.getElementById("subRingHoursProgress");
+    const subRingMinutesProgress = document.getElementById("subRingMinutesProgress");
+    const subRingSecondsProgress = document.getElementById("subRingSecondsProgress");
+    const subRingHoursValue = document.getElementById("subRingHoursValue");
+    const subRingMinutesValue = document.getElementById("subRingMinutesValue");
+    const subRingSecondsValue = document.getElementById("subRingSecondsValue");
+    const subRingNote = document.getElementById("subRingNote");
+
     let currentUser = null;
     let currentUsers = [];
+    let currentSubState = null;
+    let subBtDevice = null;
+    let subBtCharacteristic = null;
+    let subBtTimer = null;
+
+    const serviceUuid = "000000ff-0000-1000-8000-00805f9b34fb";
+    const characteristicUuid = "0000ff01-0000-1000-8000-00805f9b34fb";
 
     function setSession(token) {
       sessionStorage.setItem(SESSION_KEY, token);
@@ -665,114 +834,10 @@
       return payload;
     }
 
-    function renderProfile(user) {
-      const role = user.sub ? "DOM" : user.dom ? "SUB" : "未绑定";
-      currentUser = user;
-      profileCard.innerHTML = `
-        <div><strong>账户</strong>${user.account}</div>
-        <div><strong>角色</strong>${role}</div>
-        <div><strong>DOM</strong>${user.dom || "未设置"}</div>
-        <div><strong>SUB</strong>${user.sub || "未设置"}</div>
-        <div><strong>删除方式</strong>仅支持用户手动删除</div>
-      `;
-      editDom.value = user.dom || "";
-      editSub.value = user.sub || "";
-      sideOpenDomBtn.hidden = role !== "DOM";
-      sideOpenSubBtn.hidden = role !== "SUB";
-    }
-
-    function renderUsers(users) {
-      currentUsers = users;
-      accountOptions.innerHTML = users.map((user) => `<option value="${user.account}"></option>`).join("");
-    }
-
-    async function refreshDashboard() {
-      const me = await request("/api/me");
-      const list = await request("/api/users");
-      renderProfile(me.user);
-      renderUsers(list.users || []);
-      authStatus.textContent = `已登录账户: ${me.user.account}`;
-      setLoggedInView(true);
-    }
-
-    async function refreshMe() {
-      const token = getSession();
-      if (!token) {
-        setLoggedInView(false);
-        authStatus.textContent = "未登录。";
-        accountOptions.innerHTML = "";
-        currentUser = null;
-        currentUsers = [];
-        sideOpenDomBtn.hidden = true;
-        sideOpenSubBtn.hidden = true;
-        settingsEditor.hidden = true;
-        toggleSettingsBtn.textContent = "设置";
-        return;
-      }
-
-      try {
-        await refreshDashboard();
-      } catch (error) {
-        clearSession();
-        setLoggedInView(false);
-        authStatus.textContent = "登录已失效，请重新登录。";
-        accountOptions.innerHTML = "";
-        currentUser = null;
-        currentUsers = [];
-        sideOpenDomBtn.hidden = true;
-        sideOpenSubBtn.hidden = true;
-        settingsEditor.hidden = true;
-        toggleSettingsBtn.textContent = "设置";
-      }
-    }
-
-    function findUserAccount(account) {
-      return currentUsers.find((user) => user.account === account) || null;
-    }
-
-    function openRelationPage(kind) {
-      if (!currentUser) {
-        authStatus.textContent = "请先登录。";
-        return;
-      }
-      const role = currentUser.sub ? "dom" : currentUser.dom ? "sub" : "";
-      if (role !== kind) {
-        authStatus.textContent = kind === "dom"
-          ? "当前账户不是 DOM 角色，只能打开 SUB 查看页。"
-          : "当前账户不是 SUB 角色，只能打开 DOM 控制页。";
-        return;
-      }
-      const relation = kind === "dom" ? currentUser.sub : currentUser.dom;
-      if (!relation) {
-        authStatus.textContent = `当前账户还没有设置对应的 ${kind.toUpperCase()}。`;
-        return;
-      }
-      const targetUser = findUserAccount(relation);
-      if (!targetUser) {
-        authStatus.textContent = `数据库中找不到对应的 ${kind.toUpperCase()} 账户: ${relation}`;
-        return;
-      }
-      if (kind === "dom" && targetUser.dom !== currentUser.account) {
-        authStatus.textContent = `对应的 SUB 账户 ${relation} 没有与当前账户形成一对一绑定。`;
-        return;
-      }
-      if (kind === "sub" && targetUser.sub !== currentUser.account) {
-        authStatus.textContent = `对应的 DOM 账户 ${relation} 没有与当前账户形成一对一绑定。`;
-        return;
-      }
-      window.location.href = kind === "dom" ? "./dom.html" : "./sub.html";
-    }
-
     function getUserRole(user) {
-      if (user.dom && user.sub) {
-        return "INVALID";
-      }
-      if (user.sub) {
-        return "DOM";
-      }
-      if (user.dom) {
-        return "SUB";
-      }
+      if (user.dom && user.sub) return "INVALID";
+      if (user.sub) return "DOM";
+      if (user.dom) return "SUB";
       return "UNBOUND";
     }
 
@@ -789,55 +854,229 @@
       `;
       editDom.value = user.dom || "";
       editSub.value = user.sub || "";
-      sideOpenDomBtn.hidden = role !== "DOM";
-      sideOpenSubBtn.hidden = role !== "SUB";
       if (role === "INVALID") {
-        authStatus.textContent = "当前账户同时设置了 DOM 和 SUB，这是无效关系，请先在设置中修正。";
+        authStatus.textContent = "当前账户同时设置了 DOM 和 SUB，这是无效关系，请先修正。";
       }
     }
 
-    function openRelationPage(kind) {
-      if (!currentUser) {
-        authStatus.textContent = "请先登录。";
+    function renderUsers(users) {
+      currentUsers = users;
+      accountOptions.innerHTML = users.map((user) => `<option value="${user.account}"></option>`).join("");
+    }
+
+    function parseRemainingTimeText(value) {
+      const match = /^(\d{2,}):(\d{2}):(\d{2})$/.exec(value || "");
+      if (!match) return null;
+      const hours = Number(match[1]);
+      const minutes = Number(match[2]);
+      const seconds = Number(match[3]);
+      if ([hours, minutes, seconds].some((part) => Number.isNaN(part))) return null;
+      return { hours, minutes, seconds };
+    }
+
+    function setRingProgress(element, progress) {
+      element.style.strokeDasharray = `${ringCircumference}`;
+      element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
+    }
+
+    function syncRing(remainingText, totalMs, refs, idleText) {
+      const parts = parseRemainingTimeText(remainingText);
+      if (!parts || !totalMs || totalMs <= 0) {
+        setRingProgress(refs.hoursProgress, 0);
+        setRingProgress(refs.minutesProgress, 0);
+        setRingProgress(refs.secondsProgress, 0);
+        refs.hoursValue.textContent = remainingText === "00:00:00" && totalMs ? "00" : "--";
+        refs.minutesValue.textContent = remainingText === "00:00:00" && totalMs ? "00" : "--";
+        refs.secondsValue.textContent = remainingText === "00:00:00" && totalMs ? "00" : "--";
+        refs.note.textContent = totalMs ? "开锁时间已到，倒计时完成。" : idleText;
         return;
       }
 
-      const currentRole = getUserRole(currentUser);
-      if (currentRole === "INVALID") {
-        authStatus.textContent = "当前账户的 DOM / SUB 关系无效，请先修正后再打开页面。";
+      const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
+      setRingProgress(refs.hoursProgress, Math.max(0, Math.min(1, parts.hours / hoursProgressBase)));
+      setRingProgress(refs.minutesProgress, Math.max(0, Math.min(1, parts.minutes / 59)));
+      setRingProgress(refs.secondsProgress, Math.max(0, Math.min(1, parts.seconds / 59)));
+      refs.hoursValue.textContent = String(Math.min(parts.hours, 99)).padStart(2, "0");
+      refs.minutesValue.textContent = String(parts.minutes).padStart(2, "0");
+      refs.secondsValue.textContent = String(parts.seconds).padStart(2, "0");
+      refs.note.textContent = `距离自动开锁还有 ${remainingText}。`;
+    }
+
+    function getRingRefs(prefix) {
+      return {
+        hoursProgress: document.getElementById(`${prefix}RingHoursProgress`),
+        minutesProgress: document.getElementById(`${prefix}RingMinutesProgress`),
+        secondsProgress: document.getElementById(`${prefix}RingSecondsProgress`),
+        hoursValue: document.getElementById(`${prefix}RingHoursValue`),
+        minutesValue: document.getElementById(`${prefix}RingMinutesValue`),
+        secondsValue: document.getElementById(`${prefix}RingSecondsValue`),
+        note: document.getElementById(`${prefix}RingNote`)
+      };
+    }
+
+    function setPillState(element, text, active) {
+      element.textContent = text;
+      element.classList.toggle("online", !!active);
+      element.classList.toggle("unlocked", !!active);
+    }
+
+    function renderWorkbenches() {
+      const role = currentUser ? getUserRole(currentUser) : "UNBOUND";
+      domWorkbench.hidden = role !== "DOM";
+      subWorkbench.hidden = role !== "SUB";
+      workIntro.hidden = role === "DOM" || role === "SUB";
+    }
+
+    function findUserAccount(account) {
+      return currentUsers.find((user) => user.account === account) || null;
+    }
+
+    async function refreshDashboard() {
+      const me = await request("/api/me");
+      const list = await request("/api/users");
+      renderProfile(me.user);
+      renderUsers(list.users || []);
+      renderWorkbenches();
+      authStatus.textContent = `已登录账户: ${me.user.account}`;
+      setLoggedInView(true);
+      await refreshWorkbenchStates();
+    }
+
+    async function refreshMe() {
+      const token = getSession();
+      if (!token) {
+        setLoggedInView(false);
+        authStatus.textContent = "未登录。";
+        currentUser = null;
+        currentUsers = [];
+        settingsEditor.hidden = true;
+        toggleSettingsBtn.textContent = "设置";
         return;
       }
 
-      const role = currentRole === "DOM" ? "dom" : currentRole === "SUB" ? "sub" : "";
-      if (role !== kind) {
-        authStatus.textContent = kind === "dom"
-          ? "当前账户不是 DOM 角色，只能打开 SUB 查看页。"
-          : "当前账户不是 SUB 角色，只能打开 DOM 控制页。";
-        return;
+      try {
+        await refreshDashboard();
+      } catch (error) {
+        clearSession();
+        setLoggedInView(false);
+        authStatus.textContent = "登录已失效，请重新登录。";
+      }
+    }
+
+    async function refreshWorkbenchStates() {
+      if (!currentUser) return;
+      const role = getUserRole(currentUser);
+
+      if (role === "DOM") {
+        const state = await request(API_DOM_STATE);
+        const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
+        const unlockAt = state.unlockTime ? new Date(state.unlockTime) : null;
+        const totalMs = scheduledAt && unlockAt ? Math.max(unlockAt.getTime() - scheduledAt.getTime(), 0) : null;
+        setPillState(domDeviceState, `锁状态：${state.deviceOnline ? "在线" : "不在线"}`, state.deviceOnline);
+        if (unlockAt && !Number.isNaN(unlockAt.getTime()) && document.activeElement !== domUnlockTime) {
+          domUnlockTime.value = `${unlockAt.getFullYear()}-${String(unlockAt.getMonth() + 1).padStart(2, "0")}-${String(unlockAt.getDate()).padStart(2, "0")}T${String(unlockAt.getHours()).padStart(2, "0")}:${String(unlockAt.getMinutes()).padStart(2, "0")}`;
+        }
+        if (!state.unlockTime && document.activeElement !== domUnlockTime) {
+          domUnlockTime.value = "";
+        }
+        syncRing(state.remainingTime || "--:--:--", totalMs, getRingRefs("dom"), "等待设置自动开锁时间。");
       }
 
-      const relation = kind === "dom" ? currentUser.sub : currentUser.dom;
-      if (!relation) {
-        authStatus.textContent = `当前账户还没有设置对应的 ${kind.toUpperCase()}。`;
-        return;
+      if (role === "SUB") {
+        const state = await request(API_SUB_STATE);
+        currentSubState = state;
+        const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
+        const unlockAt = state.unlockTime ? new Date(state.unlockTime) : null;
+        const totalMs = scheduledAt && unlockAt ? Math.max(unlockAt.getTime() - scheduledAt.getTime(), 0) : null;
+        setPillState(subLockState, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
+        setPillState(subDeviceState, `锁状态：${state.deviceOnline ? "在线" : "不在线"}`, state.deviceOnline);
+        syncRing(state.remainingTime || "--:--:--", totalMs, getRingRefs("sub"), "等待 DOM 设置时间。");
       }
+    }
 
-      const targetUser = findUserAccount(relation);
-      if (!targetUser) {
-        authStatus.textContent = `数据库中找不到对应的 ${kind.toUpperCase()} 账户: ${relation}`;
-        return;
-      }
+    async function updateDeviceStatus(isOnline, keepalive = false) {
+      const token = getSession();
+      if (!token) return;
+      await fetch(API_DEVICE_STATUS, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ isOnline }),
+        keepalive
+      }).catch(() => {});
+    }
 
-      if (kind === "dom" && targetUser.dom !== currentUser.account) {
-        authStatus.textContent = `对应的 SUB 账户 ${relation} 没有与当前账户形成一对一绑定。`;
-        return;
-      }
-      if (kind === "sub" && targetUser.sub !== currentUser.account) {
-        authStatus.textContent = `对应的 DOM 账户 ${relation} 没有与当前账户形成一对一绑定。`;
-        return;
-      }
+    function getSubPayloadFromState(state) {
+      return {
+        account: state.user.account,
+        dom: state.user.dom,
+        sub: state.user.sub,
+        locked: !!state.locked,
+        unlockTime: state.unlockTime || null,
+        remainingTime: state.remainingTime || "--:--:--",
+        source: "sub",
+        sentAt: new Date().toISOString()
+      };
+    }
 
-      window.location.href = kind === "dom" ? "./dom.html" : "./sub.html";
+    async function scanBluetoothDevice() {
+      if (!navigator.bluetooth) {
+        throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
+      }
+      subBtDevice = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [serviceUuid]
+      });
+      subBtDeviceInfo.textContent = `已选择设备: ${subBtDevice.name || "Unknown Device"}`;
+      subBtDevice.addEventListener("gattserverdisconnected", () => {
+        subBtCharacteristic = null;
+        if (subBtTimer) {
+          clearInterval(subBtTimer);
+          subBtTimer = null;
+        }
+        void updateDeviceStatus(false);
+        setPillState(subDeviceState, "锁状态：不在线", false);
+        subBtDeviceInfo.textContent = `设备已断开: ${subBtDevice ? subBtDevice.name || "Unknown Device" : "Unknown Device"}`;
+      });
+    }
+
+    async function connectBluetooth() {
+      if (!navigator.bluetooth) {
+        throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
+      }
+      if (!subBtDevice) {
+        throw new Error("请先搜索并选择蓝牙设备。");
+      }
+      const server = await subBtDevice.gatt.connect();
+      const service = await server.getPrimaryService(serviceUuid);
+      subBtCharacteristic = await service.getCharacteristic(characteristicUuid);
+      await updateDeviceStatus(true);
+      setPillState(subDeviceState, "锁状态：在线", true);
+      subBtDeviceInfo.textContent = `已连接设备: ${subBtDevice.name || "Unknown Device"}`;
+      if (subBtTimer) clearInterval(subBtTimer);
+      subBtTimer = setInterval(() => void safeBluetoothSend(), 1000);
+      await safeBluetoothSend();
+    }
+
+    async function sendBluetoothState() {
+      if (!subBtCharacteristic || !currentSubState) return;
+      const encoded = new TextEncoder().encode(JSON.stringify(getSubPayloadFromState(currentSubState)));
+      if (typeof subBtCharacteristic.writeValueWithoutResponse === "function") {
+        await subBtCharacteristic.writeValueWithoutResponse(encoded);
+      } else {
+        await subBtCharacteristic.writeValue(encoded);
+      }
+    }
+
+    async function safeBluetoothSend() {
+      try {
+        await sendBluetoothState();
+      } catch (error) {
+        subBtDeviceInfo.textContent = `发送失败: ${error.message}`;
+      }
     }
 
     tabLogin.addEventListener("click", () => setTab("login"));
@@ -881,7 +1120,7 @@
 
     saveProfileBtn.addEventListener("click", async () => {
       try {
-        const payload = await request("/api/account/profile", {
+        await request("/api/account/profile", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -889,7 +1128,6 @@
             sub: editSub.value
           })
         });
-        renderProfile(payload.user);
         await refreshDashboard();
       } catch (error) {
         authStatus.textContent = `保存关系失败: ${error.message}`;
@@ -901,8 +1139,65 @@
       toggleSettingsBtn.textContent = settingsEditor.hidden ? "设置" : "收起设置";
     });
 
-    sideOpenDomBtn.addEventListener("click", () => openRelationPage("dom"));
-    sideOpenSubBtn.addEventListener("click", () => openRelationPage("sub"));
+    domApplyBtn.addEventListener("click", async () => {
+      try {
+        let unlockTimeValue = null;
+        if (domUnlockTime.value) {
+          const unlockDate = new Date(domUnlockTime.value);
+          if (Number.isNaN(unlockDate.getTime()) || unlockDate.getTime() <= Date.now()) {
+            authStatus.textContent = "开锁时间无效或早于当前时间。";
+            return;
+          }
+          unlockTimeValue = unlockDate.toISOString();
+        }
+
+        await request(API_DOM_STATE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            locked: true,
+            unlockTime: unlockTimeValue,
+            source: "dom"
+          })
+        });
+        await refreshWorkbenchStates();
+      } catch (error) {
+        authStatus.textContent = `保存失败: ${error.message}`;
+      }
+    });
+
+    domUnlockNowBtn.addEventListener("click", async () => {
+      try {
+        await request(API_DOM_STATE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            locked: false,
+            unlockTime: null,
+            source: "dom"
+          })
+        });
+        await refreshWorkbenchStates();
+      } catch (error) {
+        authStatus.textContent = `立即开锁失败: ${error.message}`;
+      }
+    });
+
+    subScanBtBtn.addEventListener("click", async () => {
+      try {
+        await scanBluetoothDevice();
+      } catch (error) {
+        subBtDeviceInfo.textContent = `搜索失败: ${error.message}`;
+      }
+    });
+
+    subConnectBtBtn.addEventListener("click", async () => {
+      try {
+        await connectBluetooth();
+      } catch (error) {
+        subBtDeviceInfo.textContent = `连接失败: ${error.message}`;
+      }
+    });
 
     logoutBtn.addEventListener("click", async () => {
       try {
@@ -917,7 +1212,6 @@
       if (!confirm("删除当前账户后，关联的锁状态和会话都会一起删除。是否继续？")) {
         return;
       }
-
       try {
         await request("/api/account", { method: "DELETE" });
         clearSession();
@@ -927,8 +1221,17 @@
       }
     });
 
+    window.addEventListener("beforeunload", () => {
+      void updateDeviceStatus(false, true);
+    });
+
     setTab("login");
     refreshMe();
+    setInterval(() => {
+      if (getSession() && !dashboard.hidden) {
+        void refreshWorkbenchStates().catch(() => {});
+      }
+    }, 1000);
   </script>
 </body>
 </html>
