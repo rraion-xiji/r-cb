@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM Control</title>
+  <style>
+    :root {
+      --safe: #1d8b57;
+      --ink: #111;
+      --muted: #66605a;
+      --cream: #f0e6d8;
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 85% 12%, rgba(240, 230, 216, 0.16), transparent 20%),
+        linear-gradient(180deg, #090909 0%, #111111 100%);
+    }
+
+    .shell {
+      width: min(1100px, calc(100vw - 32px));
+      margin: 24px auto;
+      padding: 28px;
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at top right, rgba(240, 230, 216, 0.22), transparent 26%),
+        linear-gradient(180deg, rgba(28, 28, 28, 0.96), rgba(16, 16, 16, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 112px 1fr auto;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .hero img {
+      width: 112px;
+      height: 112px;
+      object-fit: contain;
+      border-radius: 28px;
+      background: #000;
+      padding: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle,
+    .nav a {
+      color: rgba(255, 250, 243, 0.74);
+    }
+
+    .nav a {
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 10px 10px 0 rgba(240, 230, 216, 0.9);
+    }
+
+    .chip {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+    }
+
+    .control-box,
+    .metric,
+    .ring-card,
+    .log li {
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fffdfa, #f4eadc);
+    }
+
+    .control-box {
+      display: grid;
+      gap: 16px;
+      padding: 18px;
+    }
+
+    .field-row,
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    label strong,
+    .hint-strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    input[type="datetime-local"] {
+      width: min(100%, 290px);
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      font-size: 15px;
+      background: #fffdfa;
+    }
+
+    .switch {
+      position: relative;
+      width: 72px;
+      height: 40px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #d9d3cb;
+      border: 2px solid rgba(17, 17, 17, 0.82);
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      left: 5px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid rgba(17, 17, 17, 0.85);
+      transition: transform 180ms ease;
+    }
+
+    .switch input:checked + .slider {
+      background: #111;
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(30px);
+    }
+
+    button {
+      border: 2px solid rgba(17, 17, 17, 0.88);
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--cream);
+      color: var(--ink);
+    }
+
+    .primary {
+      background: #111;
+      color: #fffaf5;
+    }
+
+    .ring-card {
+      display: grid;
+      gap: 14px;
+      padding: 18px 14px 14px;
+    }
+
+    .ring-cluster {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+
+    .ring-unit {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: 104px;
+      height: 104px;
+    }
+
+    .ring-svg {
+      width: 104px;
+      height: 104px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track,
+    .ring-progress {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .ring-track {
+      stroke: rgba(17, 17, 17, 0.1);
+    }
+
+    .ring-progress {
+      stroke: #111;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 900ms linear;
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      color: var(--ink);
+    }
+
+    .ring-value {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .ring-unit-label,
+    .ring-note,
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .ring-unit-label {
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .metric-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 16px 18px;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .status-flag {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 2px solid rgba(17, 17, 17, 0.16);
+      background: rgba(17, 17, 17, 0.08);
+    }
+
+    .status-flag.unlocked {
+      color: var(--safe);
+      background: rgba(29, 139, 87, 0.12);
+      border-color: rgba(29, 139, 87, 0.22);
+    }
+
+    .log {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .log li {
+      padding: 12px 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .log time {
+      color: var(--ink);
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <img src="./logo.png" alt="Logo">
+      <div>
+        <div class="chip">Puppy Control</div>
+        <h1>DOM 页面</h1>
+        <p class="subtitle">DOM 负责设定锁状态与自动开锁时间，并通过 Cloudflare API 写入共享状态。</p>
+      </div>
+      <div class="nav"><a href="./a.html">返回入口</a> · <a href="./sub.html">打开 SUB 页面</a></div>
+    </section>
+
+    <section class="layout">
+      <section class="panel">
+        <h2>控制面板</h2>
+        <div class="control-box">
+          <div class="field-row">
+            <div>
+              <span class="hint-strong">CB 锁状态</span>
+              <div class="hint">切换后点击“应用策略”写入云端状态。SUB 页面与钥匙盒会读取这份状态。</div>
+            </div>
+            <label class="switch" aria-label="切换CB锁">
+              <input id="lockToggle" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="field-row">
+            <label for="unlockTime">
+              <strong>D 设定开锁时间</strong>
+              <span class="hint">按绝对时间设定，到时由服务端把状态视为已开锁。</span>
+            </label>
+            <input id="unlockTime" type="datetime-local">
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="applyBtn">应用策略</button>
+            <button id="unlockNowBtn" type="button">立即开锁</button>
+          </div>
+
+          <div class="ring-card">
+            <div class="ring-cluster">
+              <div class="ring-unit">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                    <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                    <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
+                  </svg>
+                  <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
+                </div>
+                <div class="ring-unit-label">Hours</div>
+              </div>
+              <div class="ring-unit">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                    <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                    <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
+                  </svg>
+                  <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
+                </div>
+                <div class="ring-unit-label">Minutes</div>
+              </div>
+              <div class="ring-unit">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                    <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                    <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
+                  </svg>
+                  <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
+                </div>
+                <div class="ring-unit-label">Seconds</div>
+              </div>
+            </div>
+            <div id="ringNote" class="ring-note">还没有设置自动开锁时间。</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>当前状态</h2>
+        <div id="statusFlag" class="status-flag">当前已上锁</div>
+        <div class="metric-grid" style="margin-top:16px;">
+          <div class="metric">
+            <div class="metric-label">当前角色</div>
+            <div class="metric-value">DOM</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">预计开锁时间</div>
+            <div id="timeValue" class="metric-value" style="font-size:22px;">未设定</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">剩余时间</div>
+            <div id="countdownValue" class="metric-value">--:--:--</div>
+          </div>
+        </div>
+
+        <ul class="log" id="activityLog" style="margin-top:16px;">
+          <li><time>系统</time>等待从云端读取状态。</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = "/api/state";
+    const ringCircumference = 2 * Math.PI * 40;
+    const lockToggle = document.getElementById("lockToggle");
+    const unlockTime = document.getElementById("unlockTime");
+    const applyBtn = document.getElementById("applyBtn");
+    const unlockNowBtn = document.getElementById("unlockNowBtn");
+    const statusFlag = document.getElementById("statusFlag");
+    const timeValue = document.getElementById("timeValue");
+    const countdownValue = document.getElementById("countdownValue");
+    const ringHoursProgress = document.getElementById("ringHoursProgress");
+    const ringMinutesProgress = document.getElementById("ringMinutesProgress");
+    const ringSecondsProgress = document.getElementById("ringSecondsProgress");
+    const ringHoursValue = document.getElementById("ringHoursValue");
+    const ringMinutesValue = document.getElementById("ringMinutesValue");
+    const ringSecondsValue = document.getElementById("ringSecondsValue");
+    const ringNote = document.getElementById("ringNote");
+    const activityLog = document.getElementById("activityLog");
+
+    let currentState = {
+      locked: true,
+      unlockTime: null,
+      scheduledAt: null,
+      remainingTime: "--:--:--",
+      updatedAt: null,
+      updatedBy: "system"
+    };
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function formatDate(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    function appendLog(message) {
+      const item = document.createElement("li");
+      const stamp = document.createElement("time");
+      stamp.textContent = new Date().toLocaleTimeString("zh-CN", { hour12: false });
+      item.appendChild(stamp);
+      item.append(` ${message}`);
+      activityLog.prepend(item);
+      while (activityLog.children.length > 5) {
+        activityLog.removeChild(activityLog.lastChild);
+      }
+    }
+
+    async function fetchState() {
+      const response = await fetch(API_URL, { headers: { Accept: "application/json" } });
+      if (!response.ok) {
+        throw new Error(`读取状态失败: ${response.status}`);
+      }
+      currentState = await response.json();
+      return currentState;
+    }
+
+    async function postState(payload) {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `保存状态失败: ${response.status}`);
+      }
+      currentState = await response.json();
+      return currentState;
+    }
+
+    function setRingProgress(element, progress) {
+      element.style.strokeDasharray = `${ringCircumference}`;
+      element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
+    }
+
+    function syncRing(remainingMs, totalMs) {
+      if (!remainingMs || !totalMs || remainingMs <= 0 || totalMs <= 0) {
+        setRingProgress(ringHoursProgress, 0);
+        setRingProgress(ringMinutesProgress, 0);
+        setRingProgress(ringSecondsProgress, 0);
+        ringHoursValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringMinutesValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringSecondsValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "还没有设置自动开锁时间。";
+        return;
+      }
+
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const totalHours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
+      const hoursProgress = Math.max(0, Math.min(1, totalHours / hoursProgressBase));
+      const minutesProgress = Math.max(0, Math.min(1, minutes / 59));
+      const secondsProgress = Math.max(0, Math.min(1, seconds / 59));
+      setRingProgress(ringHoursProgress, hoursProgress);
+      setRingProgress(ringMinutesProgress, minutesProgress);
+      setRingProgress(ringSecondsProgress, secondsProgress);
+      ringHoursValue.textContent = pad(Math.min(totalHours, 99));
+      ringMinutesValue.textContent = pad(minutes);
+      ringSecondsValue.textContent = pad(seconds);
+      ringNote.textContent = `距离自动开锁还有 ${countdownValue.textContent}。`;
+    }
+
+    function renderState(state) {
+      lockToggle.checked = !!state.locked;
+      statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
+      statusFlag.classList.toggle("unlocked", !state.locked);
+
+      if (!state.unlockTime) {
+        timeValue.textContent = "未设定";
+        countdownValue.textContent = "--:--:--";
+        if (document.activeElement !== unlockTime) {
+          unlockTime.value = "";
+        }
+        syncRing(null, null);
+        return;
+      }
+
+      const autoUnlockAt = new Date(state.unlockTime);
+      const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
+      const remainingMs = autoUnlockAt.getTime() - Date.now();
+      timeValue.textContent = Number.isNaN(autoUnlockAt.getTime()) ? "未设定" : formatDate(autoUnlockAt);
+      countdownValue.textContent = state.remainingTime || "--:--:--";
+
+      if (document.activeElement !== unlockTime && !Number.isNaN(autoUnlockAt.getTime())) {
+        unlockTime.value = `${autoUnlockAt.getFullYear()}-${pad(autoUnlockAt.getMonth() + 1)}-${pad(autoUnlockAt.getDate())}T${pad(autoUnlockAt.getHours())}:${pad(autoUnlockAt.getMinutes())}`;
+      }
+
+      const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
+        ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
+        : Math.max(remainingMs, 0);
+      syncRing(Math.max(remainingMs, 0), totalMs);
+    }
+
+    async function refreshState() {
+      try {
+        const state = await fetchState();
+        renderState(state);
+      } catch (error) {
+        appendLog(`同步失败: ${error.message}`);
+      }
+    }
+
+    applyBtn.addEventListener("click", async () => {
+      try {
+        let unlockTimeValue = null;
+        if (unlockTime.value) {
+          const unlockDate = new Date(unlockTime.value);
+          if (Number.isNaN(unlockDate.getTime()) || unlockDate.getTime() <= Date.now()) {
+            appendLog("开锁时间无效或早于当前时间。");
+            return;
+          }
+          unlockTimeValue = unlockDate.toISOString();
+        }
+
+        const state = await postState({
+          locked: lockToggle.checked,
+          unlockTime: unlockTimeValue,
+          source: "dom"
+        });
+        appendLog(unlockTimeValue ? `已应用策略，自动开锁时间为 ${formatDate(new Date(unlockTimeValue))}。` : "已应用策略，未设置自动开锁时间。");
+        renderState(state);
+      } catch (error) {
+        appendLog(`保存失败: ${error.message}`);
+      }
+    });
+
+    unlockNowBtn.addEventListener("click", async () => {
+      try {
+        const state = await postState({
+          locked: false,
+          unlockTime: null,
+          source: "dom"
+        });
+        appendLog("已立即开锁，并清除定时策略。");
+        renderState(state);
+      } catch (error) {
+        appendLog(`立即开锁失败: ${error.message}`);
+      }
+    });
+
+    refreshState();
+    setInterval(refreshState, 5000);
+  </script>
+</body>
+</html>

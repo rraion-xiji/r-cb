@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUB View</title>
+  <style>
+    :root {
+      --safe: #1d8b57;
+      --ink: #111;
+      --muted: #66605a;
+      --cream: #f0e6d8;
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 85% 12%, rgba(240, 230, 216, 0.16), transparent 20%),
+        linear-gradient(180deg, #090909 0%, #111111 100%);
+    }
+
+    .shell {
+      width: min(980px, calc(100vw - 32px));
+      margin: 24px auto;
+      padding: 28px;
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at top right, rgba(240, 230, 216, 0.22), transparent 26%),
+        linear-gradient(180deg, rgba(28, 28, 28, 0.96), rgba(16, 16, 16, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 112px 1fr auto;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .hero img {
+      width: 112px;
+      height: 112px;
+      object-fit: contain;
+      border-radius: 28px;
+      background: #000;
+      padding: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle,
+    .nav a {
+      color: rgba(255, 250, 243, 0.74);
+    }
+
+    .nav a {
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .panel {
+      display: grid;
+      gap: 18px;
+      padding: 22px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      box-shadow: 10px 10px 0 rgba(240, 230, 216, 0.9);
+    }
+
+    .chip {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .status-flag {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 2px solid rgba(17, 17, 17, 0.16);
+      background: rgba(17, 17, 17, 0.08);
+    }
+
+    .status-flag.unlocked {
+      color: var(--safe);
+      background: rgba(29, 139, 87, 0.12);
+      border-color: rgba(29, 139, 87, 0.22);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .ring-card,
+    .metric,
+    .bt-box {
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fffdfa, #f4eadc);
+    }
+
+    .ring-card,
+    .bt-box {
+      display: grid;
+      gap: 14px;
+      padding: 18px 14px 14px;
+    }
+
+    .ring-cluster {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+
+    .ring-unit {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: 104px;
+      height: 104px;
+    }
+
+    .ring-svg {
+      width: 104px;
+      height: 104px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track,
+    .ring-progress {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .ring-track {
+      stroke: rgba(17, 17, 17, 0.1);
+    }
+
+    .ring-progress {
+      stroke: #111;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 900ms linear;
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .ring-value {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .ring-unit-label,
+    .ring-note,
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .ring-unit-label {
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .metric-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 16px 18px;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .notice {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .bt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .bt-grid input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      font-size: 14px;
+      background: #fffdfa;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 2px solid rgba(17, 17, 17, 0.88);
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--cream);
+      color: var(--ink);
+    }
+
+    .primary {
+      background: #111;
+      color: #fffaf5;
+    }
+
+    .bt-status,
+    .bt-device {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 2px solid rgba(17, 17, 17, 0.12);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .bt-status {
+      background: rgba(17, 17, 17, 0.05);
+      color: var(--muted);
+    }
+
+    .bt-device {
+      background: rgba(240, 230, 216, 0.5);
+      color: var(--ink);
+    }
+
+    .bt-preview {
+      margin: 0;
+      padding: 14px;
+      border-radius: 18px;
+      background: #111;
+      color: #f5efe5;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .grid,
+      .bt-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <img src="./logo.png" alt="Logo">
+      <div>
+        <div class="chip">Puppy Watch</div>
+        <h1>SUB 页面</h1>
+        <p class="subtitle">SUB 从 Cloudflare API 读取状态，并把当前状态同步发送给钥匙盒。</p>
+      </div>
+      <div class="nav"><a href="./a.html">返回入口</a> · <a href="./dom.html">打开 DOM 页面</a></div>
+    </section>
+
+    <section class="panel">
+      <div id="statusFlag" class="status-flag">当前已上锁</div>
+
+      <div class="grid">
+        <div class="ring-card">
+          <div class="ring-cluster">
+            <div class="ring-unit">
+              <div class="ring-wrap">
+                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                  <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
+                </svg>
+                <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
+              </div>
+              <div class="ring-unit-label">Hours</div>
+            </div>
+            <div class="ring-unit">
+              <div class="ring-wrap">
+                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                  <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
+                </svg>
+                <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
+              </div>
+              <div class="ring-unit-label">Minutes</div>
+            </div>
+            <div class="ring-unit">
+              <div class="ring-wrap">
+                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                  <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
+                </svg>
+                <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
+              </div>
+              <div class="ring-unit-label">Seconds</div>
+            </div>
+          </div>
+          <div id="ringNote" class="ring-note">等待 DOM 页面设定时间。</div>
+        </div>
+
+        <div class="metric-list">
+          <div class="metric">
+            <div class="metric-label">查看角色</div>
+            <div class="metric-value">SUB</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">预计开锁时间</div>
+            <div id="timeValue" class="metric-value" style="font-size:22px;">未设定</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">剩余时间</div>
+            <div id="countdownValue" class="metric-value">--:--:--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice">此页面通过 `/api/state` 读取共享状态。蓝牙连接成功后，会每秒把当前状态写入钥匙盒的特征值。</div>
+
+      <div class="bt-box">
+        <div>
+          <div class="chip" style="margin-bottom:8px;">Keybox Link</div>
+          <div class="notice">如设备 UUID 固定，后续可以把下面两个输入框隐藏掉。当前先保留，方便和 ESP 固件对齐。</div>
+        </div>
+
+        <div class="bt-grid">
+          <label>
+            <div class="metric-label" style="margin-bottom:8px;">Service UUID</div>
+            <input id="serviceUuidInput" type="text" value="0000ff00-0000-1000-8000-00805f9b34fb">
+          </label>
+          <label>
+            <div class="metric-label" style="margin-bottom:8px;">Characteristic UUID</div>
+            <input id="characteristicUuidInput" type="text" value="0000ff01-0000-1000-8000-00805f9b34fb">
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="scanBtBtn" type="button">搜索蓝牙</button>
+          <button class="primary" id="connectBtBtn" type="button">连接蓝牙</button>
+        </div>
+
+        <div id="btDeviceInfo" class="bt-device">尚未选择蓝牙设备。</div>
+        <div id="btStatus" class="bt-status">尚未连接蓝牙设备。</div>
+        <pre id="btPreview" class="bt-preview">{"locked":true,"unlockTime":null,"remainingTime":"--:--:--"}</pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = "/api/state";
+    const ringCircumference = 2 * Math.PI * 40;
+    const statusFlag = document.getElementById("statusFlag");
+    const timeValue = document.getElementById("timeValue");
+    const countdownValue = document.getElementById("countdownValue");
+    const ringHoursProgress = document.getElementById("ringHoursProgress");
+    const ringMinutesProgress = document.getElementById("ringMinutesProgress");
+    const ringSecondsProgress = document.getElementById("ringSecondsProgress");
+    const ringHoursValue = document.getElementById("ringHoursValue");
+    const ringMinutesValue = document.getElementById("ringMinutesValue");
+    const ringSecondsValue = document.getElementById("ringSecondsValue");
+    const ringNote = document.getElementById("ringNote");
+    const serviceUuidInput = document.getElementById("serviceUuidInput");
+    const characteristicUuidInput = document.getElementById("characteristicUuidInput");
+    const scanBtBtn = document.getElementById("scanBtBtn");
+    const connectBtBtn = document.getElementById("connectBtBtn");
+    const btDeviceInfo = document.getElementById("btDeviceInfo");
+    const btStatus = document.getElementById("btStatus");
+    const btPreview = document.getElementById("btPreview");
+
+    let currentState = {
+      locked: true,
+      unlockTime: null,
+      scheduledAt: null,
+      remainingTime: "--:--:--",
+      updatedAt: null,
+      updatedBy: "system"
+    };
+    let btDevice = null;
+    let btCharacteristic = null;
+    let autoSendTimer = null;
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function formatDate(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    async function fetchState() {
+      const response = await fetch(API_URL, { headers: { Accept: "application/json" } });
+      if (!response.ok) {
+        throw new Error(`读取状态失败: ${response.status}`);
+      }
+      currentState = await response.json();
+      return currentState;
+    }
+
+    function normalizeBluetoothUuid(value) {
+      return value.trim().toLowerCase();
+    }
+
+    function setBtStatus(message) {
+      btStatus.textContent = message;
+    }
+
+    function setBtDeviceInfo(message) {
+      btDeviceInfo.textContent = message;
+    }
+
+    function getPayloadFromState(state) {
+      return {
+        locked: !!state.locked,
+        unlockTime: state.unlockTime || null,
+        remainingTime: state.remainingTime || "--:--:--",
+        source: "sub",
+        sentAt: new Date().toISOString()
+      };
+    }
+
+    function refreshPayloadPreview() {
+      btPreview.textContent = JSON.stringify(getPayloadFromState(currentState), null, 2);
+    }
+
+    async function scanBluetoothDevice() {
+      if (!navigator.bluetooth) {
+        throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
+      }
+      const serviceUuid = normalizeBluetoothUuid(serviceUuidInput.value);
+      if (!serviceUuid) {
+        throw new Error("请先填写 Service UUID。");
+      }
+      serviceUuidInput.value = serviceUuid;
+      setBtStatus("正在请求蓝牙设备...");
+      btDevice = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [serviceUuid]
+      });
+      setBtDeviceInfo(`已选择设备: ${btDevice.name || "Unknown Device"}`);
+      setBtStatus("设备已选择，点击“连接蓝牙”建立 GATT 连接。");
+      btDevice.addEventListener("gattserverdisconnected", () => {
+        btCharacteristic = null;
+        if (autoSendTimer) {
+          clearInterval(autoSendTimer);
+          autoSendTimer = null;
+        }
+        setBtStatus(`设备已断开: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}`);
+      });
+    }
+
+    async function connectBluetooth() {
+      if (!navigator.bluetooth) {
+        throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
+      }
+      const serviceUuid = normalizeBluetoothUuid(serviceUuidInput.value);
+      const characteristicUuid = normalizeBluetoothUuid(characteristicUuidInput.value);
+      if (!serviceUuid || !characteristicUuid) {
+        throw new Error("请先填写 Service UUID 和 Characteristic UUID。");
+      }
+      if (!btDevice) {
+        throw new Error("请先搜索并选择蓝牙设备。");
+      }
+      serviceUuidInput.value = serviceUuid;
+      characteristicUuidInput.value = characteristicUuid;
+      setBtStatus(`正在连接: ${btDevice.name || "Unknown Device"}...`);
+      const server = await btDevice.gatt.connect();
+      const service = await server.getPrimaryService(serviceUuid);
+      btCharacteristic = await service.getCharacteristic(characteristicUuid);
+      setBtStatus(`已连接: ${btDevice.name || "Unknown Device"}，将每秒发送状态。`);
+      if (autoSendTimer) {
+        clearInterval(autoSendTimer);
+      }
+      autoSendTimer = setInterval(() => {
+        void safeBluetoothSend();
+      }, 1000);
+      await safeBluetoothSend();
+    }
+
+    async function sendBluetoothState() {
+      if (!btCharacteristic) {
+        return;
+      }
+      const payload = getPayloadFromState(currentState);
+      const encoded = new TextEncoder().encode(JSON.stringify(payload));
+      refreshPayloadPreview();
+      if (typeof btCharacteristic.writeValueWithoutResponse === "function") {
+        await btCharacteristic.writeValueWithoutResponse(encoded);
+      } else {
+        await btCharacteristic.writeValue(encoded);
+      }
+      setBtStatus(`已连接: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}，每秒发送中。`);
+    }
+
+    async function safeBluetoothSend() {
+      try {
+        await sendBluetoothState();
+      } catch (error) {
+        setBtStatus(`发送失败: ${error.message}`);
+      }
+    }
+
+    function setRingProgress(element, progress) {
+      element.style.strokeDasharray = `${ringCircumference}`;
+      element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
+    }
+
+    function syncRing(remainingMs, totalMs) {
+      if (!remainingMs || !totalMs || remainingMs <= 0 || totalMs <= 0) {
+        setRingProgress(ringHoursProgress, 0);
+        setRingProgress(ringMinutesProgress, 0);
+        setRingProgress(ringSecondsProgress, 0);
+        ringHoursValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringMinutesValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringSecondsValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "等待 DOM 页面设定时间。";
+        return;
+      }
+
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const totalHours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
+      const hoursProgress = Math.max(0, Math.min(1, totalHours / hoursProgressBase));
+      const minutesProgress = Math.max(0, Math.min(1, minutes / 59));
+      const secondsProgress = Math.max(0, Math.min(1, seconds / 59));
+      setRingProgress(ringHoursProgress, hoursProgress);
+      setRingProgress(ringMinutesProgress, minutesProgress);
+      setRingProgress(ringSecondsProgress, secondsProgress);
+      ringHoursValue.textContent = pad(Math.min(totalHours, 99));
+      ringMinutesValue.textContent = pad(minutes);
+      ringSecondsValue.textContent = pad(seconds);
+      ringNote.textContent = `距离自动开锁还有 ${countdownValue.textContent}。`;
+    }
+
+    function renderState(state) {
+      refreshPayloadPreview();
+      statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
+      statusFlag.classList.toggle("unlocked", !state.locked);
+
+      if (!state.unlockTime) {
+        timeValue.textContent = "未设定";
+        countdownValue.textContent = "--:--:--";
+        syncRing(null, null);
+        return;
+      }
+
+      const autoUnlockAt = new Date(state.unlockTime);
+      const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
+      const remainingMs = autoUnlockAt.getTime() - Date.now();
+      timeValue.textContent = Number.isNaN(autoUnlockAt.getTime()) ? "未设定" : formatDate(autoUnlockAt);
+      countdownValue.textContent = state.remainingTime || "--:--:--";
+      const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
+        ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
+        : Math.max(remainingMs, 0);
+      syncRing(Math.max(remainingMs, 0), totalMs);
+    }
+
+    async function refreshState() {
+      try {
+        const state = await fetchState();
+        renderState(state);
+      } catch (error) {
+        setBtStatus(`同步失败: ${error.message}`);
+      }
+    }
+
+    scanBtBtn.addEventListener("click", async () => {
+      try {
+        await scanBluetoothDevice();
+      } catch (error) {
+        setBtStatus(`搜索失败: ${error.message}`);
+      }
+    });
+
+    connectBtBtn.addEventListener("click", async () => {
+      try {
+        await connectBluetooth();
+      } catch (error) {
+        setBtStatus(`连接失败: ${error.message}`);
+      }
+    });
+
+    refreshState();
+    setInterval(refreshState, 1000);
+  </script>
+</body>
+</html>

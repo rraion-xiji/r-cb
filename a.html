@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CB Lock Portal</title>
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: rgba(255, 255, 255, 0.95);
+      --ink: #101010;
+      --muted: #6c655e;
+      --cream: #f0e6d8;
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 85% 12%, rgba(240, 230, 216, 0.16), transparent 20%),
+        linear-gradient(180deg, #090909 0%, #111111 100%);
+      color: #fff;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(980px, 100%);
+      padding: 28px;
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at top right, rgba(240, 230, 216, 0.22), transparent 26%),
+        linear-gradient(180deg, rgba(28, 28, 28, 0.96), rgba(16, 16, 16, 0.98));
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .hero img {
+      width: 112px;
+      height: 112px;
+      object-fit: contain;
+      border-radius: 28px;
+      background: #000;
+      padding: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 8px 8px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 4vw, 50px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: rgba(255, 250, 243, 0.72);
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      display: block;
+      text-decoration: none;
+      color: var(--ink);
+      padding: 24px;
+      border-radius: 28px;
+      background: var(--panel);
+      border: 2px solid rgba(17, 17, 17, 0.88);
+      box-shadow: 10px 10px 0 rgba(240, 230, 216, 0.9);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px) rotate(-0.3deg);
+      box-shadow: 14px 14px 0 rgba(240, 230, 216, 0.9);
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .foot {
+      margin-top: 20px;
+      color: rgba(255, 250, 243, 0.66);
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <img src="./logo.png" alt="Logo">
+      <div>
+        <h1>CB Lock Portal</h1>
+        <p class="subtitle">分成两个独立页面使用。DOM 页面负责锁控制与定时开锁，SUB 页面负责查看当前状态和剩余时间。</p>
+      </div>
+    </section>
+
+    <section class="grid">
+      <a class="card" href="./dom.html">
+        <span class="tag">Puppy Control</span>
+        <h2>DOM 页面</h2>
+        <p>可上锁、开锁、设置自动开锁时间，并把状态同步给 SUB 页面。</p>
+      </a>
+
+      <a class="card" href="./sub.html">
+        <span class="tag">Puppy Watch</span>
+        <h2>SUB 页面</h2>
+        <p>只读查看锁状态、计划开锁时间和圆环倒计时，不提供控制操作。</p>
+      </a>
+    </section>
+
+    <p class="foot">建议先打开 `dom.html` 设定状态，再打开 `sub.html` 查看同步结果。</p>
+  </main>
+</body>
+</html>
