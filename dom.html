@@ -6,11 +6,11 @@
   <title>DOM Control</title>
   <style>
     :root {
-      --safe: #1d8b57;
-      --ink: #111;
-      --muted: #66605a;
-      --cream: #f0e6d8;
-      --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+      --safe: #79d79d;
+      --ink: #f3efe8;
+      --muted: #9d968f;
+      --cream: #181614;
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
     }
     * { box-sizing: border-box; }
     body {
@@ -19,9 +19,9 @@
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: #fff;
       background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 18%),
-        radial-gradient(circle at 85% 12%, rgba(240, 230, 216, 0.16), transparent 20%),
-        linear-gradient(180deg, #090909 0%, #111111 100%);
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 18%),
+        radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.04), transparent 20%),
+        linear-gradient(180deg, #040404 0%, #0c0c0c 100%);
     }
     .shell {
       width: min(1120px, calc(100vw - 32px));
@@ -29,9 +29,9 @@
       padding: 28px;
       border-radius: 36px;
       background:
-        radial-gradient(circle at top right, rgba(240, 230, 216, 0.22), transparent 26%),
-        linear-gradient(180deg, rgba(28, 28, 28, 0.96), rgba(16, 16, 16, 0.98));
-      border: 1px solid rgba(255, 255, 255, 0.14);
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 26%),
+        linear-gradient(180deg, rgba(18, 18, 18, 0.98), rgba(8, 8, 8, 0.99));
+      border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: var(--shadow);
     }
     .hero {
@@ -57,7 +57,7 @@
       letter-spacing: -0.04em;
     }
     .subtitle,
-    .nav a { color: rgba(255, 250, 243, 0.74); }
+    .nav a { color: rgba(243, 239, 232, 0.72); }
     .nav a { text-decoration: none; font-size: 14px; }
     .layout {
       display: grid;
@@ -65,19 +65,19 @@
       gap: 20px;
     }
     .panel {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(18, 18, 18, 0.96);
       color: var(--ink);
-      border: 2px solid rgba(17, 17, 17, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 28px;
       padding: 22px;
-      box-shadow: 10px 10px 0 rgba(240, 230, 216, 0.9);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.34);
     }
     .chip {
       display: inline-flex;
       padding: 6px 10px;
       border-radius: 999px;
-      background: #111;
-      color: #fff;
+      background: #f3efe8;
+      color: #111;
       font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -88,9 +88,9 @@
     .ring-card,
     .log li,
     .profile {
-      border: 2px solid rgba(17, 17, 17, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px;
-      background: linear-gradient(180deg, #fffdfa, #f4eadc);
+      background: linear-gradient(180deg, #1a1a1a, #111111);
     }
     .control-box {
       display: grid;
@@ -120,9 +120,10 @@
       width: min(100%, 290px);
       padding: 14px 16px;
       border-radius: 16px;
-      border: 2px solid rgba(17, 17, 17, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       font-size: 15px;
-      background: #fffdfa;
+      background: #0c0c0c;
+      color: var(--ink);
     }
     .switch { position: relative; width: 72px; height: 40px; flex: 0 0 auto; }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -130,8 +131,8 @@
       position: absolute;
       inset: 0;
       border-radius: 999px;
-      background: #d9d3cb;
-      border: 2px solid rgba(17, 17, 17, 0.82);
+      background: #3a3a3a;
+      border: 1px solid rgba(255, 255, 255, 0.18);
       cursor: pointer;
     }
     .slider::before {
@@ -142,14 +143,14 @@
       left: 5px;
       top: 3px;
       border-radius: 50%;
-      background: #fff;
-      border: 2px solid rgba(17, 17, 17, 0.85);
+      background: #f3efe8;
+      border: 1px solid rgba(255, 255, 255, 0.18);
       transition: transform 180ms ease;
     }
-    .switch input:checked + .slider { background: #111; }
+    .switch input:checked + .slider { background: #f3efe8; }
     .switch input:checked + .slider::before { transform: translateX(30px); }
     button {
-      border: 2px solid rgba(17, 17, 17, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 16px;
       padding: 14px 18px;
       font-size: 15px;
@@ -158,15 +159,15 @@
       background: var(--cream);
       color: var(--ink);
     }
-    .primary { background: #111; color: #fffaf5; }
+    .primary { background: #f3efe8; color: #111; }
     .ring-card { display: grid; gap: 14px; padding: 18px 14px 14px; }
     .ring-cluster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; }
     .ring-unit { display: grid; justify-items: center; gap: 8px; }
     .ring-wrap { position: relative; width: 104px; height: 104px; }
     .ring-svg { width: 104px; height: 104px; transform: rotate(-90deg); }
     .ring-track, .ring-progress { fill: none; stroke-width: 8; }
-    .ring-track { stroke: rgba(17, 17, 17, 0.1); }
-    .ring-progress { stroke: #111; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
+    .ring-track { stroke: rgba(255, 255, 255, 0.08); }
+    .ring-progress { stroke: #f3efe8; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
     .ring-center {
       position: absolute;
       inset: 0;
@@ -189,13 +190,13 @@
       border-radius: 999px;
       font-size: 13px;
       font-weight: 700;
-      border: 2px solid rgba(17, 17, 17, 0.16);
-      background: rgba(17, 17, 17, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
     }
     .status-flag.unlocked {
       color: var(--safe);
-      background: rgba(29, 139, 87, 0.12);
-      border-color: rgba(29, 139, 87, 0.22);
+      background: rgba(121, 215, 157, 0.12);
+      border-color: rgba(121, 215, 157, 0.28);
     }
     .log { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
     .log li { padding: 12px 14px; color: var(--muted); line-height: 1.5; }
