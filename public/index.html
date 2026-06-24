@@ -520,18 +520,35 @@
       }
 
       .hero {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        text-align: center;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+          "logo title"
+          "tools tools";
+        justify-items: start;
+        align-items: center;
+        text-align: left;
+        gap: 12px 14px;
+      }
+
+      .hero-logo {
+        grid-area: logo;
+      }
+
+      .hero-copy {
+        grid-area: title;
+      }
+
+      .hero-copy h1 {
+        font-size: clamp(24px, 7vw, 42px);
       }
 
       .hero-tools {
-        justify-content: center;
-      }
-
-      .hero-copy p {
-        margin-left: auto;
-        margin-right: auto;
+        grid-area: tools;
+        width: 100%;
+        justify-content: stretch;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
       }
 
       .auth-card,
@@ -555,17 +572,20 @@
         font-size: 24px;
       }
 
-      .stage-head {
-        flex-direction: column;
-      }
-
-      .hero-tools,
       .hero-actions,
       .editor-actions,
       .work-actions,
       .stage-toolbar {
         display: grid;
         grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-tools .small-button {
+        width: 100%;
+        min-width: 0;
+        padding: 11px 8px;
+        font-size: 13px;
+        border-radius: 14px;
       }
 
       .ring-wrap,
@@ -595,6 +615,19 @@
         width: 100%;
         padding-left: 10px;
         padding-right: 10px;
+      }
+
+      .hero-copy h1 {
+        font-size: clamp(22px, 8vw, 34px);
+      }
+
+      .hero-tools {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .hero-tools .small-button {
+        padding: 10px 6px;
+        font-size: 12px;
       }
 
       .ring-cluster {
