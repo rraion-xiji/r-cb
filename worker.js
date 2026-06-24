@@ -330,6 +330,25 @@ async function loadState(db, user) {
   };
 }
 
+async function resolveStateSubject(db, actor, mode) {
+  if (mode === "dom_control") {
+    if (!actor.sub) {
+      throw new Error("Current account is not bound to a SUB account");
+    }
+    const target = await getUserByAccount(db, actor.sub);
+    if (!target) {
+      throw new Error(`Bound SUB account "${actor.sub}" was not found`);
+    }
+    return target;
+  }
+
+  if (mode === "sub_view") {
+    return actor;
+  }
+
+  return actor;
+}
+
 async function handleRegister(request, env) {
   const body = await parseJson(request);
   const account = normalizeAccount(body.account);
@@ -530,12 +549,19 @@ async function handleDeleteAccount(request, env) {
 
 async function handleGetState(request, env) {
   const { user } = await authenticate(request, env.DB);
-  const state = await loadState(env.DB, user);
-  return json(state);
+  const mode = new URL(request.url).searchParams.get("mode") || "";
+  const subject = await resolveStateSubject(env.DB, user, mode);
+  const state = await loadState(env.DB, subject);
+  return json({
+    ...state,
+    actor: serializeUser(user)
+  });
 }
 
 async function handlePostState(request, env) {
   const { user } = await authenticate(request, env.DB);
+  const mode = new URL(request.url).searchParams.get("mode") || "";
+  const subject = await resolveStateSubject(env.DB, user, mode);
   const body = await parseJson(request);
   const locked = body.locked ? 1 : 0;
   const unlockTime = body.unlockTime || null;
@@ -550,21 +576,24 @@ async function handlePostState(request, env) {
 
   const currentIso = nowIso();
   const scheduledAt = unlockTime ? currentIso : null;
-  await ensureUserState(env.DB, user.id);
+  await ensureUserState(env.DB, subject.id);
   await env.DB.batch([
     env.DB.prepare(
       `UPDATE lock_state
        SET locked = ?, unlock_time = ?, scheduled_at = ?, updated_by = ?, updated_at = ?
        WHERE user_id = ?`
-    ).bind(locked, unlockTime, scheduledAt, source, currentIso, user.id),
+    ).bind(locked, unlockTime, scheduledAt, source, currentIso, subject.id),
     env.DB.prepare(
       `INSERT INTO lock_events (user_id, event_type, locked, unlock_time, remaining_time, source, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).bind(user.id, "state_update", locked, unlockTime, remainingTimeString(unlockTime), source, currentIso)
+    ).bind(subject.id, "state_update", locked, unlockTime, remainingTimeString(unlockTime), source, currentIso)
   ]);
 
-  const state = await loadState(env.DB, user);
-  return json(state);
+  const state = await loadState(env.DB, subject);
+  return json({
+    ...state,
+    actor: serializeUser(user)
+  });
 }
 
 export default {

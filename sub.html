@@ -304,7 +304,7 @@
 
   <script>
     const SESSION_KEY = "cb-lock-session";
-    const API_URL = "/api/state";
+    const API_URL = "/api/state?mode=sub_view";
     const ringCircumference = 2 * Math.PI * 40;
     const profileCard = document.getElementById("profileCard");
     const statusFlag = document.getElementById("statusFlag");
@@ -385,19 +385,19 @@
       btDeviceInfo.textContent = message;
     }
 
-    function renderProfile(user) {
-      if (!user.dom) {
+    function renderProfile(actor, subject) {
+      if (!actor.dom) {
         redirectToPortal("当前账户不是 SUB 角色");
         return;
       }
       profileCard.innerHTML = `
-        <div><strong>账户:</strong> ${user.account}</div>
+        <div><strong>账户:</strong> ${subject.account}</div>
         <div><strong>角色:</strong> SUB</div>
-        <div><strong>DOM 字段:</strong> ${user.dom}</div>
-        <div><strong>SUB 字段:</strong> ${user.sub}</div>
-        <div><strong>自动删号时间:</strong> ${user.deleteAt}</div>
+        <div><strong>绑定 DOM:</strong> ${actor.dom}</div>
+        <div><strong>SUB 字段:</strong> ${subject.sub || "未设置"}</div>
+        <div><strong>自动删号时间:</strong> ${subject.deleteAt}</div>
       `;
-      accountValue.textContent = user.account;
+      accountValue.textContent = subject.account;
     }
 
     function getPayloadFromState(state) {
@@ -530,11 +530,11 @@
 
     function renderState(state) {
       currentState = state;
-      if (!state.user.dom) {
+      if (!state.actor?.dom) {
         redirectToPortal("当前账户不能打开 SUB 查看页");
         return;
       }
-      renderProfile(state.user);
+      renderProfile(state.actor, state.user);
       refreshPayloadPreview();
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);

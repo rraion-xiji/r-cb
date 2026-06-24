@@ -316,7 +316,7 @@
 
   <script>
     const SESSION_KEY = "cb-lock-session";
-    const API_URL = "/api/state";
+    const API_URL = "/api/state?mode=dom_control";
     const ringCircumference = 2 * Math.PI * 40;
     const profileCard = document.getElementById("profileCard");
     const lockToggle = document.getElementById("lockToggle");
@@ -423,28 +423,28 @@
       ringNote.textContent = `距离自动开锁还有 ${countdownValue.textContent}。`;
     }
 
-    function renderProfile(user) {
-      if (!user.sub) {
+    function renderProfile(actor, subject) {
+      if (!actor.sub) {
         redirectToPortal("当前账户不是 DOM 角色");
         return;
       }
       profileCard.innerHTML = `
-        <div><strong>账户:</strong> ${user.account}</div>
+        <div><strong>当前账户:</strong> ${actor.account}</div>
         <div><strong>角色:</strong> DOM</div>
-        <div><strong>DOM 字段:</strong> ${user.dom}</div>
-        <div><strong>SUB 字段:</strong> ${user.sub}</div>
-        <div><strong>自动删号时间:</strong> ${user.deleteAt}</div>
+        <div><strong>绑定 SUB:</strong> ${actor.sub}</div>
+        <div><strong>目标状态账户:</strong> ${subject.account}</div>
+        <div><strong>目标删除时间:</strong> ${subject.deleteAt}</div>
       `;
-      accountValue.textContent = user.account;
+      accountValue.textContent = subject.account;
     }
 
     function renderState(state) {
       currentState = state;
-      if (!state.user.sub) {
+      if (!state.actor?.sub) {
         redirectToPortal("当前账户不能打开 DOM 控制页");
         return;
       }
-      renderProfile(state.user);
+      renderProfile(state.actor, state.user);
       lockToggle.checked = !!state.locked;
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);
