@@ -114,8 +114,8 @@ async function validateOneToOneTargets(db, currentUser, dom, sub) {
   if (sub && sub === currentUser.account) {
     throw new Error("sub cannot reference the current account");
   }
-  if (dom && sub && dom === sub) {
-    throw new Error("dom and sub must reference different accounts");
+  if (dom && sub) {
+    throw new Error("an account cannot have both dom and sub at the same time");
   }
 
   if (dom) {
@@ -413,7 +413,13 @@ async function handleListUsers(request, env) {
      FROM users
      ORDER BY created_at DESC`
   ).all();
-  return json({ users: (results.results || []).map(serializeUser) });
+  return json({
+    users: (results.results || []).map((user) => ({
+      account: user.account,
+      dom: user.dom,
+      sub: user.sub
+    }))
+  });
 }
 
 async function handleUpdateProfile(request, env) {
@@ -515,6 +521,9 @@ async function handleGetState(request, env) {
 async function handlePostState(request, env) {
   const { user } = await authenticate(request, env.DB);
   const mode = new URL(request.url).searchParams.get("mode") || "";
+  if (mode !== "dom_control") {
+    return errorResponse(403, "Only DOM control mode can update state");
+  }
   const subject = await resolveStateSubject(env.DB, user, mode);
   const body = await parseJson(request);
   const locked = body.locked ? 1 : 0;

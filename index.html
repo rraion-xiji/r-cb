@@ -664,6 +664,83 @@
       window.location.href = kind === "dom" ? "./dom.html" : "./sub.html";
     }
 
+    function getUserRole(user) {
+      if (user.dom && user.sub) {
+        return "INVALID";
+      }
+      if (user.sub) {
+        return "DOM";
+      }
+      if (user.dom) {
+        return "SUB";
+      }
+      return "UNBOUND";
+    }
+
+    function renderProfile(user) {
+      const role = getUserRole(user);
+      const roleText = role === "INVALID" ? "关系错误" : role === "UNBOUND" ? "未绑定" : role;
+      currentUser = user;
+      profileCard.innerHTML = `
+        <div><strong>账户</strong>${user.account}</div>
+        <div><strong>角色</strong>${roleText}</div>
+        <div><strong>DOM</strong>${user.dom || "未设置"}</div>
+        <div><strong>SUB</strong>${user.sub || "未设置"}</div>
+        <div><strong>删除方式</strong>仅支持用户手动删除</div>
+      `;
+      editDom.value = user.dom || "";
+      editSub.value = user.sub || "";
+      sideOpenDomBtn.hidden = role !== "DOM";
+      sideOpenSubBtn.hidden = role !== "SUB";
+      if (role === "INVALID") {
+        authStatus.textContent = "当前账户同时设置了 DOM 和 SUB，这是无效关系，请先在设置中修正。";
+      }
+    }
+
+    function openRelationPage(kind) {
+      if (!currentUser) {
+        authStatus.textContent = "请先登录。";
+        return;
+      }
+
+      const currentRole = getUserRole(currentUser);
+      if (currentRole === "INVALID") {
+        authStatus.textContent = "当前账户的 DOM / SUB 关系无效，请先修正后再打开页面。";
+        return;
+      }
+
+      const role = currentRole === "DOM" ? "dom" : currentRole === "SUB" ? "sub" : "";
+      if (role !== kind) {
+        authStatus.textContent = kind === "dom"
+          ? "当前账户不是 DOM 角色，只能打开 SUB 查看页。"
+          : "当前账户不是 SUB 角色，只能打开 DOM 控制页。";
+        return;
+      }
+
+      const relation = kind === "dom" ? currentUser.sub : currentUser.dom;
+      if (!relation) {
+        authStatus.textContent = `当前账户还没有设置对应的 ${kind.toUpperCase()}。`;
+        return;
+      }
+
+      const targetUser = findUserAccount(relation);
+      if (!targetUser) {
+        authStatus.textContent = `数据库中找不到对应的 ${kind.toUpperCase()} 账户: ${relation}`;
+        return;
+      }
+
+      if (kind === "dom" && targetUser.dom !== currentUser.account) {
+        authStatus.textContent = `对应的 SUB 账户 ${relation} 没有与当前账户形成一对一绑定。`;
+        return;
+      }
+      if (kind === "sub" && targetUser.sub !== currentUser.account) {
+        authStatus.textContent = `对应的 DOM 账户 ${relation} 没有与当前账户形成一对一绑定。`;
+        return;
+      }
+
+      window.location.href = kind === "dom" ? "./dom.html" : "./sub.html";
+    }
+
     tabLogin.addEventListener("click", () => setTab("login"));
     tabRegister.addEventListener("click", () => setTab("register"));
 
