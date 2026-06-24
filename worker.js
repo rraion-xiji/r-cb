@@ -106,6 +106,49 @@ async function ensureRelationshipTargetsExist(db, dom, sub) {
   }
 }
 
+async function clearReverseBinding(db, account, counterpartColumn, counterpartValue) {
+  if (!account) {
+    return;
+  }
+  await db.prepare(
+    `UPDATE users
+     SET ${counterpartColumn} = '', updated_at = ?
+     WHERE account = ? AND ${counterpartColumn} = ?`
+  ).bind(nowIso(), account, counterpartValue).run();
+}
+
+async function validateOneToOneTargets(db, currentUser, dom, sub) {
+  if (dom && dom === currentUser.account) {
+    throw new Error("dom cannot reference the current account");
+  }
+  if (sub && sub === currentUser.account) {
+    throw new Error("sub cannot reference the current account");
+  }
+  if (dom && sub && dom === sub) {
+    throw new Error("dom and sub must reference different accounts");
+  }
+
+  if (dom) {
+    const domUser = await getUserByAccount(db, dom);
+    if (!domUser) {
+      throw new Error(`Referenced account "${dom}" does not exist`);
+    }
+    if (domUser.sub && domUser.sub !== currentUser.account) {
+      throw new Error(`Account "${dom}" is already paired as sub with another user`);
+    }
+  }
+
+  if (sub) {
+    const subUser = await getUserByAccount(db, sub);
+    if (!subUser) {
+      throw new Error(`Referenced account "${sub}" does not exist`);
+    }
+    if (subUser.dom && subUser.dom !== currentUser.account) {
+      throw new Error(`Account "${sub}" is already paired as dom with another user`);
+    }
+  }
+}
+
 async function cleanupExpiredRecords(db) {
   const now = nowIso();
   await db.batch([
@@ -308,7 +351,7 @@ async function handleRegister(request, env) {
   }
 
   try {
-    await ensureRelationshipTargetsExist(env.DB, dom, sub);
+    await validateOneToOneTargets(env.DB, { account }, dom, sub);
   } catch (error) {
     return errorResponse(400, error.message);
   }
@@ -324,6 +367,25 @@ async function handleRegister(request, env) {
 
   const userId = insertResult.meta.last_row_id;
   await ensureUserState(env.DB, userId);
+  const reciprocalUpdates = [
+    ...(dom ? [
+      env.DB.prepare(
+        `UPDATE users
+         SET sub = ?, updated_at = ?
+         WHERE account = ?`
+      ).bind(account, currentIso, dom)
+    ] : []),
+    ...(sub ? [
+      env.DB.prepare(
+        `UPDATE users
+         SET dom = ?, updated_at = ?
+         WHERE account = ?`
+      ).bind(account, currentIso, sub)
+    ] : [])
+  ];
+  if (reciprocalUpdates.length) {
+    await env.DB.batch(reciprocalUpdates);
+  }
   const session = await createSession(env.DB, userId);
   const user = await getUserById(env.DB, userId);
 
@@ -388,17 +450,36 @@ async function handleUpdateProfile(request, env) {
   const sub = normalizeProfileField(body.sub);
 
   try {
-    await ensureRelationshipTargetsExist(env.DB, dom, sub);
+    await validateOneToOneTargets(env.DB, user, dom, sub);
   } catch (error) {
     return errorResponse(400, error.message);
   }
 
   const currentIso = nowIso();
-  await env.DB.prepare(
-    `UPDATE users
-     SET dom = ?, sub = ?, updated_at = ?
-     WHERE id = ?`
-  ).bind(dom, sub, currentIso, user.id).run();
+  await clearReverseBinding(env.DB, user.dom, "sub", user.account);
+  await clearReverseBinding(env.DB, user.sub, "dom", user.account);
+
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE users
+       SET dom = ?, sub = ?, updated_at = ?
+       WHERE id = ?`
+    ).bind(dom, sub, currentIso, user.id),
+    ...(dom ? [
+      env.DB.prepare(
+        `UPDATE users
+         SET sub = ?, updated_at = ?
+         WHERE account = ?`
+      ).bind(user.account, currentIso, dom)
+    ] : []),
+    ...(sub ? [
+      env.DB.prepare(
+        `UPDATE users
+         SET dom = ?, updated_at = ?
+         WHERE account = ?`
+      ).bind(user.account, currentIso, sub)
+    ] : [])
+  ]);
 
   const updatedUser = await getUserById(env.DB, user.id);
   return json({ user: serializeUser(updatedUser) });

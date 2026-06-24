@@ -210,7 +210,8 @@
       nodes: [],
       links: [],
       nodeObjects: [],
-      arrowObjects: []
+      arrowObjects: [],
+      edgeSegments: null
     };
 
     function getSession() {
@@ -358,8 +359,53 @@
       for (const object of graphState.arrowObjects) {
         scene.remove(object);
       }
+      if (graphState.edgeSegments) {
+        scene.remove(graphState.edgeSegments);
+      }
       graphState.nodeObjects = [];
       graphState.arrowObjects = [];
+      graphState.edgeSegments = null;
+    }
+
+    function buildEdgeSegments() {
+      if (!graphState.links.length) {
+        return;
+      }
+
+      const positions = [];
+      const colors = [];
+
+      for (const link of graphState.links) {
+        const source = graphState.nodeObjects.find((item) => item.userData.nodeId === link.source);
+        const target = graphState.nodeObjects.find((item) => item.userData.nodeId === link.target);
+        if (!source || !target) {
+          continue;
+        }
+
+        positions.push(
+          source.position.x, source.position.y, source.position.z,
+          target.position.x, target.position.y, target.position.z
+        );
+
+        const color = link.type === "dom"
+          ? new THREE.Color(0xd9a84d)
+          : new THREE.Color(0xffffff);
+        colors.push(
+          color.r, color.g, color.b,
+          color.r, color.g, color.b
+        );
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+      const material = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.72
+      });
+      graphState.edgeSegments = new THREE.LineSegments(geometry, material);
+      scene.add(graphState.edgeSegments);
     }
 
     function buildArrows() {
@@ -371,13 +417,15 @@
         }
 
         const direction = new THREE.Vector3().subVectors(target.position, source.position);
-        const length = Math.max(direction.length() - 36, 8);
+        const fullLength = direction.length();
+        const length = Math.max(fullLength - 36, 8);
         const normalized = direction.clone().normalize();
         const color = link.type === "dom" ? 0xd9a84d : 0xffffff;
+        const arrowOrigin = source.position.clone().add(normalized.clone().multiplyScalar(Math.max(fullLength - 46, 18)));
         const arrow = new THREE.ArrowHelper(
           normalized,
-          source.position.clone(),
-          length,
+          arrowOrigin,
+          18,
           color,
           18,
           10
@@ -413,6 +461,7 @@
       for (const object of graphState.nodeObjects) {
         scene.add(object);
       }
+      buildEdgeSegments();
       buildArrows();
       setupDragControls();
     }
@@ -420,10 +469,15 @@
     let dragControls = null;
 
     function refreshArrows() {
+      if (graphState.edgeSegments) {
+        scene.remove(graphState.edgeSegments);
+        graphState.edgeSegments = null;
+      }
       for (const arrow of graphState.arrowObjects) {
         scene.remove(arrow);
       }
       graphState.arrowObjects = [];
+      buildEdgeSegments();
       buildArrows();
     }
 

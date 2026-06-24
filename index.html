@@ -325,6 +325,8 @@
       background: #111;
       color: #fff;
       text-align: center;
+      border: 0;
+      width: 100%;
     }
 
     .link-card.secondary {
@@ -472,8 +474,8 @@
           </div>
 
           <div class="links">
-            <a class="link-card" href="./dom.html">打开 DOM 控制页</a>
-            <a class="link-card secondary" href="./sub.html">打开 SUB 查看页</a>
+            <button id="openDomBtn" class="link-card" type="button">打开 DOM 控制页</button>
+            <button id="openSubBtn" class="link-card secondary" type="button">打开 SUB 查看页</button>
             <a class="link-card planet" href="./planet.html">打开小狗星球</a>
           </div>
         </section>
@@ -511,12 +513,16 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const deleteBtn = document.getElementById("deleteBtn");
     const saveProfileBtn = document.getElementById("saveProfileBtn");
+    const openDomBtn = document.getElementById("openDomBtn");
+    const openSubBtn = document.getElementById("openSubBtn");
     const editDom = document.getElementById("editDom");
     const editSub = document.getElementById("editSub");
     const authStatus = document.getElementById("authStatus");
     const profileCard = document.getElementById("profileCard");
     const userList = document.getElementById("userList");
     const accountOptions = document.getElementById("accountOptions");
+    let currentUser = null;
+    let currentUsers = [];
 
     function setSession(token) {
       localStorage.setItem(SESSION_KEY, token);
@@ -559,6 +565,7 @@
     }
 
     function renderProfile(user) {
+      currentUser = user;
       profileCard.innerHTML = `
         <div><strong>账户</strong>${user.account}</div>
         <div><strong>DOM</strong>${user.dom || "未设置"}</div>
@@ -571,6 +578,7 @@
     }
 
     function renderUsers(users) {
+      currentUsers = users;
       accountOptions.innerHTML = users.map((user) => `<option value="${user.account}"></option>`).join("");
       if (!users.length) {
         userList.innerHTML = '<div class="user-item">当前没有用户。</div>';
@@ -604,6 +612,8 @@
         authStatus.textContent = "未登录。";
         userList.innerHTML = "";
         accountOptions.innerHTML = "";
+        currentUser = null;
+        currentUsers = [];
         return;
       }
 
@@ -615,7 +625,39 @@
         authStatus.textContent = "登录已失效，请重新登录。";
         userList.innerHTML = "";
         accountOptions.innerHTML = "";
+        currentUser = null;
+        currentUsers = [];
       }
+    }
+
+    function findUserAccount(account) {
+      return currentUsers.find((user) => user.account === account) || null;
+    }
+
+    function openRelationPage(kind) {
+      if (!currentUser) {
+        authStatus.textContent = "请先登录。";
+        return;
+      }
+      const relation = kind === "dom" ? currentUser.dom : currentUser.sub;
+      if (!relation) {
+        authStatus.textContent = `当前账户还没有设置对应的 ${kind.toUpperCase()}。`;
+        return;
+      }
+      const targetUser = findUserAccount(relation);
+      if (!targetUser) {
+        authStatus.textContent = `数据库中找不到对应的 ${kind.toUpperCase()} 账户: ${relation}`;
+        return;
+      }
+      if (kind === "dom" && targetUser.sub !== currentUser.account) {
+        authStatus.textContent = `对应的 DOM 账户 ${relation} 没有与当前账户形成一对一绑定。`;
+        return;
+      }
+      if (kind === "sub" && targetUser.dom !== currentUser.account) {
+        authStatus.textContent = `对应的 SUB 账户 ${relation} 没有与当前账户形成一对一绑定。`;
+        return;
+      }
+      window.location.href = kind === "dom" ? "./dom.html" : "./sub.html";
     }
 
     tabLogin.addEventListener("click", () => setTab("login"));
@@ -674,6 +716,9 @@
         authStatus.textContent = `保存关系失败: ${error.message}`;
       }
     });
+
+    openDomBtn.addEventListener("click", () => openRelationPage("dom"));
+    openSubBtn.addEventListener("click", () => openRelationPage("sub"));
 
     logoutBtn.addEventListener("click", async () => {
       try {

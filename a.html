@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Three.js Obsidian风格3D图谱</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a1a1a; }
+        canvas { display: block; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<script>
+    // 1. 初始化场景、相机和渲染器
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x121212); // Obsidian 暗色背景
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 50);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 添加环境光和点光源
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xffffff, 0.8);
+    pointLight.position.set(20, 30, 40);
+    scene.add(pointLight);
+
+    // 添加鼠标轨道控制
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // 2. 模拟数据：节点与关系
+    const nodeCount = 20;
+    const nodes = [];
+    const nodeGroup = new THREE.Group();
+    scene.add(nodeGroup);
+
+    // 随机生成节点坐标
+    const geometry = new THREE.SphereGeometry(0.6, 16, 16);
+    const material = new THREE.MeshStandardMaterial({ color: 0x4b9cd3, roughness: 0.4 });
+
+    for (let i = 0; i < nodeCount; i++) {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(
+            (Math.random() - 0.5) * 40,
+            (Math.random() - 0.5) * 40,
+            (Math.random() - 0.5) * 40
+        );
+        nodeGroup.add(mesh);
+        nodes.push(mesh.position);
+    }
+
+    // 3. 创建带箭头的连线
+    // 随机让节点之间产生一些连线
+    const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x555555, transparent: true, opacity: 0.6 });
+    
+    for (let i = 0; i < nodeCount; i++) {
+        // 每个节点随机连接 1~2 个其他节点
+        const connections = Math.floor(Math.random() * 2) + 1;
+        for (let j = 0; j < connections; j++) {
+            const targetIndex = Math.floor(Math.random() * nodeCount);
+            if (targetIndex !== i) {
+                const start = nodes[i];
+                const end = nodes[targetIndex];
+
+                // 绘制线段
+                const lineGeometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+                const line = new THREE.Line(lineGeometry, edgeMaterial);
+                scene.add(line);
+
+                // 计算箭头方向和长度
+                const direction = new THREE.Vector3().subVectors(end, start);
+                const length = direction.length();
+                direction.normalize();
+
+                // 核心：在连线中间或者靠近终点的地方放置箭头
+                // 为了防止箭头钻进球体内部，我们将箭头的基准点稍微向起点回退一点
+                const arrowLength = 1.5;
+                const arrowPosition = new THREE.Vector3().copy(end).sub(direction.clone().multiplyScalar(0.6)); 
+
+                const arrowHelper = new THREE.ArrowHelper(
+                    direction, 
+                    arrowPosition, 
+                    arrowLength, 
+                    0xff7675, // 箭头颜色
+                    0.5,      // 箭头头部长度
+                    0.3       // 箭头头部宽度
+                );
+                scene.add(arrowHelper);
+            }
+        }
+    }
+
+    // 4. 动画循环
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // 让图谱缓慢自转，增加动态效果（模拟Obsidian缓慢旋转）
+        nodeGroup.rotation.y += 0.001;
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // 5. 窗口自适应
+    window.addEventListener('resize', onWindowResize, false);
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+</script>
+
+</body>
+</html>
