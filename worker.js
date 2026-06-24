@@ -151,6 +151,25 @@ async function ensureUserState(db, userId) {
   ).bind(userId).run();
 }
 
+async function ensureDeviceStatusTable(db) {
+  await db.prepare(
+    `CREATE TABLE IF NOT EXISTS device_status (
+       user_id INTEGER PRIMARY KEY,
+       is_online INTEGER NOT NULL DEFAULT 0,
+       updated_at TEXT NOT NULL,
+       FOREIGN KEY (user_id) REFERENCES users(id)
+     )`
+  ).run();
+}
+
+async function ensureDeviceStatus(db, userId) {
+  await ensureDeviceStatusTable(db);
+  await db.prepare(
+    `INSERT OR IGNORE INTO device_status (user_id, is_online, updated_at)
+     VALUES (?, 0, ?)`
+  ).bind(userId, nowIso()).run();
+}
+
 async function createSession(db, userId) {
   const token = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
   const createdAt = nowIso();
@@ -239,9 +258,19 @@ async function authenticate(request, db) {
 
 async function loadState(db, user) {
   await ensureUserState(db, user.id);
+  await ensureDeviceStatus(db, user.id);
   const record = await db.prepare(
-    `SELECT user_id, locked, unlock_time, scheduled_at, updated_by, updated_at
+    `SELECT
+       lock_state.user_id,
+       lock_state.locked,
+       lock_state.unlock_time,
+       lock_state.scheduled_at,
+       lock_state.updated_by,
+       lock_state.updated_at,
+       device_status.is_online,
+       device_status.updated_at AS device_updated_at
      FROM lock_state
+     LEFT JOIN device_status ON device_status.user_id = lock_state.user_id
      WHERE user_id = ?`
   ).bind(user.id).first();
 
@@ -272,6 +301,8 @@ async function loadState(db, user) {
       unlockTime: null,
       scheduledAt: null,
       remainingTime: "--:--:--",
+      deviceOnline: Number(record.is_online) === 1,
+      deviceUpdatedAt: record.device_updated_at || null,
       updatedAt: currentIso,
       updatedBy: "system-auto-unlock"
     };
@@ -283,6 +314,8 @@ async function loadState(db, user) {
     unlockTime,
     scheduledAt: record.scheduled_at || null,
     remainingTime: remainingTimeString(unlockTime),
+    deviceOnline: Number(record.is_online) === 1,
+    deviceUpdatedAt: record.device_updated_at || null,
     updatedAt: record.updated_at,
     updatedBy: record.updated_by
   };
@@ -499,12 +532,36 @@ async function handleDeleteAccount(request, env) {
   await env.DB.batch([
     env.DB.prepare("UPDATE users SET dom = '' WHERE dom = ?").bind(user.account),
     env.DB.prepare("UPDATE users SET sub = '' WHERE sub = ?").bind(user.account),
+    env.DB.prepare("DELETE FROM device_status WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM lock_events WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM lock_state WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM users WHERE id = ?").bind(user.id)
   ]);
   return json({ ok: true, deletedToken: token });
+}
+
+async function handlePostDeviceStatus(request, env) {
+  const { user } = await authenticate(request, env.DB);
+  if (!user.dom) {
+    return errorResponse(403, "Only SUB accounts can update device status");
+  }
+
+  const body = await parseJson(request);
+  const isOnline = body.isOnline ? 1 : 0;
+  const currentIso = nowIso();
+  await ensureDeviceStatus(env.DB, user.id);
+  await env.DB.prepare(
+    `UPDATE device_status
+     SET is_online = ?, updated_at = ?
+     WHERE user_id = ?`
+  ).bind(isOnline, currentIso, user.id).run();
+
+  return json({
+    ok: true,
+    isOnline: isOnline === 1,
+    updatedAt: currentIso
+  });
 }
 
 async function handleGetState(request, env) {
@@ -589,6 +646,9 @@ export default {
       }
       if (url.pathname === "/api/account" && request.method === "DELETE") {
         return handleDeleteAccount(request, env);
+      }
+      if (url.pathname === "/api/device-status" && request.method === "POST") {
+        return handlePostDeviceStatus(request, env);
       }
       if (url.pathname === "/api/state") {
         if (request.method === "GET") {

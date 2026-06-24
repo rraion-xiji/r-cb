@@ -41,6 +41,13 @@ CREATE TABLE IF NOT EXISTS lock_events (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS device_status (
+  user_id INTEGER PRIMARY KEY,
+  is_online INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_users_delete_at ON users(delete_at);

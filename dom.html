@@ -206,6 +206,25 @@
       text-align: center;
     }
 
+    .device-state {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .device-state.online {
+      color: var(--safe);
+      border-color: rgba(121, 215, 157, 0.28);
+      background: rgba(121, 215, 157, 0.12);
+    }
+
     @media (max-width: 860px) {
       .hero,
       .ring-cluster {
@@ -228,6 +247,7 @@
 
     <section class="panel">
       <h2>控制面板</h2>
+      <div id="deviceState" class="device-state">锁状态：不在线</div>
       <div class="control-box" style="margin-top:16px;">
         <div class="field-row">
           <label for="unlockTime">
@@ -295,6 +315,7 @@
     const ringMinutesValue = document.getElementById("ringMinutesValue");
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
+    const deviceState = document.getElementById("deviceState");
 
     function getSession() {
       return sessionStorage.getItem(SESSION_KEY);
@@ -374,6 +395,9 @@
         redirectToPortal("当前账户不能打开 DOM 控制页");
         return;
       }
+
+      deviceState.textContent = `锁状态：${state.deviceOnline ? "在线" : "不在线"}`;
+      deviceState.classList.toggle("online", !!state.deviceOnline);
 
       if (!state.unlockTime) {
         if (document.activeElement !== unlockTime) {

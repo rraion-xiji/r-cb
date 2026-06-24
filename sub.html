@@ -111,6 +111,24 @@
       border-color: rgba(29, 139, 87, 0.22);
     }
 
+    .device-state {
+      display: inline-flex;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(140, 118, 92, 0.16);
+      background: rgba(255, 255, 255, 0.55);
+      color: var(--muted);
+    }
+
+    .device-state.online {
+      color: var(--safe);
+      background: rgba(29, 139, 87, 0.12);
+      border-color: rgba(29, 139, 87, 0.22);
+    }
+
     .ring-card,
     .bt-box,
     .bt-device {
@@ -250,6 +268,7 @@
 
     <section class="panel">
       <div id="statusFlag" class="status-flag">当前已上锁</div>
+      <div id="deviceState" class="device-state">锁状态：不在线</div>
 
       <div class="ring-card">
         <div class="ring-cluster">
@@ -310,6 +329,7 @@
   <script>
     const SESSION_KEY = "cb-lock-session";
     const API_URL = "/api/state?mode=sub_view";
+    const DEVICE_STATUS_API = "/api/device-status";
     const ringCircumference = 2 * Math.PI * 40;
     const statusFlag = document.getElementById("statusFlag");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
@@ -322,6 +342,7 @@
     const scanBtBtn = document.getElementById("scanBtBtn");
     const connectBtBtn = document.getElementById("connectBtBtn");
     const btDeviceInfo = document.getElementById("btDeviceInfo");
+    const deviceState = document.getElementById("deviceState");
 
     let currentState = null;
     let btDevice = null;
@@ -376,6 +397,29 @@
       btDeviceInfo.textContent = message;
     }
 
+    function renderDeviceState(isOnline) {
+      deviceState.textContent = `锁状态：${isOnline ? "在线" : "不在线"}`;
+      deviceState.classList.toggle("online", !!isOnline);
+    }
+
+    async function updateDeviceStatus(isOnline, keepalive = false) {
+      const token = getSession();
+      if (!token) {
+        return;
+      }
+
+      await fetch(DEVICE_STATUS_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ isOnline }),
+        keepalive
+      }).catch(() => {});
+    }
+
     function getPayloadFromState(state) {
       return {
         account: state.user.account,
@@ -407,6 +451,8 @@
           clearInterval(autoSendTimer);
           autoSendTimer = null;
         }
+        void updateDeviceStatus(false);
+        renderDeviceState(false);
         setBtDeviceInfo(`设备已断开: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}`);
       });
     }
@@ -422,6 +468,8 @@
       const server = await btDevice.gatt.connect();
       const service = await server.getPrimaryService(serviceUuid);
       btCharacteristic = await service.getCharacteristic(characteristicUuid);
+      await updateDeviceStatus(true);
+      renderDeviceState(true);
       setBtDeviceInfo(`已连接设备: ${btDevice.name || "Unknown Device"}`);
 
       if (autoSendTimer) {
@@ -501,6 +549,7 @@
 
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);
+      renderDeviceState(!!state.deviceOnline);
 
       if (!state.unlockTime) {
         syncRing(null, null, "--:--:--");
@@ -543,6 +592,12 @@
       }
     });
 
+    window.addEventListener("beforeunload", () => {
+      void updateDeviceStatus(false, true);
+    });
+
+    renderDeviceState(false);
+    void updateDeviceStatus(false);
     refreshState();
     setInterval(refreshState, 1000);
   </script>
