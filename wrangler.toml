@@ -4,6 +4,7 @@ main = "worker.js"
 
 [assets]
 directory = "."
+binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"

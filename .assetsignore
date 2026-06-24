@@ -1,0 +1,7 @@
+.git
+.wrangler
+functions
+schema.sql
+readme
+wrangler.toml
+worker.js
