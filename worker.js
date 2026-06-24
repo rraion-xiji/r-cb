@@ -271,7 +271,7 @@ async function loadState(db, user) {
        device_status.updated_at AS device_updated_at
      FROM lock_state
      LEFT JOIN device_status ON device_status.user_id = lock_state.user_id
-     WHERE user_id = ?`
+     WHERE lock_state.user_id = ?`
   ).bind(user.id).first();
 
   if (!record) {
