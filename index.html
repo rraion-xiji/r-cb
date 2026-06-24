@@ -253,7 +253,7 @@
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 360px minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: 18px;
       align-items: start;
     }
@@ -276,11 +276,6 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 14px;
-    }
-
-    .current-shell {
-      display: grid;
-      gap: 14px;
     }
 
     .profile-hero {
@@ -762,10 +757,16 @@
 
     <section id="dashboard" class="dashboard" hidden>
       <div class="dashboard-grid">
-        <section class="panel current-shell">
-          <div class="section-chip">Current User</div>
+        <section class="panel workbench">
+          <div class="stage-head">
+            <div>
+              <div class="stage-kicker">Workbench</div>
+              <h2 id="stageTitle" class="stage-title">当前工作台</h2>
+              <p id="workIntro" class="stage-subtitle">登录后会直接在这里显示当前账户对应的 DOM 或 SUB 面板。</p>
+            </div>
+          </div>
 
-          <div class="profile-hero">
+          <div class="profile-hero" style="margin-bottom:14px;">
             <img id="profileAvatar" class="profile-avatar" src="./logo.png" alt="Current User Avatar">
             <div>
               <div id="profileHeroName" class="profile-name">当前用户</div>
@@ -773,9 +774,9 @@
             </div>
           </div>
 
-          <div id="profileCard" class="profile"></div>
+          <div id="profileCard" class="profile" style="margin-bottom:14px;"></div>
 
-          <div class="editor-actions">
+          <div class="editor-actions" style="margin-top:0;margin-bottom:14px;">
             <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
             <button id="logoutBtn" class="small-button" type="button">退出登录</button>
             <button id="deleteBtn" class="small-button danger" type="button">注销账户</button>
@@ -794,16 +795,6 @@
             </div>
             <div class="editor-actions">
               <button id="saveProfileBtn" class="small-button" type="button">保存关系</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel workbench">
-          <div class="stage-head">
-            <div>
-              <div class="stage-kicker">Workbench</div>
-              <h2 id="stageTitle" class="stage-title">当前工作台</h2>
-              <p id="workIntro" class="stage-subtitle">登录后会直接在这里显示当前账户对应的 DOM 或 SUB 面板。</p>
             </div>
           </div>
 
