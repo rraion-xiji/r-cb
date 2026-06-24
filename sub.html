@@ -6,11 +6,19 @@
   <title>SUB View</title>
   <style>
     :root {
+      --bg: #080808;
+      --shell: #121212;
+      --panel: #f3efe7;
+      --panel-edge: rgba(91, 73, 49, 0.14);
+      --ink: #14110f;
+      --muted: #76695a;
+      --line: rgba(91, 73, 49, 0.16);
+      --dark-button: #4a3418;
+      --dark-button-hover: #5c4120;
       --safe: #1d8b57;
-      --ink: #151311;
-      --muted: #72685f;
-      --cream: #f4eadc;
-      --shadow: 0 28px 70px rgba(158, 132, 98, 0.18);
+      --safe-bg: rgba(29, 139, 87, 0.14);
+      --safe-line: rgba(29, 139, 87, 0.3);
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
     }
 
     * { box-sizing: border-box; }
@@ -19,153 +27,218 @@
       margin: 0;
       min-height: 100vh;
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      color: var(--ink);
+      color: #fff;
       background:
-        radial-gradient(circle at top left, rgba(214, 196, 171, 0.22), transparent 18%),
-        radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.58), transparent 20%),
-        linear-gradient(180deg, #faf5ec 0%, #ece1d2 100%);
+        radial-gradient(circle at 14% 10%, rgba(255, 255, 255, 0.06), transparent 18%),
+        radial-gradient(circle at 84% 12%, rgba(120, 95, 58, 0.14), transparent 24%),
+        linear-gradient(180deg, #060606 0%, #0e0e0e 100%);
+      padding: 18px;
     }
 
     .shell {
-      width: min(1020px, calc(100vw - 32px));
-      margin: 24px auto;
-      padding: 28px;
-      border-radius: 36px;
-      background:
-        radial-gradient(circle at top right, rgba(255, 255, 255, 0.72), transparent 26%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 236, 223, 0.94));
-      border: 1px solid rgba(140, 118, 92, 0.16);
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 18px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, #151515, #101010);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: var(--shadow);
     }
 
     .hero {
       display: grid;
-      grid-template-columns: 112px 1fr auto;
-      gap: 22px;
-      align-items: center;
-      margin-bottom: 28px;
-    }
-
-    .hero img {
-      width: 112px;
-      height: 112px;
-      object-fit: contain;
-      border-radius: 28px;
-      background: #000;
-      padding: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.9);
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(30px, 4vw, 48px);
-      line-height: 1;
-      letter-spacing: -0.04em;
-    }
-
-    .subtitle,
-    .nav a { color: rgba(56, 46, 38, 0.72); }
-
-    .nav a {
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .panel {
-      display: grid;
+      grid-template-columns: 96px 1fr auto;
       gap: 18px;
-      padding: 18px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.82);
-      color: var(--ink);
-      border: 1px solid rgba(140, 118, 92, 0.1);
-      box-shadow: none;
+      align-items: center;
+      margin-bottom: 18px;
     }
 
-    .chip {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
+    .hero-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 28px;
+      object-fit: cover;
+      background: #000;
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      image-rendering: pixelated;
+    }
+
+    .hero-copy h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-copy p {
+      margin: 10px 0 0;
+      color: rgba(255, 244, 234, 0.78);
+      font-size: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-button,
+    button {
+      border-radius: 16px;
+      border: 1px solid var(--panel-edge);
+      background: #f5ebd8;
+      color: var(--ink);
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .danger {
+      background: #ffe9ee;
+      color: #b11f3b;
+    }
+
+    .primary {
       background: #111;
       color: #fff;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
+      border-color: rgba(255, 255, 255, 0.08);
     }
 
-    .status-flag {
-      display: inline-flex;
-      width: fit-content;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      border: 1px solid rgba(140, 118, 92, 0.16);
-      background: rgba(255, 255, 255, 0.55);
+    .stage {
+      border-radius: 28px;
+      background: #efefef;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .status-flag.unlocked {
-      color: var(--safe);
-      background: rgba(29, 139, 87, 0.12);
-      border-color: rgba(29, 139, 87, 0.22);
+    .stage-inner {
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid rgba(91, 73, 49, 0.12);
+      padding: 18px;
+      color: var(--ink);
     }
 
-    .device-state {
-      display: inline-flex;
-      width: fit-content;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      border: 1px solid rgba(140, 118, 92, 0.16);
-      background: rgba(255, 255, 255, 0.55);
-      color: var(--muted);
-    }
-
-    .device-state.online {
-      color: var(--safe);
-      background: rgba(29, 139, 87, 0.12);
-      border-color: rgba(29, 139, 87, 0.22);
-    }
-
-    .ring-card,
-    .bt-box,
-    .bt-device {
-      border: 1px solid rgba(140, 118, 92, 0.1);
-      border-radius: 18px;
-      background: rgba(255, 251, 245, 0.72);
-    }
-
-    .ring-card,
-    .bt-box {
-      display: grid;
+    .stage-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 14px;
-      padding: 16px 14px 14px;
+      margin-bottom: 18px;
+    }
+
+    .stage-title {
+      font-size: clamp(30px, 4vw, 46px);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+    }
+
+    .stage-role {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .status-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .pill.active {
+      color: var(--safe);
+      background: var(--safe-bg);
+      border-color: var(--safe-line);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .portrait-card,
+    .status-card,
+    .ring-card {
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid var(--line);
+    }
+
+    .portrait-card {
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      min-height: 270px;
+    }
+
+    .portrait-card img {
+      width: min(100%, 260px);
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      image-rendering: pixelated;
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .status-card {
+      padding: 18px;
+    }
+
+    .top-pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .ring-card {
+      padding: 18px 14px 14px;
     }
 
     .ring-cluster {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      width: 100%;
     }
 
     .ring-unit {
       display: grid;
       justify-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .ring-wrap {
       position: relative;
-      width: 104px;
-      height: 104px;
+      width: 132px;
+      height: 132px;
     }
 
     .ring-svg {
-      width: 104px;
-      height: 104px;
+      width: 132px;
+      height: 132px;
       transform: rotate(-90deg);
     }
 
@@ -175,122 +248,135 @@
       stroke-width: 8;
     }
 
-    .ring-track { stroke: rgba(21, 19, 17, 0.12); }
-
-    .ring-progress {
-      stroke: #111;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 900ms linear;
-    }
+    .ring-track { stroke: rgba(20, 17, 15, 0.12); }
+    .ring-progress { stroke: #111; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
 
     .ring-center {
       position: absolute;
       inset: 0;
       display: grid;
       place-items: center;
-      text-align: center;
       padding: 18px;
+      text-align: center;
     }
 
     .ring-value {
-      font-size: 24px;
-      font-weight: 800;
+      font-size: 26px;
+      font-weight: 900;
       line-height: 1;
     }
 
-    .ring-unit-label,
-    .ring-note {
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.12em;
+    .ring-unit-label {
+      color: #6a5139;
+      font-size: 16px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
-    .ring-unit-label {
-      font-size: 11px;
+    .ring-note {
+      margin-top: 14px;
+      color: #6a5139;
+      font-size: 14px;
       text-align: center;
     }
 
-    .notice {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .actions {
+    .toolbar {
+      margin-top: 18px;
       display: flex;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
-    button {
-      border: 1px solid rgba(140, 118, 92, 0.22);
-      border-radius: 16px;
-      padding: 14px 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--cream);
-      color: var(--ink);
-    }
-
-    .primary {
-      background: #111;
-      color: #fffaf5;
-    }
-
-    .bt-device {
-      padding: 12px 14px;
-      line-height: 1.5;
-      font-size: 14px;
+    .device-box {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 18px;
       background: rgba(245, 236, 223, 0.56);
+      border: 1px solid var(--line);
       color: var(--ink);
+      line-height: 1.6;
+      font-size: 14px;
     }
 
-    @media (max-width: 860px) {
+    .planet-bar {
+      margin-top: 18px;
+    }
+
+    .planet-link {
+      display: block;
+      width: 100%;
+      padding: 18px 22px;
+      border-radius: 18px;
+      background: #4a3418;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .planet-link:hover {
+      background: var(--dark-button-hover);
+    }
+
+    @media (max-width: 980px) {
       .hero,
-      .ring-cluster {
+      .content-grid {
         grid-template-columns: 1fr;
+      }
+
+      .hero-actions,
+      .status-row,
+      .top-pill-row {
+        justify-content: flex-start;
       }
     }
 
     @media (max-width: 680px) {
-      .shell {
-        width: min(100vw - 16px, 1020px);
-        margin: 8px auto;
-        padding: 16px 12px;
-        border-radius: 24px;
-      }
-
-      .hero {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        justify-items: center;
-        text-align: center;
-        margin-bottom: 18px;
-      }
-
-      .hero img {
-        width: 84px;
-        height: 84px;
-        border-radius: 22px;
+      body {
         padding: 10px;
       }
 
-      .nav {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .panel {
-        padding: 16px 12px;
+      .shell,
+      .stage,
+      .stage-inner {
         border-radius: 22px;
       }
 
-      .ring-card,
-      .bt-box {
-        padding: 14px 12px;
-        border-radius: 20px;
+      .shell {
+        padding: 12px;
+      }
+
+      .stage,
+      .stage-inner {
+        padding: 12px;
+      }
+
+      .hero {
+        gap: 14px;
+      }
+
+      .hero-logo {
+        width: 82px;
+        height: 82px;
+        border-radius: 22px;
+      }
+
+      .stage-top,
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hero-actions {
+        justify-content: stretch;
+      }
+
+      .nav-button,
+      button {
+        width: 100%;
       }
 
       .ring-cluster {
@@ -300,67 +386,41 @@
 
       .ring-wrap,
       .ring-svg {
-        width: 78px;
-        height: 78px;
-      }
-
-      .ring-track,
-      .ring-progress {
-        stroke-width: 7;
+        width: 86px;
+        height: 86px;
       }
 
       .ring-center {
-        padding: 12px;
+        padding: 10px;
+      }
+
+      .ring-value {
+        font-size: 20px;
+      }
+
+      .ring-unit-label {
+        font-size: 12px;
+      }
+
+      .planet-link {
+        font-size: 22px;
+        padding: 16px 18px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .ring-wrap,
+      .ring-svg {
+        width: 74px;
+        height: 74px;
       }
 
       .ring-value {
         font-size: 18px;
       }
 
-      .ring-unit-label {
-        font-size: 10px;
-      }
-
-      .actions {
-        flex-direction: row;
-        gap: 10px;
-      }
-
-      .actions button {
-        flex: 1;
-        width: auto;
-      }
-
-      .bt-device,
-      .notice {
-        font-size: 14px;
-        line-height: 1.6;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .shell {
-        width: calc(100vw - 10px);
-        padding: 14px 10px;
-      }
-
-      .panel {
-        padding: 14px 10px;
-      }
-
-      .device-state,
-      .status-flag {
-        font-size: 12px;
-      }
-
-      .ring-wrap,
-      .ring-svg {
-        width: 72px;
-        height: 72px;
-      }
-
-      .ring-value {
-        font-size: 16px;
+      .pill {
+        width: 100%;
       }
     }
   </style>
@@ -368,71 +428,81 @@
 <body>
   <main class="shell">
     <section class="hero">
-      <img src="./sub.png" alt="SUB Logo">
-      <div>
-        <div class="chip">Puppy Watch</div>
-        <h1>SUB 查看页</h1>
-        <p class="subtitle">SUB 页面只保留状态查看和蓝牙连接的核心操作。</p>
+      <img class="hero-logo" src="./sub.jpg" alt="SUB Logo">
+      <div class="hero-copy">
+        <h1 id="heroName">SUB</h1>
+        <p id="heroSubtitle">正在读取绑定关系...</p>
       </div>
-      <div class="nav"><a href="./index.html">返回入口</a> / <a href="./dom.html">打开 DOM 页面</a></div>
+      <div class="hero-actions">
+        <a class="nav-button" href="./index.html">返回入口</a>
+        <a class="nav-button" href="./planet.html">小狗星球</a>
+      </div>
     </section>
 
-    <section class="panel">
-      <div id="statusFlag" class="status-flag">当前已上锁</div>
-      <div id="deviceState" class="device-state">锁状态：不在线</div>
-
-      <div class="ring-card">
-        <div class="ring-cluster">
-          <div class="ring-unit">
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
-              </svg>
-              <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
-            </div>
-            <div class="ring-unit-label">Hours</div>
+    <section class="stage">
+      <div class="stage-inner">
+        <div class="stage-top">
+          <div>
+            <div class="stage-title" id="targetTitle">DOM : --</div>
+            <div class="stage-role">SUB 查看面板</div>
           </div>
-
-          <div class="ring-unit">
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
-              </svg>
-              <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
-            </div>
-            <div class="ring-unit-label">Minutes</div>
-          </div>
-
-          <div class="ring-unit">
-            <div class="ring-wrap">
-              <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
-              </svg>
-              <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
-            </div>
-            <div class="ring-unit-label">Seconds</div>
+          <div class="status-row">
+            <div id="deviceState" class="pill">锁状态：离线</div>
+            <div id="statusFlag" class="pill">当前已上锁</div>
+            <button id="scanBtBtn" type="button">搜索蓝牙</button>
+            <button id="connectBtBtn" type="button">连接蓝牙</button>
           </div>
         </div>
 
-        <div id="ringNote" class="ring-note">等待 DOM 设置时间。</div>
-      </div>
+        <div class="content-grid">
+          <section class="portrait-card">
+            <img src="./sub.jpg" alt="SUB Portrait">
+          </section>
 
-      <div class="notice">SUB 页面同样走已登录账户的会话，不再读取全局共享状态。</div>
-
-      <div class="bt-box">
-        <div>
-          <div class="chip" style="margin-bottom:8px;">Keybox Link</div>
+          <section class="status-card">
+            <div class="ring-card">
+              <div class="ring-cluster">
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Hours</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Minutes</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Seconds</div>
+                </div>
+              </div>
+              <div id="ringNote" class="ring-note">等待 DOM 设置时间。</div>
+            </div>
+          </section>
         </div>
 
-        <div class="actions">
-          <button id="scanBtBtn" type="button">搜索蓝牙</button>
-          <button class="primary" id="connectBtBtn" type="button">连接蓝牙</button>
-        </div>
+        <div id="btDeviceInfo" class="device-box">尚未选择蓝牙设备。</div>
 
-        <div id="btDeviceInfo" class="bt-device">尚未选择蓝牙设备。</div>
+        <div class="planet-bar">
+          <a class="planet-link" href="./planet.html">小狗星球</a>
+        </div>
       </div>
     </section>
   </main>
@@ -442,7 +512,15 @@
     const API_URL = "/api/state?mode=sub_view";
     const DEVICE_STATUS_API = "/api/device-status";
     const ringCircumference = 2 * Math.PI * 40;
+
+    const heroName = document.getElementById("heroName");
+    const heroSubtitle = document.getElementById("heroSubtitle");
+    const targetTitle = document.getElementById("targetTitle");
     const statusFlag = document.getElementById("statusFlag");
+    const deviceState = document.getElementById("deviceState");
+    const scanBtBtn = document.getElementById("scanBtBtn");
+    const connectBtBtn = document.getElementById("connectBtBtn");
+    const btDeviceInfo = document.getElementById("btDeviceInfo");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
     const ringMinutesProgress = document.getElementById("ringMinutesProgress");
     const ringSecondsProgress = document.getElementById("ringSecondsProgress");
@@ -450,10 +528,6 @@
     const ringMinutesValue = document.getElementById("ringMinutesValue");
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
-    const scanBtBtn = document.getElementById("scanBtBtn");
-    const connectBtBtn = document.getElementById("connectBtBtn");
-    const btDeviceInfo = document.getElementById("btDeviceInfo");
-    const deviceState = document.getElementById("deviceState");
 
     let currentState = null;
     let btDevice = null;
@@ -486,17 +560,14 @@
       const headers = new Headers(options.headers || {});
       headers.set("Accept", "application/json");
       headers.set("Authorization", `Bearer ${token}`);
-
       const response = await fetch(path, { ...options, headers });
       const payload = await response.json().catch(() => ({}));
-
       if (!response.ok) {
         if (response.status === 401) {
           redirectToPortal(payload.error || "登录已失效");
         }
         throw new Error(payload.error || `Request failed: ${response.status}`);
       }
-
       return payload;
     }
 
@@ -504,21 +575,56 @@
       return String(value).padStart(2, "0");
     }
 
+    function setRingProgress(element, progress) {
+      element.style.strokeDasharray = `${ringCircumference}`;
+      element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
+    }
+
+    function parseRemainingTimeText(value) {
+      const match = /^(\d{2,}):(\d{2}):(\d{2})$/.exec(value || "");
+      if (!match) return null;
+      const hours = Number(match[1]);
+      const minutes = Number(match[2]);
+      const seconds = Number(match[3]);
+      if ([hours, minutes, seconds].some((part) => Number.isNaN(part))) return null;
+      return { hours, minutes, seconds };
+    }
+
+    function syncRing(remainingLabel, totalMs) {
+      const parts = parseRemainingTimeText(remainingLabel);
+      if (!parts || !totalMs || totalMs <= 0) {
+        setRingProgress(ringHoursProgress, 0);
+        setRingProgress(ringMinutesProgress, 0);
+        setRingProgress(ringSecondsProgress, 0);
+        ringHoursValue.textContent = remainingLabel === "00:00:00" && totalMs ? "00" : "--";
+        ringMinutesValue.textContent = remainingLabel === "00:00:00" && totalMs ? "00" : "--";
+        ringSecondsValue.textContent = remainingLabel === "00:00:00" && totalMs ? "00" : "--";
+        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "等待 DOM 设置时间。";
+        return;
+      }
+
+      const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
+      setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, parts.hours / hoursProgressBase)));
+      setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, parts.minutes / 59)));
+      setRingProgress(ringSecondsProgress, Math.max(0, Math.min(1, parts.seconds / 59)));
+      ringHoursValue.textContent = pad(Math.min(parts.hours, 99));
+      ringMinutesValue.textContent = pad(parts.minutes);
+      ringSecondsValue.textContent = pad(parts.seconds);
+      ringNote.textContent = `距离自动开锁还有 ${remainingLabel}。`;
+    }
+
+    function setPillState(element, text, active) {
+      element.textContent = text;
+      element.classList.toggle("active", !!active);
+    }
+
     function setBtDeviceInfo(message) {
       btDeviceInfo.textContent = message;
     }
 
-    function renderDeviceState(isOnline) {
-      deviceState.textContent = `锁状态：${isOnline ? "在线" : "不在线"}`;
-      deviceState.classList.toggle("online", !!isOnline);
-    }
-
     async function updateDeviceStatus(isOnline, keepalive = false) {
       const token = getSession();
-      if (!token) {
-        return;
-      }
-
+      if (!token) return;
       await fetch(DEVICE_STATUS_API, {
         method: "POST",
         headers: {
@@ -555,7 +661,6 @@
       });
 
       setBtDeviceInfo(`已选择设备: ${btDevice.name || "Unknown Device"}`);
-
       btDevice.addEventListener("gattserverdisconnected", () => {
         btCharacteristic = null;
         if (autoSendTimer) {
@@ -563,7 +668,7 @@
           autoSendTimer = null;
         }
         void updateDeviceStatus(false);
-        renderDeviceState(false);
+        setPillState(deviceState, "锁状态：离线", false);
         setBtDeviceInfo(`设备已断开: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}`);
       });
     }
@@ -580,28 +685,17 @@
       const service = await server.getPrimaryService(serviceUuid);
       btCharacteristic = await service.getCharacteristic(characteristicUuid);
       await updateDeviceStatus(true);
-      renderDeviceState(true);
+      setPillState(deviceState, "锁状态：在线", true);
       setBtDeviceInfo(`已连接设备: ${btDevice.name || "Unknown Device"}`);
 
-      if (autoSendTimer) {
-        clearInterval(autoSendTimer);
-      }
-
-      autoSendTimer = setInterval(() => {
-        void safeBluetoothSend();
-      }, 1000);
-
+      if (autoSendTimer) clearInterval(autoSendTimer);
+      autoSendTimer = setInterval(() => void safeBluetoothSend(), 1000);
       await safeBluetoothSend();
     }
 
     async function sendBluetoothState() {
-      if (!btCharacteristic || !currentState) {
-        return;
-      }
-
-      const payload = getPayloadFromState(currentState);
-      const encoded = new TextEncoder().encode(JSON.stringify(payload));
-
+      if (!btCharacteristic || !currentState) return;
+      const encoded = new TextEncoder().encode(JSON.stringify(getPayloadFromState(currentState)));
       if (typeof btCharacteristic.writeValueWithoutResponse === "function") {
         await btCharacteristic.writeValueWithoutResponse(encoded);
       } else {
@@ -617,66 +711,18 @@
       }
     }
 
-    function setRingProgress(element, progress) {
-      element.style.strokeDasharray = `${ringCircumference}`;
-      element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
-    }
-
-    function parseRemainingTimeText(value) {
-      const match = /^(\d{2,}):(\d{2}):(\d{2})$/.exec(value || "");
-      if (!match) {
-        return null;
-      }
-
-      const hours = Number(match[1]);
-      const minutes = Number(match[2]);
-      const seconds = Number(match[3]);
-      if ([hours, minutes, seconds].some((part) => Number.isNaN(part))) {
-        return null;
-      }
-
-      return { hours, minutes, seconds };
-    }
-
-    function syncRing(remainingLabel, totalMs) {
-      const parts = parseRemainingTimeText(remainingLabel);
-      if (!parts || !totalMs || totalMs <= 0) {
-        setRingProgress(ringHoursProgress, 0);
-        setRingProgress(ringMinutesProgress, 0);
-        setRingProgress(ringSecondsProgress, 0);
-        ringHoursValue.textContent = remainingLabel === "00:00:00" && totalMs ? "00" : "--";
-        ringMinutesValue.textContent = remainingLabel === "00:00:00" && totalMs ? "00" : "--";
-        ringSecondsValue.textContent = remainingLabel === "00:00:00" && totalMs ? "00" : "--";
-        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "等待 DOM 设置时间。";
-        return;
-      }
-
-      const totalHours = parts.hours;
-      const minutes = parts.minutes;
-      const seconds = parts.seconds;
-      const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
-
-      setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, totalHours / hoursProgressBase)));
-      setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, minutes / 59)));
-      setRingProgress(ringSecondsProgress, Math.max(0, Math.min(1, seconds / 59)));
-
-      ringHoursValue.textContent = pad(Math.min(totalHours, 99));
-      ringMinutesValue.textContent = pad(minutes);
-      ringSecondsValue.textContent = pad(seconds);
-      ringNote.textContent = `距离自动开锁还有 ${remainingLabel}。`;
-    }
-
     function renderState(state) {
       currentState = state;
-
       if (!state.actor?.dom) {
         redirectToPortal("当前账户不能打开 SUB 查看页");
         return;
       }
 
-      statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
-      statusFlag.classList.toggle("unlocked", !state.locked);
-      renderDeviceState(!!state.deviceOnline);
+      heroName.textContent = state.actor.account;
+      heroSubtitle.textContent = `已绑定 DOM：${state.user.dom || "未设置"}`;
+      targetTitle.textContent = `DOM : ${state.user.dom || "--"}`;
+      setPillState(statusFlag, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
+      setPillState(deviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
 
       if (!state.unlockTime) {
         syncRing("--:--:--", null);
@@ -685,12 +731,10 @@
 
       const autoUnlockAt = new Date(state.unlockTime);
       const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
-      const remainingLabel = state.remainingTime || "--:--:--";
       const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
         ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
         : null;
-
-      syncRing(remainingLabel, totalMs);
+      syncRing(state.remainingTime || "--:--:--", totalMs);
     }
 
     async function refreshState() {
@@ -722,7 +766,6 @@
       void updateDeviceStatus(false, true);
     });
 
-    renderDeviceState(false);
     void updateDeviceStatus(false);
     refreshState();
     setInterval(refreshState, 1000);

@@ -6,11 +6,19 @@
   <title>DOM Control</title>
   <style>
     :root {
-      --safe: #79d79d;
-      --ink: #f3efe8;
-      --muted: #9d968f;
-      --cream: #181614;
-      --shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
+      --bg: #080808;
+      --shell: #121212;
+      --panel: #f3efe7;
+      --panel-edge: rgba(91, 73, 49, 0.14);
+      --ink: #14110f;
+      --muted: #76695a;
+      --line: rgba(91, 73, 49, 0.16);
+      --dark-button: #4a3418;
+      --dark-button-hover: #5c4120;
+      --safe: #1d8b57;
+      --safe-bg: rgba(29, 139, 87, 0.14);
+      --safe-line: rgba(29, 139, 87, 0.3);
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
     }
 
     * { box-sizing: border-box; }
@@ -21,150 +29,246 @@
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: #fff;
       background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 18%),
-        radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.04), transparent 20%),
-        linear-gradient(180deg, #040404 0%, #0c0c0c 100%);
+        radial-gradient(circle at 14% 10%, rgba(255, 255, 255, 0.06), transparent 18%),
+        radial-gradient(circle at 84% 12%, rgba(120, 95, 58, 0.14), transparent 24%),
+        linear-gradient(180deg, #060606 0%, #0e0e0e 100%);
+      padding: 18px;
     }
 
     .shell {
-      width: min(920px, calc(100vw - 32px));
-      margin: 24px auto;
-      padding: 28px;
-      border-radius: 36px;
-      background:
-        radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 26%),
-        linear-gradient(180deg, rgba(18, 18, 18, 0.98), rgba(8, 8, 8, 0.99));
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 18px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, #151515, #101010);
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: var(--shadow);
     }
 
     .hero {
       display: grid;
-      grid-template-columns: 112px 1fr auto;
-      gap: 22px;
+      grid-template-columns: 96px 1fr auto;
+      gap: 18px;
       align-items: center;
-      margin-bottom: 28px;
+      margin-bottom: 18px;
     }
 
-    .hero img {
-      width: 112px;
-      height: 112px;
-      object-fit: contain;
+    .hero-logo {
+      width: 96px;
+      height: 96px;
       border-radius: 28px;
+      object-fit: cover;
       background: #000;
-      padding: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      image-rendering: pixelated;
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(30px, 4vw, 48px);
+    .hero-copy h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
       line-height: 1;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.05em;
     }
 
-    .subtitle,
-    .nav a { color: rgba(243, 239, 232, 0.72); }
-    .nav a { text-decoration: none; font-size: 14px; }
-
-    .panel {
-      background: rgba(18, 18, 18, 0.72);
-      color: var(--ink);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: none;
+    .hero-copy p {
+      margin: 10px 0 0;
+      color: rgba(255, 244, 234, 0.78);
+      font-size: 16px;
     }
 
-    .control-box,
-    .ring-card {
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .control-box {
-      display: grid;
-      gap: 16px;
-      padding: 16px 18px 18px;
-    }
-
-    .field-row,
-    .actions {
+    .hero-actions {
       display: flex;
-      gap: 14px;
+      gap: 10px;
       flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-button,
+    .action-button {
+      border-radius: 16px;
+      border: 1px solid var(--panel-edge);
+      background: #f5ebd8;
+      color: var(--ink);
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .stage {
+      border-radius: 28px;
+      background: #efefef;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stage-inner {
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid rgba(91, 73, 49, 0.12);
+      padding: 18px;
+      color: var(--ink);
+    }
+
+    .stage-top {
+      display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
     }
 
-    label strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 15px;
+    .stage-title {
+      font-size: clamp(30px, 4vw, 46px);
+      font-weight: 900;
+      letter-spacing: -0.05em;
     }
 
-    .hint {
+    .stage-role {
+      margin-top: 8px;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 16px;
+      font-weight: 700;
     }
 
-    input[type="datetime-local"] {
+    .status-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .pill.active {
+      color: var(--safe);
+      background: var(--safe-bg);
+      border-color: var(--safe-line);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .portrait-card,
+    .control-card,
+    .ring-card {
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid var(--line);
+    }
+
+    .portrait-card {
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      min-height: 270px;
+    }
+
+    .portrait-card img {
+      width: min(100%, 260px);
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      image-rendering: pixelated;
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .control-card {
+      padding: 18px;
+    }
+
+    .control-head {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .control-head strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .control-head .hint {
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    .control-head input[type="datetime-local"] {
       width: min(100%, 320px);
       padding: 14px 16px;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      font-size: 15px;
-      background: #0c0c0c;
+      border: 1px solid rgba(91, 73, 49, 0.18);
+      background: rgba(255, 255, 255, 0.82);
       color: var(--ink);
-      color-scheme: dark;
+      font-size: 15px;
     }
 
-    button {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 16px;
-      padding: 14px 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--cream);
-      color: var(--ink);
+    .control-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
     }
 
-    .primary {
-      background: #f3efe8;
-      color: #111;
+    .action-button.primary {
+      background: #f6ecda;
+    }
+
+    .action-button.secondary {
+      background: transparent;
+      color: var(--ink);
     }
 
     .ring-card {
-      display: grid;
-      gap: 14px;
-      padding: 16px 14px 14px;
+      padding: 18px 14px 14px;
     }
 
     .ring-cluster {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      width: 100%;
     }
 
     .ring-unit {
       display: grid;
       justify-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .ring-wrap {
       position: relative;
-      width: 104px;
-      height: 104px;
+      width: 132px;
+      height: 132px;
     }
 
     .ring-svg {
-      width: 104px;
-      height: 104px;
+      width: 132px;
+      height: 132px;
       transform: rotate(-90deg);
     }
 
@@ -174,139 +278,157 @@
       stroke-width: 8;
     }
 
-    .ring-track { stroke: rgba(255, 255, 255, 0.08); }
-    .ring-progress { stroke: #f3efe8; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
+    .ring-track { stroke: rgba(20, 17, 15, 0.12); }
+    .ring-progress { stroke: #111; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
 
     .ring-center {
       position: absolute;
       inset: 0;
       display: grid;
       place-items: center;
-      text-align: center;
       padding: 18px;
-      color: var(--ink);
+      text-align: center;
     }
 
     .ring-value {
-      font-size: 24px;
-      font-weight: 800;
+      font-size: 26px;
+      font-weight: 900;
       line-height: 1;
     }
 
-    .ring-unit-label,
-    .ring-note {
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.12em;
+    .ring-unit-label {
+      color: #6a5139;
+      font-size: 16px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
-    .ring-unit-label {
-      font-size: 11px;
+    .ring-note {
+      margin-top: 14px;
+      color: #6a5139;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .planet-bar {
+      margin-top: 18px;
+    }
+
+    .planet-link {
+      display: block;
+      width: 100%;
+      padding: 18px 22px;
+      border-radius: 18px;
+      background: #4a3418;
+      color: #fff;
       text-align: center;
+      text-decoration: none;
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
     }
 
-    .device-state {
-      display: inline-flex;
-      width: fit-content;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--muted);
-      margin-top: 12px;
+    .planet-link:hover {
+      background: var(--dark-button-hover);
     }
 
-    .device-state.online {
-      color: var(--safe);
-      border-color: rgba(121, 215, 157, 0.28);
-      background: rgba(121, 215, 157, 0.12);
-    }
-
-    @media (max-width: 860px) {
+    @media (max-width: 980px) {
       .hero,
-      .ring-cluster {
+      .content-grid {
         grid-template-columns: 1fr;
+      }
+
+      .hero-actions,
+      .status-row {
+        justify-content: flex-start;
       }
     }
 
     @media (max-width: 680px) {
-      .shell {
-        width: min(100vw - 16px, 920px);
-        margin: 8px auto;
-        padding: 16px 12px;
-        border-radius: 24px;
-      }
-
-      .hero {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        justify-items: center;
-        text-align: center;
-        margin-bottom: 18px;
-      }
-
-      .hero img {
-        width: 84px;
-        height: 84px;
-        border-radius: 22px;
+      body {
         padding: 10px;
       }
 
-      .nav {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .panel {
-        padding: 16px 12px;
+      .shell,
+      .stage,
+      .stage-inner {
         border-radius: 22px;
       }
 
-      .control-box,
-      .ring-card {
-        padding: 14px 12px;
-        border-radius: 20px;
+      .shell {
+        padding: 12px;
       }
 
-      .field-row,
-      .actions {
+      .stage,
+      .stage-inner {
+        padding: 12px;
+      }
+
+      .hero {
+        gap: 14px;
+      }
+
+      .hero-logo {
+        width: 82px;
+        height: 82px;
+        border-radius: 22px;
+      }
+
+      .stage-top,
+      .control-head,
+      .control-actions {
         flex-direction: column;
         align-items: stretch;
       }
 
-      input[type="datetime-local"],
-      button {
+      .control-head input[type="datetime-local"],
+      .nav-button,
+      .action-button {
         width: 100%;
       }
 
       .ring-cluster {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
       }
 
       .ring-wrap,
       .ring-svg {
-        width: 96px;
-        height: 96px;
+        width: 86px;
+        height: 86px;
+      }
+
+      .ring-center {
+        padding: 10px;
+      }
+
+      .ring-value {
+        font-size: 20px;
+      }
+
+      .ring-unit-label {
+        font-size: 12px;
+      }
+
+      .planet-link {
+        font-size: 22px;
+        padding: 16px 18px;
       }
     }
 
     @media (max-width: 420px) {
-      .shell {
-        width: calc(100vw - 10px);
-        padding: 14px 10px;
+      .ring-wrap,
+      .ring-svg {
+        width: 74px;
+        height: 74px;
       }
 
-      .panel {
-        padding: 14px 10px;
+      .ring-value {
+        font-size: 18px;
       }
 
-      .device-state {
-        font-size: 12px;
+      .pill {
+        width: 100%;
       }
     }
   </style>
@@ -314,66 +436,89 @@
 <body>
   <main class="shell">
     <section class="hero">
-      <img src="./dom.png" alt="DOM Logo">
-      <div>
-        <div style="display:inline-flex;padding:6px 10px;border-radius:999px;background:#f3efe8;color:#111;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;">Puppy Control</div>
-        <h1>DOM 控制页</h1>
-        <p class="subtitle">只保留策略设置与倒计时，不显示当前状态区。</p>
+      <img class="hero-logo" src="./dom.jpg" alt="DOM Logo">
+      <div class="hero-copy">
+        <h1 id="heroName">DOM</h1>
+        <p id="heroSubtitle">正在读取目标关系...</p>
       </div>
-      <div class="nav"><a href="./index.html">返回入口</a> / <a href="./sub.html">打开 SUB 页面</a></div>
+      <div class="hero-actions">
+        <a class="nav-button" href="./index.html">返回入口</a>
+        <a class="nav-button" href="./planet.html">小狗星球</a>
+      </div>
     </section>
 
-    <section class="panel">
-      <h2>控制面板</h2>
-      <div id="deviceState" class="device-state">锁状态：不在线</div>
-      <div class="control-box" style="margin-top:16px;">
-        <div class="field-row">
-          <label for="unlockTime">
-            <strong>自动开锁时间</strong>
-            <span class="hint">到点后服务端会把目标 SUB 账户的状态自动切为已开锁。</span>
-          </label>
-          <input id="unlockTime" type="datetime-local">
-        </div>
-
-        <div class="actions">
-          <button class="primary" id="applyBtn">应用策略</button>
-          <button id="unlockNowBtn" type="button">立即开锁</button>
-        </div>
-
-        <div class="ring-card">
-          <div class="ring-cluster">
-            <div class="ring-unit">
-              <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                  <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
-                </svg>
-                <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
-              </div>
-              <div class="ring-unit-label">Hours</div>
-            </div>
-            <div class="ring-unit">
-              <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                  <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
-                </svg>
-                <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
-              </div>
-              <div class="ring-unit-label">Minutes</div>
-            </div>
-            <div class="ring-unit">
-              <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                  <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
-                </svg>
-                <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
-              </div>
-              <div class="ring-unit-label">Seconds</div>
-            </div>
+    <section class="stage">
+      <div class="stage-inner">
+        <div class="stage-top">
+          <div>
+            <div class="stage-title" id="targetTitle">SUB : --</div>
+            <div class="stage-role">DOM 控制面板</div>
           </div>
-          <div id="ringNote" class="ring-note">还没有设置自动开锁时间。</div>
+          <div class="status-row">
+            <div id="deviceState" class="pill">锁状态：离线</div>
+            <div id="lockState" class="pill">当前已上锁</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <section class="portrait-card">
+            <img src="./dom.jpg" alt="DOM Portrait">
+          </section>
+
+          <section class="control-card">
+            <div class="control-head">
+              <div>
+                <strong>自动开锁时间</strong>
+                <div class="hint">到点后服务器会把目标 SUB 账户的状态自动切为已开锁。</div>
+              </div>
+              <input id="unlockTime" type="datetime-local">
+            </div>
+
+            <div class="control-actions">
+              <button id="applyBtn" class="action-button primary" type="button">应用策略</button>
+              <button id="unlockNowBtn" class="action-button secondary" type="button">立即开锁</button>
+            </div>
+
+            <div class="ring-card">
+              <div class="ring-cluster">
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Hours</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Minutes</div>
+                </div>
+                <div class="ring-unit">
+                  <div class="ring-wrap">
+                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                      <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
+                    </svg>
+                    <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
+                  </div>
+                  <div class="ring-unit-label">Seconds</div>
+                </div>
+              </div>
+              <div id="ringNote" class="ring-note">等待设置自动开锁时间。</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="planet-bar">
+          <a class="planet-link" href="./planet.html">小狗星球</a>
         </div>
       </div>
     </section>
@@ -383,6 +528,12 @@
     const SESSION_KEY = "cb-lock-session";
     const API_URL = "/api/state?mode=dom_control";
     const ringCircumference = 2 * Math.PI * 40;
+
+    const heroName = document.getElementById("heroName");
+    const heroSubtitle = document.getElementById("heroSubtitle");
+    const targetTitle = document.getElementById("targetTitle");
+    const deviceState = document.getElementById("deviceState");
+    const lockState = document.getElementById("lockState");
     const unlockTime = document.getElementById("unlockTime");
     const applyBtn = document.getElementById("applyBtn");
     const unlockNowBtn = document.getElementById("unlockNowBtn");
@@ -393,7 +544,6 @@
     const ringMinutesValue = document.getElementById("ringMinutesValue");
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
-    const deviceState = document.getElementById("deviceState");
 
     function getSession() {
       return sessionStorage.getItem(SESSION_KEY);
@@ -444,17 +594,11 @@
 
     function parseRemainingTimeText(value) {
       const match = /^(\d{2,}):(\d{2}):(\d{2})$/.exec(value || "");
-      if (!match) {
-        return null;
-      }
-
+      if (!match) return null;
       const hours = Number(match[1]);
       const minutes = Number(match[2]);
       const seconds = Number(match[3]);
-      if ([hours, minutes, seconds].some((part) => Number.isNaN(part))) {
-        return null;
-      }
-
+      if ([hours, minutes, seconds].some((part) => Number.isNaN(part))) return null;
       return { hours, minutes, seconds };
     }
 
@@ -467,21 +611,23 @@
         ringHoursValue.textContent = remainingTimeText === "00:00:00" && totalMs ? "00" : "--";
         ringMinutesValue.textContent = remainingTimeText === "00:00:00" && totalMs ? "00" : "--";
         ringSecondsValue.textContent = remainingTimeText === "00:00:00" && totalMs ? "00" : "--";
-        ringNote.textContent = totalMs ? "开锁时间已到，倒计时完成。" : "还没有设置自动开锁时间。";
+        ringNote.textContent = totalMs ? "开锁时间已到，倒计时完成。" : "等待设置自动开锁时间。";
         return;
       }
 
-      const totalHours = parts.hours;
-      const minutes = parts.minutes;
-      const seconds = parts.seconds;
       const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
-      setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, totalHours / hoursProgressBase)));
-      setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, minutes / 59)));
-      setRingProgress(ringSecondsProgress, Math.max(0, Math.min(1, seconds / 59)));
-      ringHoursValue.textContent = pad(Math.min(totalHours, 99));
-      ringMinutesValue.textContent = pad(minutes);
-      ringSecondsValue.textContent = pad(seconds);
+      setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, parts.hours / hoursProgressBase)));
+      setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, parts.minutes / 59)));
+      setRingProgress(ringSecondsProgress, Math.max(0, Math.min(1, parts.seconds / 59)));
+      ringHoursValue.textContent = pad(Math.min(parts.hours, 99));
+      ringMinutesValue.textContent = pad(parts.minutes);
+      ringSecondsValue.textContent = pad(parts.seconds);
       ringNote.textContent = `距离自动开锁还有 ${remainingTimeText || "--:--:--"}。`;
+    }
+
+    function setPillState(element, text, active) {
+      element.textContent = text;
+      element.classList.toggle("active", !!active);
     }
 
     function renderState(state) {
@@ -490,8 +636,11 @@
         return;
       }
 
-      deviceState.textContent = `锁状态：${state.deviceOnline ? "在线" : "不在线"}`;
-      deviceState.classList.toggle("online", !!state.deviceOnline);
+      heroName.textContent = state.actor.account;
+      heroSubtitle.textContent = `绑定 SUB：${state.user.account}`;
+      targetTitle.textContent = `SUB : ${state.user.account}`;
+      setPillState(deviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
+      setPillState(lockState, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
 
       if (!state.unlockTime) {
         if (document.activeElement !== unlockTime) {
@@ -503,11 +652,9 @@
 
       const autoUnlockAt = new Date(state.unlockTime);
       const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
-
       if (document.activeElement !== unlockTime && !Number.isNaN(autoUnlockAt.getTime())) {
         unlockTime.value = `${autoUnlockAt.getFullYear()}-${pad(autoUnlockAt.getMonth() + 1)}-${pad(autoUnlockAt.getDate())}T${pad(autoUnlockAt.getHours())}:${pad(autoUnlockAt.getMinutes())}`;
       }
-
       const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
         ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
         : null;
@@ -572,7 +719,7 @@
     });
 
     refreshState();
-    setInterval(refreshState, 5000);
+    setInterval(refreshState, 1000);
   </script>
 </body>
 </html>
