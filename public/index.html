@@ -49,7 +49,7 @@
 
     .hero {
       display: grid;
-      grid-template-columns: 96px 1fr;
+      grid-template-columns: 96px 1fr auto;
       gap: 18px;
       align-items: center;
       margin-bottom: 18px;
@@ -70,6 +70,14 @@
       font-size: clamp(34px, 5vw, 58px);
       line-height: 1;
       letter-spacing: -0.05em;
+    }
+
+    .hero-tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
     }
 
     .auth-shell[hidden],
@@ -382,35 +390,6 @@
       border-color: var(--safe-line);
     }
 
-    .work-layout {
-      display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .portrait-card {
-      display: grid;
-      align-content: start;
-      gap: 12px;
-    }
-
-    .portrait-frame {
-      aspect-ratio: 1 / 1;
-      width: 100%;
-      border-radius: 24px;
-      overflow: hidden;
-      background: #fff;
-      border: 1px solid rgba(91, 73, 49, 0.16);
-    }
-
-    .portrait-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      image-rendering: pixelated;
-    }
-
     .control-card {
       display: grid;
       gap: 16px;
@@ -524,7 +503,6 @@
 
     @media (max-width: 1040px) {
       .dashboard-grid,
-      .work-layout,
       .work-field-row,
       .fields.two {
         grid-template-columns: 1fr;
@@ -545,6 +523,10 @@
         grid-template-columns: 1fr;
         justify-items: center;
         text-align: center;
+      }
+
+      .hero-tools {
+        justify-content: center;
       }
 
       .hero-copy p {
@@ -577,6 +559,7 @@
         flex-direction: column;
       }
 
+      .hero-tools,
       .hero-actions,
       .editor-actions,
       .work-actions,
@@ -597,6 +580,7 @@
     }
 
     @media (max-width: 480px) {
+      .hero-tools,
       .hero-actions,
       .editor-actions,
       .work-actions,
@@ -642,7 +626,12 @@
     <section class="hero">
       <img class="hero-logo" src="./logo.png" alt="CB Lock Logo">
       <div class="hero-copy">
-        <h1>CB Lock Portal</h1>
+        <h1 id="heroTitle">控制台</h1>
+      </div>
+      <div id="heroTools" class="hero-tools" hidden>
+        <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
+        <button id="logoutBtn" class="small-button" type="button">退出登录</button>
+        <button id="deleteBtn" class="small-button danger" type="button">注销账户</button>
       </div>
     </section>
 
@@ -700,24 +689,12 @@
     <section id="dashboard" class="dashboard" hidden>
       <div class="dashboard-grid">
         <section class="panel workbench">
-          <div class="stage-head">
-            <div>
-              <h2 id="stageTitle" class="stage-title">当前工作台</h2>
-            </div>
-          </div>
-
           <div class="profile-hero" style="margin-bottom:14px;">
             <img id="profileAvatar" class="profile-avatar" src="./logo.png" alt="Current User Avatar">
             <div>
               <div id="profileHeroName" class="profile-name">当前用户</div>
               <p id="profileHeroSubtitle" class="profile-subtitle">登录后在这里管理账户关系与当前角色。</p>
             </div>
-          </div>
-
-          <div class="editor-actions" style="margin-top:0;margin-bottom:14px;">
-            <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
-            <button id="logoutBtn" class="small-button" type="button">退出登录</button>
-            <button id="deleteBtn" class="small-button danger" type="button">注销账户</button>
           </div>
 
           <div id="settingsEditor" class="editor" hidden>
@@ -737,14 +714,7 @@
           </div>
 
           <section id="domWorkbench" class="work-card" hidden>
-            <div class="work-layout">
-              <aside class="portrait-card">
-                <div class="portrait-frame">
-                  <img src="./dom.jpg" alt="DOM">
-                </div>
-              </aside>
-
-              <div class="control-card">
+            <div class="control-card">
                 <div class="stage-toolbar">
                   <div id="domDeviceState" class="pill">锁状态：离线</div>
                 </div>
@@ -799,19 +769,11 @@
                     <div id="domRingNote" class="ring-note">等待设置自动开锁时间。</div>
                   </div>
                 </div>
-              </div>
             </div>
           </section>
 
           <section id="subWorkbench" class="work-card" hidden>
-            <div class="work-layout">
-              <aside class="portrait-card">
-                <div class="portrait-frame">
-                  <img src="./sub.jpg" alt="SUB">
-                </div>
-              </aside>
-
-              <div class="control-card">
+            <div class="control-card">
                 <div class="stage-toolbar">
                   <div id="subDeviceState" class="pill">锁状态：离线</div>
                   <div id="subLockState" class="pill">当前已上锁</div>
@@ -858,7 +820,6 @@
                 </div>
 
                 <div id="subBtDeviceInfo" class="device-box">尚未选择蓝牙设备。</div>
-              </div>
             </div>
           </section>
 
@@ -893,6 +854,8 @@
     const loginAccount = document.getElementById("loginAccount");
     const loginPassword = document.getElementById("loginPassword");
     const loginBtn = document.getElementById("loginBtn");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroTools = document.getElementById("heroTools");
     const logoutBtn = document.getElementById("logoutBtn");
     const deleteBtn = document.getElementById("deleteBtn");
     const saveProfileBtn = document.getElementById("saveProfileBtn");
@@ -904,7 +867,6 @@
     const profileAvatar = document.getElementById("profileAvatar");
     const profileHeroName = document.getElementById("profileHeroName");
     const profileHeroSubtitle = document.getElementById("profileHeroSubtitle");
-    const stageTitle = document.getElementById("stageTitle");
     const accountOptions = document.getElementById("accountOptions");
     const domWorkbench = document.getElementById("domWorkbench");
     const subWorkbench = document.getElementById("subWorkbench");
@@ -967,6 +929,10 @@
     function setLoggedInView(loggedIn) {
       authShell.hidden = loggedIn;
       dashboard.hidden = !loggedIn;
+      heroTools.hidden = !loggedIn;
+      if (!loggedIn) {
+        heroTitle.textContent = "账户入口";
+      }
     }
 
     async function request(path, options = {}) {
@@ -1092,11 +1058,11 @@
       const role = currentUser ? getUserRole(currentUser) : "UNBOUND";
       domWorkbench.hidden = role !== "DOM";
       subWorkbench.hidden = role !== "SUB";
-      stageTitle.textContent =
+      heroTitle.textContent =
         role === "DOM" ? "DOM 控制台"
-        : role === "SUB" ? "SUB 查看台"
+        : role === "SUB" ? "SUB 控制台"
         : role === "INVALID" ? "关系错误"
-        : "当前工作台";
+        : "控制台";
     }
 
     async function refreshDashboard() {
