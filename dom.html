@@ -364,22 +364,38 @@
       element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
     }
 
-    function syncRing(remainingMs, totalMs, remainingTimeText) {
-      if (!remainingMs || !totalMs || remainingMs <= 0 || totalMs <= 0) {
+    function parseRemainingTimeText(value) {
+      const match = /^(\d{2,}):(\d{2}):(\d{2})$/.exec(value || "");
+      if (!match) {
+        return null;
+      }
+
+      const hours = Number(match[1]);
+      const minutes = Number(match[2]);
+      const seconds = Number(match[3]);
+      if ([hours, minutes, seconds].some((part) => Number.isNaN(part))) {
+        return null;
+      }
+
+      return { hours, minutes, seconds };
+    }
+
+    function syncRing(remainingTimeText, totalMs) {
+      const parts = parseRemainingTimeText(remainingTimeText);
+      if (!parts || !totalMs || totalMs <= 0) {
         setRingProgress(ringHoursProgress, 0);
         setRingProgress(ringMinutesProgress, 0);
         setRingProgress(ringSecondsProgress, 0);
-        ringHoursValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
-        ringMinutesValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
-        ringSecondsValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
+        ringHoursValue.textContent = remainingTimeText === "00:00:00" && totalMs ? "00" : "--";
+        ringMinutesValue.textContent = remainingTimeText === "00:00:00" && totalMs ? "00" : "--";
+        ringSecondsValue.textContent = remainingTimeText === "00:00:00" && totalMs ? "00" : "--";
         ringNote.textContent = totalMs ? "开锁时间已到，倒计时完成。" : "还没有设置自动开锁时间。";
         return;
       }
 
-      const totalSeconds = Math.ceil(remainingMs / 1000);
-      const totalHours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+      const totalHours = parts.hours;
+      const minutes = parts.minutes;
+      const seconds = parts.seconds;
       const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
       setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, totalHours / hoursProgressBase)));
       setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, minutes / 59)));
@@ -403,13 +419,12 @@
         if (document.activeElement !== unlockTime) {
           unlockTime.value = "";
         }
-        syncRing(null, null, null);
+        syncRing(null, null);
         return;
       }
 
       const autoUnlockAt = new Date(state.unlockTime);
       const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
-      const remainingMs = autoUnlockAt.getTime() - Date.now();
 
       if (document.activeElement !== unlockTime && !Number.isNaN(autoUnlockAt.getTime())) {
         unlockTime.value = `${autoUnlockAt.getFullYear()}-${pad(autoUnlockAt.getMonth() + 1)}-${pad(autoUnlockAt.getDate())}T${pad(autoUnlockAt.getHours())}:${pad(autoUnlockAt.getMinutes())}`;
@@ -417,8 +432,8 @@
 
       const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
         ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
-        : Math.max(remainingMs, 0);
-      syncRing(Math.max(remainingMs, 0), totalMs, state.remainingTime);
+        : null;
+      syncRing(state.remainingTime || "--:--:--", totalMs);
     }
 
     async function refreshState() {
