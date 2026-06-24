@@ -12,7 +12,9 @@
       --cream: #f4eadc;
       --shadow: 0 28px 70px rgba(158, 132, 98, 0.18);
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -23,6 +25,7 @@
         radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.58), transparent 20%),
         linear-gradient(180deg, #faf5ec 0%, #ece1d2 100%);
     }
+
     .shell {
       width: min(1020px, calc(100vw - 32px));
       margin: 24px auto;
@@ -34,6 +37,7 @@
       border: 1px solid rgba(140, 118, 92, 0.16);
       box-shadow: var(--shadow);
     }
+
     .hero {
       display: grid;
       grid-template-columns: 112px 1fr auto;
@@ -41,6 +45,7 @@
       align-items: center;
       margin-bottom: 28px;
     }
+
     .hero img {
       width: 112px;
       height: 112px;
@@ -50,15 +55,18 @@
       padding: 14px;
       border: 2px solid rgba(255, 255, 255, 0.9);
     }
+
     h1 {
       margin: 0 0 8px;
       font-size: clamp(30px, 4vw, 48px);
       line-height: 1;
       letter-spacing: -0.04em;
     }
+
     .subtitle,
     .nav a { color: rgba(56, 46, 38, 0.72); }
     .nav a { text-decoration: none; font-size: 14px; }
+
     .panel {
       display: grid;
       gap: 18px;
@@ -69,6 +77,7 @@
       border: 1px solid rgba(140, 118, 92, 0.18);
       box-shadow: 0 18px 40px rgba(168, 141, 110, 0.18);
     }
+
     .chip {
       display: inline-flex;
       padding: 6px 10px;
@@ -80,6 +89,7 @@
       text-transform: uppercase;
       margin-bottom: 14px;
     }
+
     .status-flag {
       display: inline-flex;
       width: fit-content;
@@ -90,47 +100,50 @@
       border: 1px solid rgba(140, 118, 92, 0.16);
       background: rgba(255, 255, 255, 0.55);
     }
+
     .status-flag.unlocked {
       color: var(--safe);
       background: rgba(29, 139, 87, 0.12);
       border-color: rgba(29, 139, 87, 0.22);
     }
-    .profile,
+
     .ring-card,
     .metric,
-    .bt-box {
+    .bt-box,
+    .bt-device {
       border: 1px solid rgba(140, 118, 92, 0.16);
       border-radius: 24px;
       background: linear-gradient(180deg, #fffdfa, #f4eadc);
     }
-    .profile {
-      padding: 14px 16px;
-      line-height: 1.6;
-    }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
       align-items: start;
     }
+
     .ring-card,
     .bt-box {
       display: grid;
       gap: 14px;
       padding: 18px 14px 14px;
     }
+
     .ring-cluster {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       width: 100%;
     }
+
     .ring-unit { display: grid; justify-items: center; gap: 8px; }
     .ring-wrap { position: relative; width: 104px; height: 104px; }
     .ring-svg { width: 104px; height: 104px; transform: rotate(-90deg); }
     .ring-track, .ring-progress { fill: none; stroke-width: 8; }
     .ring-track { stroke: rgba(21, 19, 17, 0.12); }
     .ring-progress { stroke: #111; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
+
     .ring-center {
       position: absolute;
       inset: 0;
@@ -139,19 +152,30 @@
       text-align: center;
       padding: 18px;
     }
+
     .ring-value { font-size: 24px; font-weight: 800; line-height: 1; }
-    .ring-unit-label, .ring-note, .metric-label {
+
+    .ring-unit-label,
+    .ring-note,
+    .metric-label {
       color: var(--muted);
       font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
+
     .ring-unit-label { font-size: 11px; text-align: center; }
     .metric-list { display: grid; gap: 14px; }
     .metric { padding: 16px 18px; }
     .metric-value { margin-top: 8px; font-size: 28px; font-weight: 700; line-height: 1.1; }
     .notice { color: var(--muted); line-height: 1.6; }
-    .bt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+    .bt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
     .bt-grid input[type="text"] {
       width: 100%;
       padding: 14px 16px;
@@ -160,7 +184,9 @@
       font-size: 14px;
       background: #fffdfa;
     }
+
     .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
     button {
       border: 1px solid rgba(140, 118, 92, 0.22);
       border-radius: 16px;
@@ -171,30 +197,24 @@
       background: var(--cream);
       color: var(--ink);
     }
+
     .primary { background: #111; color: #fffaf5; }
-    .bt-status, .bt-device {
+
+    .bt-device {
       padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(140, 118, 92, 0.16);
       line-height: 1.5;
       font-size: 14px;
+      background: rgba(245, 236, 223, 0.82);
+      color: var(--ink);
     }
-    .bt-status { background: rgba(255, 255, 255, 0.56); color: var(--muted); }
-    .bt-device { background: rgba(245, 236, 223, 0.82); color: var(--ink); }
-    .bt-preview {
-      margin: 0;
-      padding: 14px;
-      border-radius: 18px;
-      background: #111;
-      color: #f5efe5;
-      font-size: 13px;
-      line-height: 1.6;
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+
     @media (max-width: 860px) {
-      .hero, .grid, .bt-grid, .ring-cluster { grid-template-columns: 1fr; }
+      .hero,
+      .grid,
+      .bt-grid,
+      .ring-cluster {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -205,13 +225,12 @@
       <div>
         <div class="chip">Puppy Watch</div>
         <h1>SUB 查看页</h1>
-        <p class="subtitle">SUB 只读取当前登录账户的共享状态，并可继续把状态同步给蓝牙设备。</p>
+        <p class="subtitle">SUB 页面只保留状态查看和蓝牙连接的核心操作，顶部资料卡和底部状态预览已收起。</p>
       </div>
       <div class="nav"><a href="./index.html">返回入口</a> / <a href="./dom.html">打开 DOM 页面</a></div>
     </section>
 
     <section class="panel">
-      <div id="profileCard" class="profile">正在读取账户信息...</div>
       <div id="statusFlag" class="status-flag">当前已上锁</div>
 
       <div class="grid">
@@ -253,10 +272,6 @@
 
         <div class="metric-list">
           <div class="metric">
-            <div class="metric-label">查看角色</div>
-            <div class="metric-value">SUB</div>
-          </div>
-          <div class="metric">
             <div class="metric-label">目标用户</div>
             <div id="accountValue" class="metric-value" style="font-size:22px;">--</div>
           </div>
@@ -276,18 +291,6 @@
       <div class="bt-box">
         <div>
           <div class="chip" style="margin-bottom:8px;">Keybox Link</div>
-          <div class="notice">蓝牙能力保持不变，只是发送内容会改成当前账户的状态。</div>
-        </div>
-
-        <div class="bt-grid">
-          <label>
-            <div class="metric-label" style="margin-bottom:8px;">Service UUID</div>
-            <input id="serviceUuidInput" type="text" value="000000ff-0000-1000-8000-00805f9b34fb">
-          </label>
-          <label>
-            <div class="metric-label" style="margin-bottom:8px;">Characteristic UUID</div>
-            <input id="characteristicUuidInput" type="text" value="0000ff01-0000-1000-8000-00805f9b34fb">
-          </label>
         </div>
 
         <div class="actions">
@@ -296,8 +299,6 @@
         </div>
 
         <div id="btDeviceInfo" class="bt-device">尚未选择蓝牙设备。</div>
-        <div id="btStatus" class="bt-status">尚未连接蓝牙设备。</div>
-        <pre id="btPreview" class="bt-preview">{"locked":true,"unlockTime":null,"remainingTime":"--:--:--"}</pre>
       </div>
     </section>
   </main>
@@ -306,7 +307,6 @@
     const SESSION_KEY = "cb-lock-session";
     const API_URL = "/api/state?mode=sub_view";
     const ringCircumference = 2 * Math.PI * 40;
-    const profileCard = document.getElementById("profileCard");
     const statusFlag = document.getElementById("statusFlag");
     const accountValue = document.getElementById("accountValue");
     const timeValue = document.getElementById("timeValue");
@@ -318,18 +318,16 @@
     const ringMinutesValue = document.getElementById("ringMinutesValue");
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
-    const serviceUuidInput = document.getElementById("serviceUuidInput");
-    const characteristicUuidInput = document.getElementById("characteristicUuidInput");
     const scanBtBtn = document.getElementById("scanBtBtn");
     const connectBtBtn = document.getElementById("connectBtBtn");
     const btDeviceInfo = document.getElementById("btDeviceInfo");
-    const btStatus = document.getElementById("btStatus");
-    const btPreview = document.getElementById("btPreview");
 
     let currentState = null;
     let btDevice = null;
     let btCharacteristic = null;
     let autoSendTimer = null;
+    const serviceUuid = "000000ff-0000-1000-8000-00805f9b34fb";
+    const characteristicUuid = "0000ff01-0000-1000-8000-00805f9b34fb";
 
     function getSession() {
       return sessionStorage.getItem(SESSION_KEY);
@@ -373,31 +371,8 @@
       return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
-    function normalizeBluetoothUuid(value) {
-      return value.trim().toLowerCase();
-    }
-
-    function setBtStatus(message) {
-      btStatus.textContent = message;
-    }
-
     function setBtDeviceInfo(message) {
       btDeviceInfo.textContent = message;
-    }
-
-    function renderProfile(actor, subject) {
-      if (!actor.dom) {
-        redirectToPortal("当前账户不是 SUB 角色");
-        return;
-      }
-      profileCard.innerHTML = `
-        <div><strong>账户:</strong> ${subject.account}</div>
-        <div><strong>角色:</strong> SUB</div>
-        <div><strong>绑定 DOM:</strong> ${actor.dom}</div>
-        <div><strong>SUB 字段:</strong> ${subject.sub || "未设置"}</div>
-        <div><strong>删除方式:</strong> 仅支持手动删除</div>
-      `;
-      accountValue.textContent = subject.account;
     }
 
     function getPayloadFromState(state) {
@@ -413,36 +388,22 @@
       };
     }
 
-    function refreshPayloadPreview() {
-      if (!currentState) {
-        return;
-      }
-      btPreview.textContent = JSON.stringify(getPayloadFromState(currentState), null, 2);
-    }
-
     async function scanBluetoothDevice() {
       if (!navigator.bluetooth) {
         throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
       }
-      const serviceUuid = normalizeBluetoothUuid(serviceUuidInput.value);
-      if (!serviceUuid) {
-        throw new Error("请先填写 Service UUID。");
-      }
-      serviceUuidInput.value = serviceUuid;
-      setBtStatus("正在请求蓝牙设备...");
       btDevice = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
         optionalServices: [serviceUuid]
       });
       setBtDeviceInfo(`已选择设备: ${btDevice.name || "Unknown Device"}`);
-      setBtStatus("设备已选择，点击“连接蓝牙”建立 GATT 连接。");
       btDevice.addEventListener("gattserverdisconnected", () => {
         btCharacteristic = null;
         if (autoSendTimer) {
           clearInterval(autoSendTimer);
           autoSendTimer = null;
         }
-        setBtStatus(`设备已断开: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}`);
+        setBtDeviceInfo(`设备已断开: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}`);
       });
     }
 
@@ -450,21 +411,13 @@
       if (!navigator.bluetooth) {
         throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
       }
-      const serviceUuid = normalizeBluetoothUuid(serviceUuidInput.value);
-      const characteristicUuid = normalizeBluetoothUuid(characteristicUuidInput.value);
-      if (!serviceUuid || !characteristicUuid) {
-        throw new Error("请先填写 Service UUID 和 Characteristic UUID。");
-      }
       if (!btDevice) {
         throw new Error("请先搜索并选择蓝牙设备。");
       }
-      serviceUuidInput.value = serviceUuid;
-      characteristicUuidInput.value = characteristicUuid;
-      setBtStatus(`正在连接: ${btDevice.name || "Unknown Device"}...`);
       const server = await btDevice.gatt.connect();
       const service = await server.getPrimaryService(serviceUuid);
       btCharacteristic = await service.getCharacteristic(characteristicUuid);
-      setBtStatus(`已连接 ${btDevice.name || "Unknown Device"}，将每秒发送 ${currentState.user.account} 的状态。`);
+      setBtDeviceInfo(`已连接设备: ${btDevice.name || "Unknown Device"}`);
       if (autoSendTimer) {
         clearInterval(autoSendTimer);
       }
@@ -480,20 +433,18 @@
       }
       const payload = getPayloadFromState(currentState);
       const encoded = new TextEncoder().encode(JSON.stringify(payload));
-      refreshPayloadPreview();
       if (typeof btCharacteristic.writeValueWithoutResponse === "function") {
         await btCharacteristic.writeValueWithoutResponse(encoded);
       } else {
         await btCharacteristic.writeValue(encoded);
       }
-      setBtStatus(`已连接 ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}，每秒发送中。`);
     }
 
     async function safeBluetoothSend() {
       try {
         await sendBluetoothState();
       } catch (error) {
-        setBtStatus(`发送失败: ${error.message}`);
+        setBtDeviceInfo(`发送失败: ${error.message}`);
       }
     }
 
@@ -534,8 +485,7 @@
         redirectToPortal("当前账户不能打开 SUB 查看页");
         return;
       }
-      renderProfile(state.actor, state.user);
-      refreshPayloadPreview();
+      accountValue.textContent = state.user.account;
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);
 
@@ -562,7 +512,7 @@
         const state = await request(API_URL);
         renderState(state);
       } catch (error) {
-        setBtStatus(`同步失败: ${error.message}`);
+        ringNote.textContent = `同步失败: ${error.message}`;
       }
     }
 
@@ -570,7 +520,7 @@
       try {
         await scanBluetoothDevice();
       } catch (error) {
-        setBtStatus(`搜索失败: ${error.message}`);
+        setBtDeviceInfo(`搜索失败: ${error.message}`);
       }
     });
 
@@ -578,7 +528,7 @@
       try {
         await connectBluetooth();
       } catch (error) {
-        setBtStatus(`连接失败: ${error.message}`);
+        setBtDeviceInfo(`连接失败: ${error.message}`);
       }
     });
 
