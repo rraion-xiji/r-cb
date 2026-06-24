@@ -158,7 +158,7 @@
 
   <script type="module">
     import * as THREE from "three";
-    import { MapControls } from "three/addons/controls/MapControls.js";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
     import { DragControls } from "three/addons/controls/DragControls.js";
 
     const SESSION_KEY = "cb-lock-session";
@@ -174,13 +174,14 @@
     scene.background = new THREE.Color(0x111111);
     scene.fog = new THREE.Fog(0x111111, 550, 1200);
 
-    const camera = new THREE.OrthographicCamera();
-    const controls = new MapControls(camera, renderer.domElement);
-    controls.enableRotate = false;
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 4000);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableRotate = true;
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.zoomSpeed = 1.1;
-    controls.screenSpacePanning = true;
+    controls.zoomSpeed = 0.9;
+    controls.minDistance = 180;
+    controls.maxDistance = 1800;
 
     scene.add(new THREE.AmbientLight(0xffffff, 1.35));
     const rim = new THREE.DirectionalLight(0xf5e8d1, 1.1);
@@ -190,7 +191,6 @@
     const floor = new THREE.GridHelper(1800, 32, 0x3f3a33, 0x262626);
     floor.material.opacity = 0.24;
     floor.material.transparent = true;
-    floor.rotation.x = Math.PI / 2;
     scene.add(floor);
 
     const graphState = {
@@ -236,16 +236,8 @@
     function resizeCamera() {
       const width = container.clientWidth;
       const height = container.clientHeight;
-      const aspect = width / Math.max(height, 1);
-      const frustum = 380;
-      camera.left = -frustum * aspect;
-      camera.right = frustum * aspect;
-      camera.top = frustum;
-      camera.bottom = -frustum;
-      camera.near = -2000;
-      camera.far = 2000;
-      camera.position.set(0, 0, 100);
-      camera.zoom = 1;
+      camera.aspect = width / Math.max(height, 1);
+      camera.position.set(0, 120, 620);
       camera.updateProjectionMatrix();
       controls.target.set(0, 0, 0);
       controls.update();
@@ -418,15 +410,17 @@
     }
 
     function layoutNodes(nodes) {
-      const radius = Math.max(160, 58 * nodes.length);
+      const radius = Math.max(180, 34 * nodes.length);
       return nodes.map((node, index) => {
-        const angle = (Math.PI * 2 * index) / Math.max(nodes.length, 1);
+        const theta = (Math.PI * 2 * index) / Math.max(nodes.length, 1);
+        const phi = Math.acos(1 - (2 * (index + 0.5)) / Math.max(nodes.length, 1));
+        const wobble = (index % 3) * 18;
         return {
           node,
           position: new THREE.Vector3(
-            Math.cos(angle) * radius,
-            Math.sin(angle) * radius,
-            (index % 2) * 8
+            Math.cos(theta) * Math.sin(phi) * (radius + wobble),
+            Math.cos(phi) * (radius * 0.72),
+            Math.sin(theta) * Math.sin(phi) * (radius + wobble)
           )
         };
       });
@@ -489,7 +483,6 @@
       });
 
       dragControls.addEventListener("drag", (event) => {
-        event.object.position.z = 0;
         refreshArrows();
       });
 
