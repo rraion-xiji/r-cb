@@ -72,14 +72,6 @@
       letter-spacing: -0.05em;
     }
 
-    .hero-copy p {
-      margin: 10px 0 0;
-      color: rgba(255, 244, 234, 0.78);
-      font-size: 16px;
-      line-height: 1.7;
-      max-width: 760px;
-    }
-
     .auth-shell[hidden],
     .dashboard[hidden],
     .editor[hidden],
@@ -266,18 +258,6 @@
       padding: 18px;
     }
 
-    .section-chip {
-      display: inline-flex;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #111;
-      color: #fff;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-
     .profile-hero {
       display: grid;
       grid-template-columns: 88px 1fr;
@@ -313,7 +293,6 @@
       margin: 0;
     }
 
-    .profile,
     .editor,
     .work-card,
     .stage-card,
@@ -323,17 +302,6 @@
       background: rgba(255, 251, 245, 0.72);
       border: 1px solid rgba(91, 73, 49, 0.12);
       line-height: 1.65;
-    }
-
-    .profile-row {
-      display: grid;
-      grid-template-columns: 78px 1fr;
-      gap: 10px;
-      align-items: start;
-    }
-
-    .profile-row strong {
-      color: var(--muted);
     }
 
     .editor h3,
@@ -373,18 +341,6 @@
       gap: 16px;
       align-items: start;
       margin-bottom: 14px;
-    }
-
-    .stage-kicker {
-      display: inline-flex;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(91, 73, 49, 0.08);
-      color: var(--ink);
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
     }
 
     .stage-title {
@@ -453,12 +409,6 @@
       height: 100%;
       object-fit: cover;
       image-rendering: pixelated;
-    }
-
-    .portrait-copy {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
     }
 
     .control-card {
@@ -570,13 +520,6 @@
       border-radius: 20px;
       font-size: clamp(22px, 3vw, 28px);
       letter-spacing: -0.03em;
-    }
-
-    .foot {
-      margin-top: 18px;
-      color: rgba(255, 247, 238, 0.74);
-      line-height: 1.7;
-      font-size: 14px;
     }
 
     @media (max-width: 1040px) {
@@ -700,7 +643,6 @@
       <img class="hero-logo" src="./logo.png" alt="CB Lock Logo">
       <div class="hero-copy">
         <h1>CB Lock Portal</h1>
-        <p>登录后会直接进入当前账户的工作台。DOM 只看到 DOM 控制区，SUB 只看到 SUB 查看区，不再跳转到独立页面。</p>
       </div>
     </section>
 
@@ -760,9 +702,7 @@
         <section class="panel workbench">
           <div class="stage-head">
             <div>
-              <div class="stage-kicker">Workbench</div>
               <h2 id="stageTitle" class="stage-title">当前工作台</h2>
-              <p id="workIntro" class="stage-subtitle">登录后会直接在这里显示当前账户对应的 DOM 或 SUB 面板。</p>
             </div>
           </div>
 
@@ -773,8 +713,6 @@
               <p id="profileHeroSubtitle" class="profile-subtitle">登录后在这里管理账户关系与当前角色。</p>
             </div>
           </div>
-
-          <div id="profileCard" class="profile" style="margin-bottom:14px;"></div>
 
           <div class="editor-actions" style="margin-top:0;margin-bottom:14px;">
             <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
@@ -804,7 +742,6 @@
                 <div class="portrait-frame">
                   <img src="./dom.jpg" alt="DOM">
                 </div>
-                <div class="portrait-copy">DOM 账户在这里设置策略。到点后服务器会把目标 SUB 账户自动切到已开锁状态。</div>
               </aside>
 
               <div class="control-card">
@@ -872,7 +809,6 @@
                 <div class="portrait-frame">
                   <img src="./sub.jpg" alt="SUB">
                 </div>
-                <div class="portrait-copy">SUB 账户只查看当前锁状态，并在蓝牙连接后持续发送当前账户状态。</div>
               </aside>
 
               <div class="control-card">
@@ -934,7 +870,6 @@
     </section>
 
     <datalist id="accountOptions"></datalist>
-    <p class="foot">当前页面复用本浏览器里的会话令牌。DOM 只显示 DOM 控制面板，SUB 只显示 SUB 查看面板。</p>
   </main>
 
   <script>
@@ -966,13 +901,11 @@
     const editDom = document.getElementById("editDom");
     const editSub = document.getElementById("editSub");
     const authStatus = document.getElementById("authStatus");
-    const profileCard = document.getElementById("profileCard");
     const profileAvatar = document.getElementById("profileAvatar");
     const profileHeroName = document.getElementById("profileHeroName");
     const profileHeroSubtitle = document.getElementById("profileHeroSubtitle");
     const stageTitle = document.getElementById("stageTitle");
     const accountOptions = document.getElementById("accountOptions");
-    const workIntro = document.getElementById("workIntro");
     const domWorkbench = document.getElementById("domWorkbench");
     const subWorkbench = document.getElementById("subWorkbench");
 
@@ -1086,13 +1019,6 @@
         : role === "INVALID" ? "当前账户的 DOM / SUB 关系冲突，请先修正。"
         : "当前账户还没有绑定 DOM / SUB 关系。";
 
-      profileCard.innerHTML = `
-        <div class="profile-row"><strong>账户</strong><span>${user.account}</span></div>
-        <div class="profile-row"><strong>角色</strong><span>${getRoleText(role)}</span></div>
-        <div class="profile-row"><strong>DOM</strong><span>${user.dom || "未设置"}</span></div>
-        <div class="profile-row"><strong>SUB</strong><span>${user.sub || "未设置"}</span></div>
-        <div class="profile-row"><strong>删除</strong><span>仅支持用户手动注销</span></div>
-      `;
       editDom.value = user.dom || "";
       editSub.value = user.sub || "";
 
@@ -1166,7 +1092,6 @@
       const role = currentUser ? getUserRole(currentUser) : "UNBOUND";
       domWorkbench.hidden = role !== "DOM";
       subWorkbench.hidden = role !== "SUB";
-      workIntro.hidden = role === "DOM" || role === "SUB";
       stageTitle.textContent =
         role === "DOM" ? "DOM 控制台"
         : role === "SUB" ? "SUB 查看台"

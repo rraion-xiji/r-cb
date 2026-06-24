@@ -3,7 +3,7 @@ compatibility_date = "2026-06-24"
 main = "worker.js"
 
 [assets]
-directory = "."
+directory = "./public"
 binding = "ASSETS"
 
 [[d1_databases]]
