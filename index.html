@@ -300,6 +300,10 @@
       margin-top: 14px;
     }
 
+    .editor[hidden] {
+      display: none;
+    }
+
     .editor h3 {
       margin: 0 0 12px;
       font-size: 18px;
@@ -333,6 +337,11 @@
       background: #f5ecdf;
       color: var(--ink);
       border: 1px solid rgba(20, 20, 20, 0.14);
+    }
+
+    .link-card:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
     }
 
     .link-card.planet {
@@ -455,7 +464,13 @@
           <div class="chip">Current User</div>
           <div id="profileCard" class="profile"></div>
 
-          <div class="editor">
+          <div class="editor-actions" style="margin-top:14px;">
+            <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
+            <button id="logoutBtn" class="small-button" type="button">退出登录</button>
+            <button id="deleteBtn" class="small-button" type="button">删除当前账户</button>
+          </div>
+
+          <div id="settingsEditor" class="editor" hidden>
             <h3>修改 DOM / SUB</h3>
             <p class="muted">这里填写的 `dom` 和 `sub` 必须是已存在账户。留空表示取消关系。</p>
             <div class="fields two">
@@ -468,14 +483,12 @@
             </div>
             <div class="editor-actions">
               <button id="saveProfileBtn" class="small-button" type="button">保存关系</button>
-              <button id="logoutBtn" class="small-button" type="button">退出登录</button>
-              <button id="deleteBtn" class="small-button" type="button">删除当前账户</button>
             </div>
           </div>
 
           <div class="links">
-            <button id="openDomBtn" class="link-card" type="button">打开 DOM 控制页</button>
-            <button id="openSubBtn" class="link-card secondary" type="button">打开 SUB 查看页</button>
+            <button id="openDomBtn" class="link-card" type="button" hidden>打开 DOM 控制页</button>
+            <button id="openSubBtn" class="link-card secondary" type="button" hidden>打开 SUB 查看页</button>
             <a class="link-card planet" href="./planet.html">打开小狗星球</a>
           </div>
         </section>
@@ -513,8 +526,10 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const deleteBtn = document.getElementById("deleteBtn");
     const saveProfileBtn = document.getElementById("saveProfileBtn");
+    const toggleSettingsBtn = document.getElementById("toggleSettingsBtn");
     const openDomBtn = document.getElementById("openDomBtn");
     const openSubBtn = document.getElementById("openSubBtn");
+    const settingsEditor = document.getElementById("settingsEditor");
     const editDom = document.getElementById("editDom");
     const editSub = document.getElementById("editSub");
     const authStatus = document.getElementById("authStatus");
@@ -565,9 +580,11 @@
     }
 
     function renderProfile(user) {
+      const role = user.dom ? "DOM" : user.sub ? "SUB" : "未绑定";
       currentUser = user;
       profileCard.innerHTML = `
         <div><strong>账户</strong>${user.account}</div>
+        <div><strong>角色</strong>${role}</div>
         <div><strong>DOM</strong>${user.dom || "未设置"}</div>
         <div><strong>SUB</strong>${user.sub || "未设置"}</div>
         <div><strong>自动删除</strong>${user.autoDeleteDays} 天</div>
@@ -575,6 +592,8 @@
       `;
       editDom.value = user.dom || "";
       editSub.value = user.sub || "";
+      openDomBtn.hidden = role !== "DOM";
+      openSubBtn.hidden = role !== "SUB";
     }
 
     function renderUsers(users) {
@@ -614,6 +633,10 @@
         accountOptions.innerHTML = "";
         currentUser = null;
         currentUsers = [];
+        openDomBtn.hidden = true;
+        openSubBtn.hidden = true;
+        settingsEditor.hidden = true;
+        toggleSettingsBtn.textContent = "设置";
         return;
       }
 
@@ -627,6 +650,10 @@
         accountOptions.innerHTML = "";
         currentUser = null;
         currentUsers = [];
+        openDomBtn.hidden = true;
+        openSubBtn.hidden = true;
+        settingsEditor.hidden = true;
+        toggleSettingsBtn.textContent = "设置";
       }
     }
 
@@ -637,6 +664,13 @@
     function openRelationPage(kind) {
       if (!currentUser) {
         authStatus.textContent = "请先登录。";
+        return;
+      }
+      const role = currentUser.dom ? "dom" : currentUser.sub ? "sub" : "";
+      if (role !== kind) {
+        authStatus.textContent = kind === "dom"
+          ? "当前账户不是 DOM 角色，只能打开 SUB 查看页。"
+          : "当前账户不是 SUB 角色，只能打开 DOM 控制页。";
         return;
       }
       const relation = kind === "dom" ? currentUser.dom : currentUser.sub;
@@ -715,6 +749,11 @@
       } catch (error) {
         authStatus.textContent = `保存关系失败: ${error.message}`;
       }
+    });
+
+    toggleSettingsBtn.addEventListener("click", () => {
+      settingsEditor.hidden = !settingsEditor.hidden;
+      toggleSettingsBtn.textContent = settingsEditor.hidden ? "设置" : "收起设置";
     });
 
     openDomBtn.addEventListener("click", () => openRelationPage("dom"));
