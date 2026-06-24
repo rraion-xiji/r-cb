@@ -215,7 +215,7 @@
         <h1>DOM 控制页</h1>
         <p class="subtitle">当前页面只控制已登录账户自己的锁状态，DOM 和 SUB 会共享同一份用户状态。</p>
       </div>
-      <div class="nav"><a href="./a.html">返回入口</a> / <a href="./sub.html">打开 SUB 页面</a></div>
+      <div class="nav"><a href="./index.html">返回入口</a> / <a href="./sub.html">打开 SUB 页面</a></div>
     </section>
 
     <section class="layout">
@@ -348,7 +348,7 @@
 
     function redirectToPortal(message) {
       clearSession();
-      window.location.href = `./a.html${message ? `#${encodeURIComponent(message)}` : ""}`;
+      window.location.href = `./index.html${message ? `#${encodeURIComponent(message)}` : ""}`;
     }
 
     async function request(path, options = {}) {

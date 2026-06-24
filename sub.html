@@ -207,7 +207,7 @@
         <h1>SUB 查看页</h1>
         <p class="subtitle">SUB 只读取当前登录账户的共享状态，并可继续把状态同步给蓝牙设备。</p>
       </div>
-      <div class="nav"><a href="./a.html">返回入口</a> / <a href="./dom.html">打开 DOM 页面</a></div>
+      <div class="nav"><a href="./index.html">返回入口</a> / <a href="./dom.html">打开 DOM 页面</a></div>
     </section>
 
     <section class="panel">
@@ -282,7 +282,7 @@
         <div class="bt-grid">
           <label>
             <div class="metric-label" style="margin-bottom:8px;">Service UUID</div>
-            <input id="serviceUuidInput" type="text" value="0000ff00-0000-1000-8000-00805f9b34fb">
+            <input id="serviceUuidInput" type="text" value="000000ff-0000-1000-8000-00805f9b34fb">
           </label>
           <label>
             <div class="metric-label" style="margin-bottom:8px;">Characteristic UUID</div>
@@ -341,7 +341,7 @@
 
     function redirectToPortal(message) {
       clearSession();
-      window.location.href = `./a.html${message ? `#${encodeURIComponent(message)}` : ""}`;
+      window.location.href = `./index.html${message ? `#${encodeURIComponent(message)}` : ""}`;
     }
 
     async function request(path, options = {}) {
