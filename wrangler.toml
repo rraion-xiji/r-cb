@@ -8,4 +8,4 @@ directory = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "cb-lock-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "5aaa9655-3d02-44a2-bab4-7c37dfa2de1b"
