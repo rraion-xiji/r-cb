@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小狗星球</title>
+  <style>
+    :root {
+      --bg: #090909;
+      --panel: rgba(255, 255, 255, 0.96);
+      --ink: #141414;
+      --muted: #6d655d;
+      --line: rgba(255, 255, 255, 0.12);
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+      --dom: #d9a84d;
+      --sub: #111111;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 18%),
+        radial-gradient(circle at 80% 10%, rgba(217, 168, 77, 0.12), transparent 24%),
+        linear-gradient(180deg, #090909 0%, #111111 100%);
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(1280px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+      border-radius: 32px;
+      background: linear-gradient(180deg, rgba(24, 24, 24, 0.97), rgba(14, 14, 14, 0.99));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 4vw, 50px);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: rgba(255, 248, 240, 0.74);
+      line-height: 1.7;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav a,
+    .nav button {
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      color: rgba(255, 248, 240, 0.72);
+      font-size: 14px;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .legend .dom::before {
+      background: var(--dom);
+    }
+
+    .legend .sub::before {
+      background: var(--sub);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .planet {
+      position: relative;
+      height: min(78vh, 900px);
+      border-radius: 26px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03), transparent 42%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: grab;
+    }
+
+    .planet.panning {
+      cursor: grabbing;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      transform-origin: 0 0;
+    }
+
+    .edges,
+    .nodes {
+      position: absolute;
+      inset: 0;
+    }
+
+    .edges {
+      overflow: visible;
+    }
+
+    .node {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      min-width: 110px;
+      padding: 12px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 253, 249, 0.96);
+      color: var(--ink);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+      user-select: none;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .node.dragging {
+      cursor: grabbing;
+      box-shadow: 0 18px 38px rgba(217, 168, 77, 0.3);
+    }
+
+    .node strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .node small {
+      display: block;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 248, 240, 0.74);
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="topbar">
+      <div>
+        <h1>小狗星球</h1>
+        <p class="subtitle">所有用户会以星球节点展示。存在 `dom/sub` 关系的两个人之间，会显示单向箭头。可以像 Obsidian 一样拖动画布，也可以单独拖动节点。</p>
+      </div>
+      <div class="nav">
+        <a href="./index.html">返回首页</a>
+        <a href="./dom.html">DOM 控制页</a>
+        <a href="./sub.html">SUB 查看页</a>
+      </div>
+    </section>
+
+    <div class="legend">
+      <span class="dom">DOM 关系箭头</span>
+      <span class="sub">SUB 关系箭头</span>
+    </div>
+
+    <section id="planet" class="planet">
+      <div id="scene" class="scene">
+        <svg id="edges" class="edges">
+          <defs>
+            <marker id="arrowDom" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#d9a84d"></path>
+            </marker>
+            <marker id="arrowSub" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#ffffff"></path>
+            </marker>
+          </defs>
+        </svg>
+        <div id="nodes" class="nodes"></div>
+      </div>
+    </section>
+
+    <div id="status" class="status">正在加载小狗星球...</div>
+  </main>
+
+  <script>
+    const SESSION_KEY = "cb-lock-session";
+    const planet = document.getElementById("planet");
+    const scene = document.getElementById("scene");
+    const edges = document.getElementById("edges");
+    const nodesLayer = document.getElementById("nodes");
+    const status = document.getElementById("status");
+    const sceneState = {
+      panX: 0,
+      panY: 0,
+      scale: 1
+    };
+    const graphState = {
+      nodes: [],
+      links: [],
+      positions: {}
+    };
+
+    function getSession() {
+      return localStorage.getItem(SESSION_KEY);
+    }
+
+    function redirectToPortal(message) {
+      localStorage.removeItem(SESSION_KEY);
+      window.location.href = `./index.html#${encodeURIComponent(message || "请先登录")}`;
+    }
+
+    async function request(path) {
+      const token = getSession();
+      if (!token) {
+        redirectToPortal("请先登录");
+        throw new Error("未登录");
+      }
+
+      const response = await fetch(path, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (response.status === 401) {
+          redirectToPortal(payload.error || "登录已失效");
+        }
+        throw new Error(payload.error || `Request failed: ${response.status}`);
+      }
+      return payload;
+    }
+
+    function updateSceneTransform() {
+      scene.style.transform = `translate(${sceneState.panX}px, ${sceneState.panY}px) scale(${sceneState.scale})`;
+    }
+
+    function getViewportCenter() {
+      return {
+        x: planet.clientWidth / 2,
+        y: planet.clientHeight / 2
+      };
+    }
+
+    function seedPositions(nodes) {
+      const radius = Math.max(180, 60 * nodes.length);
+      const center = getViewportCenter();
+      nodes.forEach((node, index) => {
+        const angle = (Math.PI * 2 * index) / Math.max(nodes.length, 1);
+        graphState.positions[node.id] = {
+          x: center.x + Math.cos(angle) * radius,
+          y: center.y + Math.sin(angle) * radius
+        };
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function renderGraph() {
+      edges.setAttribute("width", planet.clientWidth * 2);
+      edges.setAttribute("height", planet.clientHeight * 2);
+      edges.setAttribute("viewBox", `0 0 ${planet.clientWidth * 2} ${planet.clientHeight * 2}`);
+
+      edges.innerHTML = `
+        <defs>
+          <marker id="arrowDom" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#d9a84d"></path>
+          </marker>
+          <marker id="arrowSub" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#ffffff"></path>
+          </marker>
+        </defs>
+      `;
+
+      for (const link of graphState.links) {
+        const source = graphState.positions[link.source];
+        const target = graphState.positions[link.target];
+        if (!source || !target) {
+          continue;
+        }
+        const stroke = link.type === "dom" ? "#d9a84d" : "#ffffff";
+        const marker = link.type === "dom" ? "url(#arrowDom)" : "url(#arrowSub)";
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", source.x);
+        line.setAttribute("y1", source.y);
+        line.setAttribute("x2", target.x);
+        line.setAttribute("y2", target.y);
+        line.setAttribute("stroke", stroke);
+        line.setAttribute("stroke-width", link.type === "dom" ? "2.8" : "2");
+        line.setAttribute("stroke-opacity", "0.88");
+        line.setAttribute("marker-end", marker);
+        edges.appendChild(line);
+      }
+
+      nodesLayer.innerHTML = graphState.nodes.map((node) => {
+        const position = graphState.positions[node.id];
+        return `
+          <div class="node" data-id="${escapeHtml(node.id)}" style="left:${position.x}px; top:${position.y}px;">
+            <strong>${escapeHtml(node.label)}</strong>
+            <small>DOM: ${escapeHtml(node.dom || "未设置")}</small>
+            <small>SUB: ${escapeHtml(node.sub || "未设置")}</small>
+          </div>
+        `;
+      }).join("");
+
+      attachNodeDrag();
+      updateSceneTransform();
+    }
+
+    function attachNodeDrag() {
+      const nodeElements = nodesLayer.querySelectorAll(".node");
+      nodeElements.forEach((element) => {
+        element.addEventListener("pointerdown", (event) => {
+          event.stopPropagation();
+          const id = element.dataset.id;
+          const position = graphState.positions[id];
+          const startX = event.clientX;
+          const startY = event.clientY;
+          element.classList.add("dragging");
+          element.setPointerCapture(event.pointerId);
+
+          function onMove(moveEvent) {
+            const deltaX = (moveEvent.clientX - startX) / sceneState.scale;
+            const deltaY = (moveEvent.clientY - startY) / sceneState.scale;
+            graphState.positions[id] = {
+              x: position.x + deltaX,
+              y: position.y + deltaY
+            };
+            renderGraph();
+          }
+
+          function onUp(upEvent) {
+            element.classList.remove("dragging");
+            element.releasePointerCapture(upEvent.pointerId);
+            element.removeEventListener("pointermove", onMove);
+            element.removeEventListener("pointerup", onUp);
+            element.removeEventListener("pointercancel", onUp);
+          }
+
+          element.addEventListener("pointermove", onMove);
+          element.addEventListener("pointerup", onUp);
+          element.addEventListener("pointercancel", onUp);
+        });
+      });
+    }
+
+    function attachPanning() {
+      planet.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".node")) {
+          return;
+        }
+        const startPanX = sceneState.panX;
+        const startPanY = sceneState.panY;
+        const startX = event.clientX;
+        const startY = event.clientY;
+        planet.classList.add("panning");
+        planet.setPointerCapture(event.pointerId);
+
+        function onMove(moveEvent) {
+          sceneState.panX = startPanX + (moveEvent.clientX - startX);
+          sceneState.panY = startPanY + (moveEvent.clientY - startY);
+          updateSceneTransform();
+        }
+
+        function onUp(upEvent) {
+          planet.classList.remove("panning");
+          planet.releasePointerCapture(upEvent.pointerId);
+          planet.removeEventListener("pointermove", onMove);
+          planet.removeEventListener("pointerup", onUp);
+          planet.removeEventListener("pointercancel", onUp);
+        }
+
+        planet.addEventListener("pointermove", onMove);
+        planet.addEventListener("pointerup", onUp);
+        planet.addEventListener("pointercancel", onUp);
+      });
+
+      planet.addEventListener("wheel", (event) => {
+        event.preventDefault();
+        const nextScale = event.deltaY < 0 ? sceneState.scale * 1.08 : sceneState.scale / 1.08;
+        sceneState.scale = Math.max(0.45, Math.min(2.1, nextScale));
+        updateSceneTransform();
+      }, { passive: false });
+    }
+
+    async function init() {
+      try {
+        const graph = await request("/api/planet");
+        graphState.nodes = graph.nodes || [];
+        graphState.links = graph.links || [];
+
+        if (!graphState.nodes.length) {
+          status.textContent = "当前没有用户，无法生成星球关系图。";
+          return;
+        }
+
+        seedPositions(graphState.nodes);
+        renderGraph();
+        attachPanning();
+        status.textContent = `已加载 ${graphState.nodes.length} 个用户节点，${graphState.links.length} 条单向关系。拖动画布或节点可重新排列。`;
+      } catch (error) {
+        status.textContent = `加载失败: ${error.message}`;
+      }
+    }
+
+    window.addEventListener("resize", renderGraph);
+    init();
+  </script>
+</body>
+</html>

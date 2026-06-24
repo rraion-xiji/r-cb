@@ -49,7 +49,7 @@ function normalizeAccount(value) {
 }
 
 function normalizeProfileField(value) {
-  return String(value || "").trim();
+  return normalizeAccount(value);
 }
 
 function normalizeAutoDeleteDays(value) {
@@ -63,8 +63,7 @@ function normalizeAutoDeleteDays(value) {
 async function sha256Hex(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
-  const hex = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
-  return hex;
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 async function hashPassword(password, salt) {
@@ -79,10 +78,48 @@ async function parseJson(request) {
   }
 }
 
+async function getUserByAccount(db, account) {
+  return db.prepare(
+    `SELECT id, account, password_salt, password_hash, dom, sub, auto_delete_days, delete_at, created_at, updated_at
+     FROM users
+     WHERE account = ?`
+  ).bind(account).first();
+}
+
+async function getUserById(db, userId) {
+  return db.prepare(
+    `SELECT id, account, dom, sub, auto_delete_days, delete_at, created_at, updated_at
+     FROM users
+     WHERE id = ?`
+  ).bind(userId).first();
+}
+
+async function ensureRelationshipTargetsExist(db, dom, sub) {
+  for (const field of [dom, sub]) {
+    if (!field) {
+      continue;
+    }
+    const target = await getUserByAccount(db, field);
+    if (!target) {
+      throw new Error(`Referenced account "${field}" does not exist`);
+    }
+  }
+}
+
 async function cleanupExpiredRecords(db) {
   const now = nowIso();
   await db.batch([
     db.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(now),
+    db.prepare(
+      `UPDATE users
+       SET dom = ''
+       WHERE dom IN (SELECT account FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)`
+    ).bind(now),
+    db.prepare(
+      `UPDATE users
+       SET sub = ''
+       WHERE sub IN (SELECT account FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)`
+    ).bind(now),
     db.prepare("DELETE FROM lock_events WHERE user_id IN (SELECT id FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)").bind(now),
     db.prepare("DELETE FROM lock_state WHERE user_id IN (SELECT id FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)").bind(now),
     db.prepare("DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE delete_at IS NOT NULL AND delete_at <= ?)").bind(now),
@@ -97,14 +134,6 @@ async function ensureUserState(db, userId) {
   ).bind(userId).run();
 }
 
-async function getUserByAccount(db, account) {
-  return db.prepare(
-    `SELECT id, account, password_salt, password_hash, dom, sub, auto_delete_days, delete_at, created_at, updated_at
-     FROM users
-     WHERE account = ?`
-  ).bind(account).first();
-}
-
 async function createSession(db, userId) {
   const token = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
   const createdAt = nowIso();
@@ -113,10 +142,7 @@ async function createSession(db, userId) {
     `INSERT INTO sessions (id, user_id, created_at, expires_at)
      VALUES (?, ?, ?, ?)`
   ).bind(token, userId, createdAt, expiresAt).run();
-  return {
-    token,
-    expiresAt
-  };
+  return { token, expiresAt };
 }
 
 async function touchUserRetention(db, user) {
@@ -130,6 +156,19 @@ async function touchUserRetention(db, user) {
   return {
     ...user,
     delete_at: refreshedDeleteAt
+  };
+}
+
+function serializeUser(user) {
+  return {
+    id: user.id,
+    account: user.account,
+    dom: user.dom,
+    sub: user.sub,
+    autoDeleteDays: user.auto_delete_days,
+    deleteAt: user.delete_at,
+    createdAt: user.created_at,
+    updatedAt: user.updated_at
   };
 }
 
@@ -199,7 +238,6 @@ async function authenticate(request, db) {
 
 async function loadState(db, user) {
   await ensureUserState(db, user.id);
-
   const record = await db.prepare(
     `SELECT user_id, locked, unlock_time, scheduled_at, updated_by, updated_at
      FROM lock_state
@@ -228,13 +266,7 @@ async function loadState(db, user) {
     ]);
 
     return {
-      user: {
-        account: user.account,
-        dom: user.dom,
-        sub: user.sub,
-        deleteAt: user.delete_at,
-        autoDeleteDays: user.auto_delete_days
-      },
+      user: serializeUser(user),
       locked: false,
       unlockTime: null,
       scheduledAt: null,
@@ -245,13 +277,7 @@ async function loadState(db, user) {
   }
 
   return {
-    user: {
-      account: user.account,
-      dom: user.dom,
-      sub: user.sub,
-      deleteAt: user.delete_at,
-      autoDeleteDays: user.auto_delete_days
-    },
+    user: serializeUser(user),
     locked: Number(record.locked) === 1,
     unlockTime,
     scheduledAt: record.scheduled_at || null,
@@ -275,20 +301,22 @@ async function handleRegister(request, env) {
   if (!password || password.length < 6) {
     return errorResponse(400, "password must be at least 6 characters");
   }
-  if (!dom || !sub) {
-    return errorResponse(400, "dom and sub are required");
-  }
 
   const existingUser = await getUserByAccount(env.DB, account);
   if (existingUser) {
     return errorResponse(409, "account already exists");
   }
 
+  try {
+    await ensureRelationshipTargetsExist(env.DB, dom, sub);
+  } catch (error) {
+    return errorResponse(400, error.message);
+  }
+
   const currentIso = nowIso();
   const deleteAt = isoAfterDays(autoDeleteDays);
   const salt = crypto.randomUUID();
   const passwordHash = await hashPassword(password, salt);
-
   const insertResult = await env.DB.prepare(
     `INSERT INTO users (account, password_salt, password_hash, dom, sub, auto_delete_days, delete_at, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
@@ -297,19 +325,12 @@ async function handleRegister(request, env) {
   const userId = insertResult.meta.last_row_id;
   await ensureUserState(env.DB, userId);
   const session = await createSession(env.DB, userId);
+  const user = await getUserById(env.DB, userId);
 
   return json({
     token: session.token,
     sessionExpiresAt: session.expiresAt,
-    user: {
-      id: userId,
-      account,
-      dom,
-      sub,
-      autoDeleteDays,
-      deleteAt,
-      createdAt: currentIso
-    }
+    user: serializeUser(user)
   }, { status: 201 });
 }
 
@@ -335,15 +356,7 @@ async function handleLogin(request, env) {
   return json({
     token: session.token,
     sessionExpiresAt: session.expiresAt,
-    user: {
-      id: user.id,
-      account: user.account,
-      dom: user.dom,
-      sub: user.sub,
-      autoDeleteDays: user.auto_delete_days,
-      deleteAt: refreshedUser.delete_at,
-      createdAt: user.created_at
-    }
+    user: serializeUser(refreshedUser)
   });
 }
 
@@ -355,32 +368,84 @@ async function handleLogout(request, env) {
 
 async function handleGetMe(request, env) {
   const { user } = await authenticate(request, env.DB);
-  return json({
-    user: {
-      id: user.id,
-      account: user.account,
-      dom: user.dom,
-      sub: user.sub,
-      autoDeleteDays: user.auto_delete_days,
-      deleteAt: user.delete_at,
-      createdAt: user.created_at
-    }
-  });
+  return json({ user: serializeUser(user) });
 }
 
 async function handleListUsers(request, env) {
   await authenticate(request, env.DB);
   const results = await env.DB.prepare(
-    `SELECT id, account, dom, sub, auto_delete_days, delete_at, created_at
+    `SELECT id, account, dom, sub, auto_delete_days, delete_at, created_at, updated_at
      FROM users
      ORDER BY created_at DESC`
   ).all();
-  return json({ users: results.results || [] });
+  return json({ users: (results.results || []).map(serializeUser) });
+}
+
+async function handleUpdateProfile(request, env) {
+  const { user } = await authenticate(request, env.DB);
+  const body = await parseJson(request);
+  const dom = normalizeProfileField(body.dom);
+  const sub = normalizeProfileField(body.sub);
+
+  try {
+    await ensureRelationshipTargetsExist(env.DB, dom, sub);
+  } catch (error) {
+    return errorResponse(400, error.message);
+  }
+
+  const currentIso = nowIso();
+  await env.DB.prepare(
+    `UPDATE users
+     SET dom = ?, sub = ?, updated_at = ?
+     WHERE id = ?`
+  ).bind(dom, sub, currentIso, user.id).run();
+
+  const updatedUser = await getUserById(env.DB, user.id);
+  return json({ user: serializeUser(updatedUser) });
+}
+
+async function handlePlanet(request, env) {
+  await authenticate(request, env.DB);
+  const results = await env.DB.prepare(
+    `SELECT id, account, dom, sub, created_at
+     FROM users
+     ORDER BY created_at ASC`
+  ).all();
+  const users = results.results || [];
+  const knownAccounts = new Set(users.map((user) => user.account));
+  const nodes = users.map((user) => ({
+    id: user.account,
+    label: user.account,
+    dom: user.dom,
+    sub: user.sub
+  }));
+  const links = [];
+
+  for (const user of users) {
+    if (user.dom && knownAccounts.has(user.dom)) {
+      links.push({
+        source: user.account,
+        target: user.dom,
+        type: "dom"
+      });
+    }
+    if (user.sub && knownAccounts.has(user.sub)) {
+      links.push({
+        source: user.account,
+        target: user.sub,
+        type: "sub"
+      });
+    }
+  }
+
+  return json({ nodes, links });
 }
 
 async function handleDeleteAccount(request, env) {
   const { user, token } = await authenticate(request, env.DB);
   await env.DB.batch([
+    env.DB.prepare("UPDATE users SET dom = '' WHERE dom = ?").bind(user.account),
+    env.DB.prepare("UPDATE users SET sub = '' WHERE sub = ?").bind(user.account),
     env.DB.prepare("DELETE FROM lock_events WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM lock_state WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(user.id),
@@ -438,27 +503,27 @@ export default {
       if (url.pathname === "/api/register" && request.method === "POST") {
         return handleRegister(request, env);
       }
-
       if (url.pathname === "/api/login" && request.method === "POST") {
         return handleLogin(request, env);
       }
-
       if (url.pathname === "/api/logout" && request.method === "POST") {
         return handleLogout(request, env);
       }
-
       if (url.pathname === "/api/me" && request.method === "GET") {
         return handleGetMe(request, env);
       }
-
       if (url.pathname === "/api/users" && request.method === "GET") {
         return handleListUsers(request, env);
       }
-
+      if (url.pathname === "/api/planet" && request.method === "GET") {
+        return handlePlanet(request, env);
+      }
+      if (url.pathname === "/api/account/profile" && request.method === "PATCH") {
+        return handleUpdateProfile(request, env);
+      }
       if (url.pathname === "/api/account" && request.method === "DELETE") {
         return handleDeleteAccount(request, env);
       }
-
       if (url.pathname === "/api/state") {
         if (request.method === "GET") {
           return handleGetState(request, env);
@@ -471,7 +536,6 @@ export default {
           headers: { allow: "GET, POST" }
         });
       }
-
       if (url.pathname === "/") {
         return env.ASSETS.fetch(new Request(new URL("/index.html", request.url), request));
       }
