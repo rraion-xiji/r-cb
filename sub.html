@@ -19,7 +19,7 @@
       margin: 0;
       min-height: 100vh;
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      color: #151311;
+      color: var(--ink);
       background:
         radial-gradient(circle at top left, rgba(214, 196, 171, 0.22), transparent 18%),
         radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.58), transparent 20%),
@@ -65,7 +65,11 @@
 
     .subtitle,
     .nav a { color: rgba(56, 46, 38, 0.72); }
-    .nav a { text-decoration: none; font-size: 14px; }
+
+    .nav a {
+      text-decoration: none;
+      font-size: 14px;
+    }
 
     .panel {
       display: grid;
@@ -108,19 +112,11 @@
     }
 
     .ring-card,
-    .metric,
     .bt-box,
     .bt-device {
       border: 1px solid rgba(140, 118, 92, 0.16);
       border-radius: 24px;
       background: linear-gradient(180deg, #fffdfa, #f4eadc);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      align-items: start;
     }
 
     .ring-card,
@@ -137,12 +133,37 @@
       width: 100%;
     }
 
-    .ring-unit { display: grid; justify-items: center; gap: 8px; }
-    .ring-wrap { position: relative; width: 104px; height: 104px; }
-    .ring-svg { width: 104px; height: 104px; transform: rotate(-90deg); }
-    .ring-track, .ring-progress { fill: none; stroke-width: 8; }
+    .ring-unit {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: 104px;
+      height: 104px;
+    }
+
+    .ring-svg {
+      width: 104px;
+      height: 104px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track,
+    .ring-progress {
+      fill: none;
+      stroke-width: 8;
+    }
+
     .ring-track { stroke: rgba(21, 19, 17, 0.12); }
-    .ring-progress { stroke: #111; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
+
+    .ring-progress {
+      stroke: #111;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 900ms linear;
+    }
 
     .ring-center {
       position: absolute;
@@ -153,39 +174,35 @@
       padding: 18px;
     }
 
-    .ring-value { font-size: 24px; font-weight: 800; line-height: 1; }
+    .ring-value {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+    }
 
     .ring-unit-label,
-    .ring-note,
-    .metric-label {
+    .ring-note {
       color: var(--muted);
       font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
-    .ring-unit-label { font-size: 11px; text-align: center; }
-    .metric-list { display: grid; gap: 14px; }
-    .metric { padding: 16px 18px; }
-    .metric-value { margin-top: 8px; font-size: 28px; font-weight: 700; line-height: 1.1; }
-    .notice { color: var(--muted); line-height: 1.6; }
+    .ring-unit-label {
+      font-size: 11px;
+      text-align: center;
+    }
 
-    .bt-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .notice {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
       gap: 12px;
+      flex-wrap: wrap;
     }
-
-    .bt-grid input[type="text"] {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(140, 118, 92, 0.2);
-      font-size: 14px;
-      background: #fffdfa;
-    }
-
-    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     button {
       border: 1px solid rgba(140, 118, 92, 0.22);
@@ -198,7 +215,10 @@
       color: var(--ink);
     }
 
-    .primary { background: #111; color: #fffaf5; }
+    .primary {
+      background: #111;
+      color: #fffaf5;
+    }
 
     .bt-device {
       padding: 12px 14px;
@@ -210,8 +230,6 @@
 
     @media (max-width: 860px) {
       .hero,
-      .grid,
-      .bt-grid,
       .ring-cluster {
         grid-template-columns: 1fr;
       }
@@ -225,7 +243,7 @@
       <div>
         <div class="chip">Puppy Watch</div>
         <h1>SUB 查看页</h1>
-        <p class="subtitle">SUB 页面只保留状态查看和蓝牙连接的核心操作，顶部资料卡和底部状态预览已收起。</p>
+        <p class="subtitle">SUB 页面只保留状态查看和蓝牙连接的核心操作。</p>
       </div>
       <div class="nav"><a href="./index.html">返回入口</a> / <a href="./dom.html">打开 DOM 页面</a></div>
     </section>
@@ -233,57 +251,43 @@
     <section class="panel">
       <div id="statusFlag" class="status-flag">当前已上锁</div>
 
-      <div class="grid">
-        <div class="ring-card">
-          <div class="ring-cluster">
-            <div class="ring-unit">
-              <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                  <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
-                </svg>
-                <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
-              </div>
-              <div class="ring-unit-label">Hours</div>
+      <div class="ring-card">
+        <div class="ring-cluster">
+          <div class="ring-unit">
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                <circle class="ring-progress" id="ringHoursProgress" cx="52" cy="52" r="40"></circle>
+              </svg>
+              <div class="ring-center"><div id="ringHoursValue" class="ring-value">--</div></div>
             </div>
-            <div class="ring-unit">
-              <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                  <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
-                </svg>
-                <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
-              </div>
-              <div class="ring-unit-label">Minutes</div>
-            </div>
-            <div class="ring-unit">
-              <div class="ring-wrap">
-                <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                  <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                  <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
-                </svg>
-                <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
-              </div>
-              <div class="ring-unit-label">Seconds</div>
-            </div>
+            <div class="ring-unit-label">Hours</div>
           </div>
-          <div id="ringNote" class="ring-note">等待 DOM 设置时间。</div>
+
+          <div class="ring-unit">
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                <circle class="ring-progress" id="ringMinutesProgress" cx="52" cy="52" r="40"></circle>
+              </svg>
+              <div class="ring-center"><div id="ringMinutesValue" class="ring-value">--</div></div>
+            </div>
+            <div class="ring-unit-label">Minutes</div>
+          </div>
+
+          <div class="ring-unit">
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                <circle class="ring-progress" id="ringSecondsProgress" cx="52" cy="52" r="40"></circle>
+              </svg>
+              <div class="ring-center"><div id="ringSecondsValue" class="ring-value">--</div></div>
+            </div>
+            <div class="ring-unit-label">Seconds</div>
+          </div>
         </div>
 
-        <div class="metric-list">
-          <div class="metric">
-            <div class="metric-label">目标用户</div>
-            <div id="accountValue" class="metric-value" style="font-size:22px;">--</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">预计开锁时间</div>
-            <div id="timeValue" class="metric-value" style="font-size:22px;">未设置</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">剩余时间</div>
-            <div id="countdownValue" class="metric-value">--:--:--</div>
-          </div>
-        </div>
+        <div id="ringNote" class="ring-note">等待 DOM 设置时间。</div>
       </div>
 
       <div class="notice">SUB 页面同样走已登录账户的会话，不再读取全局共享状态。</div>
@@ -308,9 +312,6 @@
     const API_URL = "/api/state?mode=sub_view";
     const ringCircumference = 2 * Math.PI * 40;
     const statusFlag = document.getElementById("statusFlag");
-    const accountValue = document.getElementById("accountValue");
-    const timeValue = document.getElementById("timeValue");
-    const countdownValue = document.getElementById("countdownValue");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
     const ringMinutesProgress = document.getElementById("ringMinutesProgress");
     const ringSecondsProgress = document.getElementById("ringSecondsProgress");
@@ -326,6 +327,7 @@
     let btDevice = null;
     let btCharacteristic = null;
     let autoSendTimer = null;
+
     const serviceUuid = "000000ff-0000-1000-8000-00805f9b34fb";
     const characteristicUuid = "0000ff01-0000-1000-8000-00805f9b34fb";
 
@@ -352,23 +354,22 @@
       const headers = new Headers(options.headers || {});
       headers.set("Accept", "application/json");
       headers.set("Authorization", `Bearer ${token}`);
+
       const response = await fetch(path, { ...options, headers });
       const payload = await response.json().catch(() => ({}));
+
       if (!response.ok) {
         if (response.status === 401) {
           redirectToPortal(payload.error || "登录已失效");
         }
         throw new Error(payload.error || `Request failed: ${response.status}`);
       }
+
       return payload;
     }
 
     function pad(value) {
       return String(value).padStart(2, "0");
-    }
-
-    function formatDate(date) {
-      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
     function setBtDeviceInfo(message) {
@@ -392,11 +393,14 @@
       if (!navigator.bluetooth) {
         throw new Error("当前浏览器不支持 Web Bluetooth，请使用最新版 Chrome 或 Edge。");
       }
+
       btDevice = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
         optionalServices: [serviceUuid]
       });
+
       setBtDeviceInfo(`已选择设备: ${btDevice.name || "Unknown Device"}`);
+
       btDevice.addEventListener("gattserverdisconnected", () => {
         btCharacteristic = null;
         if (autoSendTimer) {
@@ -414,16 +418,20 @@
       if (!btDevice) {
         throw new Error("请先搜索并选择蓝牙设备。");
       }
+
       const server = await btDevice.gatt.connect();
       const service = await server.getPrimaryService(serviceUuid);
       btCharacteristic = await service.getCharacteristic(characteristicUuid);
       setBtDeviceInfo(`已连接设备: ${btDevice.name || "Unknown Device"}`);
+
       if (autoSendTimer) {
         clearInterval(autoSendTimer);
       }
+
       autoSendTimer = setInterval(() => {
         void safeBluetoothSend();
       }, 1000);
+
       await safeBluetoothSend();
     }
 
@@ -431,8 +439,10 @@
       if (!btCharacteristic || !currentState) {
         return;
       }
+
       const payload = getPayloadFromState(currentState);
       const encoded = new TextEncoder().encode(JSON.stringify(payload));
+
       if (typeof btCharacteristic.writeValueWithoutResponse === "function") {
         await btCharacteristic.writeValueWithoutResponse(encoded);
       } else {
@@ -453,7 +463,7 @@
       element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
     }
 
-    function syncRing(remainingMs, totalMs) {
+    function syncRing(remainingMs, totalMs, remainingLabel) {
       if (!remainingMs || !totalMs || remainingMs <= 0 || totalMs <= 0) {
         setRingProgress(ringHoursProgress, 0);
         setRingProgress(ringMinutesProgress, 0);
@@ -470,41 +480,42 @@
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
       const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
+
       setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, totalHours / hoursProgressBase)));
       setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, minutes / 59)));
       setRingProgress(ringSecondsProgress, Math.max(0, Math.min(1, seconds / 59)));
+
       ringHoursValue.textContent = pad(Math.min(totalHours, 99));
       ringMinutesValue.textContent = pad(minutes);
       ringSecondsValue.textContent = pad(seconds);
-      ringNote.textContent = `距离自动开锁还有 ${countdownValue.textContent}。`;
+      ringNote.textContent = `距离自动开锁还有 ${remainingLabel}。`;
     }
 
     function renderState(state) {
       currentState = state;
+
       if (!state.actor?.dom) {
         redirectToPortal("当前账户不能打开 SUB 查看页");
         return;
       }
-      accountValue.textContent = state.user.account;
+
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);
 
       if (!state.unlockTime) {
-        timeValue.textContent = "未设置";
-        countdownValue.textContent = "--:--:--";
-        syncRing(null, null);
+        syncRing(null, null, "--:--:--");
         return;
       }
 
       const autoUnlockAt = new Date(state.unlockTime);
       const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
       const remainingMs = autoUnlockAt.getTime() - Date.now();
-      timeValue.textContent = Number.isNaN(autoUnlockAt.getTime()) ? "未设置" : formatDate(autoUnlockAt);
-      countdownValue.textContent = state.remainingTime || "--:--:--";
+      const remainingLabel = state.remainingTime || "--:--:--";
       const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
         ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
         : Math.max(remainingMs, 0);
-      syncRing(Math.max(remainingMs, 0), totalMs);
+
+      syncRing(Math.max(remainingMs, 0), totalMs, remainingLabel);
     }
 
     async function refreshState() {
