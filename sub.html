@@ -74,12 +74,12 @@
     .panel {
       display: grid;
       gap: 18px;
-      padding: 22px;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.96);
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
       color: var(--ink);
-      border: 1px solid rgba(140, 118, 92, 0.18);
-      box-shadow: 0 18px 40px rgba(168, 141, 110, 0.18);
+      border: 1px solid rgba(140, 118, 92, 0.1);
+      box-shadow: none;
     }
 
     .chip {
@@ -132,16 +132,16 @@
     .ring-card,
     .bt-box,
     .bt-device {
-      border: 1px solid rgba(140, 118, 92, 0.16);
-      border-radius: 24px;
-      background: linear-gradient(180deg, #fffdfa, #f4eadc);
+      border: 1px solid rgba(140, 118, 92, 0.1);
+      border-radius: 18px;
+      background: rgba(255, 251, 245, 0.72);
     }
 
     .ring-card,
     .bt-box {
       display: grid;
       gap: 14px;
-      padding: 18px 14px 14px;
+      padding: 16px 14px 14px;
     }
 
     .ring-cluster {
@@ -242,7 +242,7 @@
       padding: 12px 14px;
       line-height: 1.5;
       font-size: 14px;
-      background: rgba(245, 236, 223, 0.82);
+      background: rgba(245, 236, 223, 0.56);
       color: var(--ink);
     }
 
@@ -293,23 +293,42 @@
         border-radius: 20px;
       }
 
-      .actions {
-        flex-direction: column;
-      }
-
-      button {
-        width: 100%;
-      }
-
       .ring-cluster {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
       }
 
       .ring-wrap,
       .ring-svg {
-        width: 96px;
-        height: 96px;
+        width: 78px;
+        height: 78px;
+      }
+
+      .ring-track,
+      .ring-progress {
+        stroke-width: 7;
+      }
+
+      .ring-center {
+        padding: 12px;
+      }
+
+      .ring-value {
+        font-size: 18px;
+      }
+
+      .ring-unit-label {
+        font-size: 10px;
+      }
+
+      .actions {
+        flex-direction: row;
+        gap: 10px;
+      }
+
+      .actions button {
+        flex: 1;
+        width: auto;
       }
 
       .bt-device,
@@ -332,6 +351,16 @@
       .device-state,
       .status-flag {
         font-size: 12px;
+      }
+
+      .ring-wrap,
+      .ring-svg {
+        width: 72px;
+        height: 72px;
+      }
+
+      .ring-value {
+        font-size: 16px;
       }
     }
   </style>
