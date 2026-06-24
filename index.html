@@ -6,16 +6,21 @@
   <title>CB Lock Portal</title>
   <style>
     :root {
-      --bg: #0a0a0a;
-      --panel: rgba(255, 255, 255, 0.88);
-      --panel-soft: rgba(255, 248, 239, 0.9);
-      --ink: #141414;
-      --muted: #6d655d;
-      --line: rgba(20, 20, 20, 0.08);
-      --cream: #efe1cc;
-      --danger-bg: #fff0f1;
-      --danger-ink: #8f2435;
-      --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+      --bg: #080808;
+      --shell: #121212;
+      --panel: #f3efe7;
+      --panel-edge: rgba(91, 73, 49, 0.14);
+      --ink: #14110f;
+      --muted: #76695a;
+      --line: rgba(91, 73, 49, 0.16);
+      --dark-button: #4a3418;
+      --dark-button-hover: #5c4120;
+      --safe: #1d8b57;
+      --safe-bg: rgba(29, 139, 87, 0.14);
+      --safe-line: rgba(29, 139, 87, 0.3);
+      --danger-bg: #fdeced;
+      --danger-ink: #a12639;
+      --shadow: 0 28px 70px rgba(0, 0, 0, 0.4);
     }
 
     * { box-sizing: border-box; }
@@ -24,62 +29,55 @@
       margin: 0;
       min-height: 100vh;
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 16%),
-        radial-gradient(circle at 80% 0%, rgba(240, 225, 204, 0.14), transparent 22%),
-        linear-gradient(180deg, #090909 0%, #111111 100%);
       color: #fff;
-      padding: 24px 16px 36px;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(255, 255, 255, 0.06), transparent 18%),
+        radial-gradient(circle at 84% 12%, rgba(120, 95, 58, 0.14), transparent 24%),
+        linear-gradient(180deg, #060606 0%, #0e0e0e 100%);
+      padding: 18px;
     }
 
     .shell {
       width: min(1180px, 100%);
       margin: 0 auto;
-      padding: 28px;
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at top right, rgba(240, 225, 204, 0.18), transparent 24%),
-        linear-gradient(180deg, rgba(26, 26, 26, 0.97), rgba(15, 15, 15, 0.98));
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 18px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, #151515, #101010);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: var(--shadow);
     }
 
     .hero {
       display: grid;
-      grid-template-columns: 108px 1fr;
-      gap: 22px;
+      grid-template-columns: 96px 1fr;
+      gap: 18px;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
-    .hero img {
-      width: 108px;
-      height: 108px;
-      object-fit: contain;
+    .hero-logo {
+      width: 96px;
+      height: 96px;
       border-radius: 28px;
-      padding: 14px;
+      object-fit: contain;
       background: #000;
-      border: 2px solid rgba(255, 255, 255, 0.92);
+      padding: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.14);
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(34px, 4vw, 58px);
+    .hero-copy h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
       line-height: 1;
       letter-spacing: -0.05em;
     }
 
-    .subtitle {
-      margin: 0;
-      color: rgba(255, 247, 238, 0.76);
+    .hero-copy p {
+      margin: 10px 0 0;
+      color: rgba(255, 244, 234, 0.78);
+      font-size: 16px;
       line-height: 1.7;
       max-width: 760px;
-    }
-
-    .auth-shell {
-      display: grid;
-      justify-items: center;
-      margin: 26px 0 20px;
     }
 
     .auth-shell[hidden],
@@ -89,28 +87,24 @@
       display: none;
     }
 
-    .auth-card,
-    .panel {
-      background: var(--panel);
-      color: var(--ink);
-      border: 1px solid var(--line);
-      box-shadow: none;
+    .auth-shell {
+      display: grid;
+      place-items: center;
+      margin-top: 10px;
     }
 
     .auth-card {
-      width: min(540px, 100%);
-      padding: 24px;
-      border-radius: 24px;
-    }
-
-    .auth-head {
-      text-align: center;
-      margin-bottom: 22px;
+      width: min(620px, 100%);
+      border-radius: 30px;
+      background: var(--panel);
+      color: var(--ink);
+      border: 1px solid var(--panel-edge);
+      padding: 28px;
     }
 
     .auth-head h2 {
       margin: 0 0 8px;
-      font-size: 30px;
+      font-size: 32px;
       letter-spacing: -0.04em;
     }
 
@@ -127,8 +121,8 @@
       gap: 10px;
       padding: 6px;
       border-radius: 18px;
-      background: #f5ede2;
-      margin-bottom: 22px;
+      background: rgba(91, 73, 49, 0.08);
+      margin: 22px 0;
     }
 
     .tab {
@@ -177,84 +171,104 @@
     input,
     .work-input {
       width: 100%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(20, 20, 20, 0.18);
-      background: #fffdf9;
-      font-size: 15px;
+      padding: 15px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(91, 73, 49, 0.24);
+      background: #fffdfa;
       color: var(--ink);
+      font-size: 15px;
       outline: none;
     }
 
     input:focus,
     .work-input:focus {
-      border-color: rgba(17, 17, 17, 0.7);
-      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
+      border-color: rgba(20, 17, 15, 0.6);
+      box-shadow: 0 0 0 3px rgba(20, 17, 15, 0.08);
     }
 
     .submit,
     .small-button,
-    .link-card {
-      border-radius: 16px;
+    .nav-button,
+    .planet-link {
+      border-radius: 18px;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .submit,
+    .nav-button.dark,
+    .planet-link {
+      border: 0;
+      background: linear-gradient(135deg, #111 0%, var(--dark-button) 100%);
+      color: #fff;
     }
 
     .submit {
       width: 100%;
       margin-top: 18px;
       padding: 15px 18px;
-      border: 0;
-      background: #111;
-      color: #fff;
     }
 
     .small-button,
-    .link-card {
-      border: 1px solid rgba(20, 20, 20, 0.12);
-      background: #f6eee3;
+    .nav-button.light {
+      border: 1px solid rgba(91, 73, 49, 0.24);
+      background: #f7eddc;
       color: var(--ink);
-      padding: 13px 16px;
-      text-decoration: none;
-      text-align: center;
+      padding: 13px 18px;
+    }
+
+    .small-button:hover,
+    .nav-button.light:hover {
+      background: #f1e3cc;
+    }
+
+    .nav-button.dark:hover,
+    .planet-link:hover,
+    .submit:hover {
+      background: linear-gradient(135deg, #1a1a1a 0%, var(--dark-button-hover) 100%);
     }
 
     .danger {
       background: var(--danger-bg);
       color: var(--danger-ink);
+      border-color: rgba(161, 38, 57, 0.18);
     }
 
     .status {
       margin-top: 16px;
       padding: 14px 16px;
-      border-radius: 16px;
-      background: var(--panel-soft);
+      border-radius: 18px;
+      background: rgba(255, 252, 246, 0.9);
       color: var(--muted);
       line-height: 1.6;
-      border: 1px solid rgba(20, 20, 20, 0.08);
+      border: 1px solid rgba(91, 73, 49, 0.12);
     }
 
     .dashboard {
-      display: grid;
-      gap: 18px;
       margin-top: 18px;
     }
 
-    .top-grid {
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: 0.98fr 1.02fr;
+      grid-template-columns: 360px minmax(0, 1fr);
       gap: 18px;
+      align-items: start;
     }
 
     .panel {
+      border-radius: 30px;
+      background: var(--panel);
+      color: var(--ink);
+      border: 1px solid var(--panel-edge);
       padding: 18px;
-      border-radius: 22px;
     }
 
-    .chip {
+    .section-chip {
       display: inline-flex;
-      padding: 6px 10px;
+      padding: 7px 12px;
       border-radius: 999px;
       background: #111;
       color: #fff;
@@ -264,50 +278,93 @@
       margin-bottom: 14px;
     }
 
+    .current-shell {
+      display: grid;
+      gap: 14px;
+    }
+
+    .profile-hero {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 24px;
+      background: rgba(255, 251, 245, 0.72);
+      border: 1px solid rgba(91, 73, 49, 0.12);
+    }
+
+    .profile-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 24px;
+      object-fit: cover;
+      background: #000;
+      border: 1px solid rgba(91, 73, 49, 0.16);
+      image-rendering: pixelated;
+    }
+
+    .profile-name {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 8px;
+    }
+
+    .profile-subtitle {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
     .profile,
     .editor,
     .work-card,
-    .ring-card,
+    .stage-card,
     .device-box {
-      padding: 14px 15px;
-      border-radius: 16px;
+      padding: 16px;
+      border-radius: 24px;
       background: rgba(255, 251, 245, 0.72);
-      border: 1px solid rgba(20, 20, 20, 0.06);
+      border: 1px solid rgba(91, 73, 49, 0.12);
       line-height: 1.65;
     }
 
-    .profile strong {
-      display: inline-block;
-      min-width: 86px;
+    .profile-row {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 10px;
+      align-items: start;
     }
 
-    .editor {
-      margin-top: 14px;
+    .profile-row strong {
+      color: var(--muted);
     }
 
     .editor h3,
     .work-card h3 {
-      margin: 0 0 12px;
-      font-size: 18px;
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .editor-actions,
+    .work-actions,
+    .hero-actions,
+    .stage-toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .editor-actions,
     .work-actions {
-      display: flex;
-      gap: 10px;
       margin-top: 14px;
-      flex-wrap: wrap;
     }
 
-    .links {
-      display: grid;
-      gap: 12px;
-    }
-
-    .link-card.planet {
-      background: linear-gradient(135deg, #111, #40331f);
-      color: #fff;
-      border: 0;
+    .editor {
+      margin-top: 6px;
     }
 
     .workbench {
@@ -315,66 +372,142 @@
       gap: 14px;
     }
 
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+
+    .stage-kicker {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(91, 73, 49, 0.08);
+      color: var(--ink);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .stage-title {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 48px);
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .stage-subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
     .status-pills {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 14px;
     }
 
     .pill {
       display: inline-flex;
       width: fit-content;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 999px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
-      border: 1px solid rgba(20, 20, 20, 0.1);
+      border: 1px solid rgba(91, 73, 49, 0.18);
       background: rgba(255, 255, 255, 0.55);
       color: var(--muted);
     }
 
     .pill.online,
     .pill.unlocked {
-      color: #1d8b57;
-      background: rgba(29, 139, 87, 0.12);
-      border-color: rgba(29, 139, 87, 0.22);
+      color: var(--safe);
+      background: var(--safe-bg);
+      border-color: var(--safe-line);
+    }
+
+    .work-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .portrait-card {
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .portrait-frame {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid rgba(91, 73, 49, 0.16);
+    }
+
+    .portrait-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+    }
+
+    .portrait-copy {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .control-card {
+      display: grid;
+      gap: 16px;
+      align-content: start;
     }
 
     .work-field-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+      gap: 14px;
+      align-items: end;
     }
 
     .ring-card {
-      margin-top: 14px;
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(91, 73, 49, 0.12);
+      background: rgba(255, 255, 255, 0.32);
     }
 
     .ring-cluster {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 14px;
       width: 100%;
     }
 
     .ring-unit {
       display: grid;
       justify-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .ring-wrap {
       position: relative;
-      width: 96px;
-      height: 96px;
+      width: 118px;
+      height: 118px;
     }
 
     .ring-svg {
-      width: 96px;
-      height: 96px;
+      width: 118px;
+      height: 118px;
       transform: rotate(-90deg);
     }
 
@@ -404,7 +537,7 @@
     }
 
     .ring-value {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       line-height: 1;
     }
@@ -412,68 +545,134 @@
     .ring-unit-label,
     .ring-note {
       color: var(--muted);
-      font-size: 11px;
+      font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       text-align: center;
     }
 
+    .ring-note {
+      margin-top: 12px;
+      letter-spacing: normal;
+      text-transform: none;
+      text-align: left;
+      font-size: 15px;
+    }
+
     .device-box {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--ink);
+    }
+
+    .full-link-row {
+      margin-top: 2px;
+    }
+
+    .planet-link {
+      display: block;
+      width: 100%;
+      padding: 26px 20px;
+      border-radius: 20px;
+      font-size: clamp(22px, 3vw, 28px);
+      letter-spacing: -0.03em;
     }
 
     .foot {
       margin-top: 18px;
       color: rgba(255, 247, 238, 0.74);
       line-height: 1.7;
+      font-size: 14px;
     }
 
-    @media (max-width: 940px) {
-      .top-grid,
+    @media (max-width: 1040px) {
+      .dashboard-grid,
+      .work-layout,
+      .work-field-row,
       .fields.two {
         grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 760px) {
       body {
-        padding: 14px 10px 28px;
+        padding: 12px;
       }
 
       .shell {
-        padding: 16px 12px;
+        padding: 14px;
         border-radius: 24px;
       }
 
       .hero {
         grid-template-columns: 1fr;
-        gap: 14px;
         justify-items: center;
         text-align: center;
       }
 
-      .hero img {
-        width: 88px;
-        height: 88px;
-        border-radius: 22px;
-        padding: 10px;
+      .hero-copy p {
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .auth-card,
       .panel {
-        padding: 16px 14px;
+        padding: 16px;
+        border-radius: 24px;
       }
 
-      .editor-actions,
-      .work-actions {
+      .profile-hero {
+        grid-template-columns: 72px 1fr;
+      }
+
+      .profile-avatar,
+      .hero-logo {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+      }
+
+      .profile-name {
+        font-size: 24px;
+      }
+
+      .stage-head {
         flex-direction: column;
       }
 
+      .hero-actions,
+      .editor-actions,
+      .work-actions,
+      .stage-toolbar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ring-wrap,
+      .ring-svg {
+        width: 88px;
+        height: 88px;
+      }
+
+      .ring-value {
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-actions,
+      .editor-actions,
+      .work-actions,
+      .stage-toolbar {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
       .small-button,
-      .link-card,
-      .work-actions .small-button {
+      .nav-button.light,
+      .nav-button.dark {
         width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
       }
 
       .ring-cluster {
@@ -482,37 +681,20 @@
 
       .ring-wrap,
       .ring-svg {
-        width: 78px;
-        height: 78px;
+        width: 76px;
+        height: 76px;
       }
 
       .ring-center {
-        padding: 12px;
+        padding: 10px;
       }
 
       .ring-value {
-        font-size: 18px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .shell {
-        padding: 14px 10px;
+        font-size: 17px;
       }
 
-      .ring-wrap,
-      .ring-svg {
-        width: 72px;
-        height: 72px;
-      }
-
-      .ring-value {
-        font-size: 16px;
-      }
-
-      .status,
-      .device-box {
-        font-size: 13px;
+      .ring-unit-label {
+        font-size: 11px;
       }
     }
   </style>
@@ -520,10 +702,10 @@
 <body>
   <main class="shell">
     <section class="hero">
-      <img src="./logo.png" alt="Logo">
-      <div>
+      <img class="hero-logo" src="./logo.png" alt="CB Lock Logo">
+      <div class="hero-copy">
         <h1>CB Lock Portal</h1>
-        <p class="subtitle">登录后会直接在当前页面显示 DOM 控制或 SUB 查看面板，不再跳转到单独页面。</p>
+        <p>登录后会直接进入当前账户的工作台。DOM 只看到 DOM 控制区，SUB 只看到 SUB 查看区，不再跳转到独立页面。</p>
       </div>
     </section>
 
@@ -531,7 +713,7 @@
       <section class="auth-card">
         <div class="auth-head">
           <h2>账户入口</h2>
-          <p>注册或登录后，页面会自动切换到当前用户工作台。</p>
+          <p>注册或登录后，页面会自动切换到当前用户面板。</p>
         </div>
 
         <div class="tabs">
@@ -579,15 +761,24 @@
     </section>
 
     <section id="dashboard" class="dashboard" hidden>
-      <section class="top-grid">
-        <section class="panel">
-          <div class="chip">Current User</div>
+      <div class="dashboard-grid">
+        <section class="panel current-shell">
+          <div class="section-chip">Current User</div>
+
+          <div class="profile-hero">
+            <img id="profileAvatar" class="profile-avatar" src="./logo.png" alt="Current User Avatar">
+            <div>
+              <div id="profileHeroName" class="profile-name">当前用户</div>
+              <p id="profileHeroSubtitle" class="profile-subtitle">登录后在这里管理账户关系与当前角色。</p>
+            </div>
+          </div>
+
           <div id="profileCard" class="profile"></div>
 
           <div class="editor-actions">
             <button id="toggleSettingsBtn" class="small-button" type="button">设置</button>
             <button id="logoutBtn" class="small-button" type="button">退出登录</button>
-            <button id="deleteBtn" class="small-button danger" type="button">删除当前账户</button>
+            <button id="deleteBtn" class="small-button danger" type="button">注销账户</button>
           </div>
 
           <div id="settingsEditor" class="editor" hidden>
@@ -607,121 +798,152 @@
           </div>
         </section>
 
-        <section class="panel">
-          <div class="chip">Workbench</div>
-          <div id="workIntro" class="muted">登录后会直接在这里显示当前账户对应的控制面板，不再跳转到单独页面。</div>
+        <section class="panel workbench">
+          <div class="stage-head">
+            <div>
+              <div class="stage-kicker">Workbench</div>
+              <h2 id="stageTitle" class="stage-title">当前工作台</h2>
+              <p id="workIntro" class="stage-subtitle">登录后会直接在这里显示当前账户对应的 DOM 或 SUB 面板。</p>
+            </div>
+          </div>
 
           <section id="domWorkbench" class="work-card" hidden>
-            <h3>DOM 控制面板</h3>
-            <div class="status-pills">
-              <div id="domDeviceState" class="pill">锁状态：不在线</div>
-            </div>
-            <div class="work-field-row">
-              <label for="domUnlockTime" style="flex:1;min-width:220px;">
-                <span style="display:block;margin-bottom:6px;">自动开锁时间</span>
-                <span class="hint">到点后服务器会把目标 SUB 账户的状态自动切为已开锁。</span>
-              </label>
-              <input id="domUnlockTime" class="work-input" type="datetime-local">
-            </div>
-            <div class="work-actions">
-              <button id="domApplyBtn" class="small-button" type="button">应用策略</button>
-              <button id="domUnlockNowBtn" class="small-button" type="button">立即开锁</button>
-            </div>
-            <div class="ring-card">
-              <div class="ring-cluster">
-                <div class="ring-unit">
-                  <div class="ring-wrap">
-                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                      <circle class="ring-progress" id="domRingHoursProgress" cx="52" cy="52" r="40"></circle>
-                    </svg>
-                    <div class="ring-center"><div id="domRingHoursValue" class="ring-value">--</div></div>
-                  </div>
-                  <div class="ring-unit-label">Hours</div>
+            <div class="work-layout">
+              <aside class="portrait-card">
+                <div class="portrait-frame">
+                  <img src="./dom.jpg" alt="DOM">
                 </div>
-                <div class="ring-unit">
-                  <div class="ring-wrap">
-                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                      <circle class="ring-progress" id="domRingMinutesProgress" cx="52" cy="52" r="40"></circle>
-                    </svg>
-                    <div class="ring-center"><div id="domRingMinutesValue" class="ring-value">--</div></div>
-                  </div>
-                  <div class="ring-unit-label">Minutes</div>
+                <div class="portrait-copy">DOM 账户在这里设置策略。到点后服务器会把目标 SUB 账户自动切到已开锁状态。</div>
+              </aside>
+
+              <div class="control-card">
+                <div class="stage-toolbar">
+                  <div id="domDeviceState" class="pill">锁状态：离线</div>
                 </div>
-                <div class="ring-unit">
-                  <div class="ring-wrap">
-                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                      <circle class="ring-progress" id="domRingSecondsProgress" cx="52" cy="52" r="40"></circle>
-                    </svg>
-                    <div class="ring-center"><div id="domRingSecondsValue" class="ring-value">--</div></div>
+
+                <div class="stage-card">
+                  <div class="work-field-row">
+                    <label for="domUnlockTime">
+                      <span style="display:block;margin-bottom:6px;">自动开锁时间</span>
+                      <span class="hint">按照这个时间下发策略，倒计时与硬件状态都以它为基准。</span>
+                    </label>
+                    <input id="domUnlockTime" class="work-input" type="datetime-local">
                   </div>
-                  <div class="ring-unit-label">Seconds</div>
+
+                  <div class="work-actions">
+                    <button id="domApplyBtn" class="small-button" type="button">应用策略</button>
+                    <button id="domUnlockNowBtn" class="small-button" type="button">立即开锁</button>
+                  </div>
+
+                  <div class="ring-card">
+                    <div class="ring-cluster">
+                      <div class="ring-unit">
+                        <div class="ring-wrap">
+                          <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                            <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                            <circle class="ring-progress" id="domRingHoursProgress" cx="52" cy="52" r="40"></circle>
+                          </svg>
+                          <div class="ring-center"><div id="domRingHoursValue" class="ring-value">--</div></div>
+                        </div>
+                        <div class="ring-unit-label">Hours</div>
+                      </div>
+                      <div class="ring-unit">
+                        <div class="ring-wrap">
+                          <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                            <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                            <circle class="ring-progress" id="domRingMinutesProgress" cx="52" cy="52" r="40"></circle>
+                          </svg>
+                          <div class="ring-center"><div id="domRingMinutesValue" class="ring-value">--</div></div>
+                        </div>
+                        <div class="ring-unit-label">Minutes</div>
+                      </div>
+                      <div class="ring-unit">
+                        <div class="ring-wrap">
+                          <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                            <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                            <circle class="ring-progress" id="domRingSecondsProgress" cx="52" cy="52" r="40"></circle>
+                          </svg>
+                          <div class="ring-center"><div id="domRingSecondsValue" class="ring-value">--</div></div>
+                        </div>
+                        <div class="ring-unit-label">Seconds</div>
+                      </div>
+                    </div>
+                    <div id="domRingNote" class="ring-note">等待设置自动开锁时间。</div>
+                  </div>
                 </div>
               </div>
-              <div id="domRingNote" class="ring-note">等待设置自动开锁时间。</div>
             </div>
           </section>
 
           <section id="subWorkbench" class="work-card" hidden>
-            <h3>SUB 查看面板</h3>
-            <div class="status-pills">
-              <div id="subLockState" class="pill">当前已上锁</div>
-              <div id="subDeviceState" class="pill">锁状态：不在线</div>
-            </div>
-            <div class="ring-card">
-              <div class="ring-cluster">
-                <div class="ring-unit">
-                  <div class="ring-wrap">
-                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                      <circle class="ring-progress" id="subRingHoursProgress" cx="52" cy="52" r="40"></circle>
-                    </svg>
-                    <div class="ring-center"><div id="subRingHoursValue" class="ring-value">--</div></div>
-                  </div>
-                  <div class="ring-unit-label">Hours</div>
+            <div class="work-layout">
+              <aside class="portrait-card">
+                <div class="portrait-frame">
+                  <img src="./sub.jpg" alt="SUB">
                 </div>
-                <div class="ring-unit">
-                  <div class="ring-wrap">
-                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                      <circle class="ring-progress" id="subRingMinutesProgress" cx="52" cy="52" r="40"></circle>
-                    </svg>
-                    <div class="ring-center"><div id="subRingMinutesValue" class="ring-value">--</div></div>
-                  </div>
-                  <div class="ring-unit-label">Minutes</div>
+                <div class="portrait-copy">SUB 账户只查看当前锁状态，并在蓝牙连接后持续发送当前账户状态。</div>
+              </aside>
+
+              <div class="control-card">
+                <div class="stage-toolbar">
+                  <div id="subDeviceState" class="pill">锁状态：离线</div>
+                  <div id="subLockState" class="pill">当前已上锁</div>
+                  <button id="subScanBtBtn" class="small-button" type="button">搜索蓝牙</button>
+                  <button id="subConnectBtBtn" class="small-button" type="button">连接蓝牙</button>
                 </div>
-                <div class="ring-unit">
-                  <div class="ring-wrap">
-                    <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
-                      <circle class="ring-track" cx="52" cy="52" r="40"></circle>
-                      <circle class="ring-progress" id="subRingSecondsProgress" cx="52" cy="52" r="40"></circle>
-                    </svg>
-                    <div class="ring-center"><div id="subRingSecondsValue" class="ring-value">--</div></div>
+
+                <div class="stage-card">
+                  <div class="ring-card" style="margin:0;">
+                    <div class="ring-cluster">
+                      <div class="ring-unit">
+                        <div class="ring-wrap">
+                          <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                            <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                            <circle class="ring-progress" id="subRingHoursProgress" cx="52" cy="52" r="40"></circle>
+                          </svg>
+                          <div class="ring-center"><div id="subRingHoursValue" class="ring-value">--</div></div>
+                        </div>
+                        <div class="ring-unit-label">Hours</div>
+                      </div>
+                      <div class="ring-unit">
+                        <div class="ring-wrap">
+                          <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                            <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                            <circle class="ring-progress" id="subRingMinutesProgress" cx="52" cy="52" r="40"></circle>
+                          </svg>
+                          <div class="ring-center"><div id="subRingMinutesValue" class="ring-value">--</div></div>
+                        </div>
+                        <div class="ring-unit-label">Minutes</div>
+                      </div>
+                      <div class="ring-unit">
+                        <div class="ring-wrap">
+                          <svg class="ring-svg" viewBox="0 0 104 104" aria-hidden="true">
+                            <circle class="ring-track" cx="52" cy="52" r="40"></circle>
+                            <circle class="ring-progress" id="subRingSecondsProgress" cx="52" cy="52" r="40"></circle>
+                          </svg>
+                          <div class="ring-center"><div id="subRingSecondsValue" class="ring-value">--</div></div>
+                        </div>
+                        <div class="ring-unit-label">Seconds</div>
+                      </div>
+                    </div>
+                    <div id="subRingNote" class="ring-note">等待 DOM 设置时间。</div>
                   </div>
-                  <div class="ring-unit-label">Seconds</div>
                 </div>
+
+                <div id="subBtDeviceInfo" class="device-box">尚未选择蓝牙设备。</div>
               </div>
-              <div id="subRingNote" class="ring-note">等待 DOM 设置时间。</div>
             </div>
-            <div class="muted" style="margin-top:14px;">蓝牙连接后会按当前账户状态每秒发送一次。</div>
-            <div class="work-actions">
-              <button id="subScanBtBtn" class="small-button" type="button">搜索蓝牙</button>
-              <button id="subConnectBtBtn" class="small-button" type="button">连接蓝牙</button>
-            </div>
-            <div id="subBtDeviceInfo" class="device-box">尚未选择蓝牙设备。</div>
           </section>
 
-          <div class="links" style="margin-top:14px;">
-            <a class="link-card planet" href="./planet.html">打开小狗星球</a>
+          <div class="full-link-row">
+            <a class="planet-link" href="./planet.html">小狗星球</a>
           </div>
         </section>
-      </section>
+      </div>
     </section>
 
     <datalist id="accountOptions"></datalist>
-    <p class="foot">当前页面会直接复用本浏览器中的会话令牌。DOM 只显示 DOM 控制面板，SUB 只显示 SUB 查看面板。</p>
+    <p class="foot">当前页面复用本浏览器里的会话令牌。DOM 只显示 DOM 控制面板，SUB 只显示 SUB 查看面板。</p>
   </main>
 
   <script>
@@ -754,6 +976,10 @@
     const editSub = document.getElementById("editSub");
     const authStatus = document.getElementById("authStatus");
     const profileCard = document.getElementById("profileCard");
+    const profileAvatar = document.getElementById("profileAvatar");
+    const profileHeroName = document.getElementById("profileHeroName");
+    const profileHeroSubtitle = document.getElementById("profileHeroSubtitle");
+    const stageTitle = document.getElementById("stageTitle");
     const accountOptions = document.getElementById("accountOptions");
     const workIntro = document.getElementById("workIntro");
     const domWorkbench = document.getElementById("domWorkbench");
@@ -823,9 +1049,7 @@
       const headers = new Headers(options.headers || {});
       headers.set("Accept", "application/json");
       const token = getSession();
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
+      if (token) headers.set("Authorization", `Bearer ${token}`);
       const response = await fetch(path, { ...options, headers });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -841,19 +1065,46 @@
       return "UNBOUND";
     }
 
+    function getRoleText(role) {
+      if (role === "INVALID") return "关系错误";
+      if (role === "UNBOUND") return "未绑定";
+      return role;
+    }
+
+    function updateProfileAvatar(role) {
+      if (role === "DOM") {
+        profileAvatar.src = "./dom.jpg";
+        profileAvatar.alt = "DOM Avatar";
+      } else if (role === "SUB") {
+        profileAvatar.src = "./sub.jpg";
+        profileAvatar.alt = "SUB Avatar";
+      } else {
+        profileAvatar.src = "./logo.png";
+        profileAvatar.alt = "Current User Avatar";
+      }
+    }
+
     function renderProfile(user) {
       const role = getUserRole(user);
-      const roleText = role === "INVALID" ? "关系错误" : role === "UNBOUND" ? "未绑定" : role;
       currentUser = user;
+      updateProfileAvatar(role);
+      profileHeroName.textContent = user.account;
+      profileHeroSubtitle.textContent =
+        role === "DOM" ? `当前角色：DOM，绑定 SUB：${user.sub || "未设置"}`
+        : role === "SUB" ? `当前角色：SUB，绑定 DOM：${user.dom || "未设置"}`
+        : role === "INVALID" ? "当前账户的 DOM / SUB 关系冲突，请先修正。"
+        : "当前账户还没有绑定 DOM / SUB 关系。";
+
       profileCard.innerHTML = `
-        <div><strong>账户</strong>${user.account}</div>
-        <div><strong>角色</strong>${roleText}</div>
-        <div><strong>DOM</strong>${user.dom || "未设置"}</div>
-        <div><strong>SUB</strong>${user.sub || "未设置"}</div>
-        <div><strong>删除方式</strong>仅支持用户手动删除</div>
+        <div class="profile-row"><strong>账户</strong><span>${user.account}</span></div>
+        <div class="profile-row"><strong>角色</strong><span>${getRoleText(role)}</span></div>
+        <div class="profile-row"><strong>DOM</strong><span>${user.dom || "未设置"}</span></div>
+        <div class="profile-row"><strong>SUB</strong><span>${user.sub || "未设置"}</span></div>
+        <div class="profile-row"><strong>删除</strong><span>仅支持用户手动注销</span></div>
       `;
       editDom.value = user.dom || "";
       editSub.value = user.sub || "";
+
       if (role === "INVALID") {
         authStatus.textContent = "当前账户同时设置了 DOM 和 SUB，这是无效关系，请先修正。";
       }
@@ -925,10 +1176,11 @@
       domWorkbench.hidden = role !== "DOM";
       subWorkbench.hidden = role !== "SUB";
       workIntro.hidden = role === "DOM" || role === "SUB";
-    }
-
-    function findUserAccount(account) {
-      return currentUsers.find((user) => user.account === account) || null;
+      stageTitle.textContent =
+        role === "DOM" ? "DOM 控制台"
+        : role === "SUB" ? "SUB 查看台"
+        : role === "INVALID" ? "关系错误"
+        : "当前工作台";
     }
 
     async function refreshDashboard() {
@@ -937,7 +1189,7 @@
       renderProfile(me.user);
       renderUsers(list.users || []);
       renderWorkbenches();
-      authStatus.textContent = `已登录账户: ${me.user.account}`;
+      authStatus.textContent = `已登录账户：${me.user.account}`;
       setLoggedInView(true);
       await refreshWorkbenchStates();
     }
@@ -972,7 +1224,7 @@
         const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
         const unlockAt = state.unlockTime ? new Date(state.unlockTime) : null;
         const totalMs = scheduledAt && unlockAt ? Math.max(unlockAt.getTime() - scheduledAt.getTime(), 0) : null;
-        setPillState(domDeviceState, `锁状态：${state.deviceOnline ? "在线" : "不在线"}`, state.deviceOnline);
+        setPillState(domDeviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
         if (unlockAt && !Number.isNaN(unlockAt.getTime()) && document.activeElement !== domUnlockTime) {
           domUnlockTime.value = `${unlockAt.getFullYear()}-${String(unlockAt.getMonth() + 1).padStart(2, "0")}-${String(unlockAt.getDate()).padStart(2, "0")}T${String(unlockAt.getHours()).padStart(2, "0")}:${String(unlockAt.getMinutes()).padStart(2, "0")}`;
         }
@@ -989,7 +1241,7 @@
         const unlockAt = state.unlockTime ? new Date(state.unlockTime) : null;
         const totalMs = scheduledAt && unlockAt ? Math.max(unlockAt.getTime() - scheduledAt.getTime(), 0) : null;
         setPillState(subLockState, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
-        setPillState(subDeviceState, `锁状态：${state.deviceOnline ? "在线" : "不在线"}`, state.deviceOnline);
+        setPillState(subDeviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
         syncRing(state.remainingTime || "--:--:--", totalMs, getRingRefs("sub"), "等待 DOM 设置时间。");
       }
     }
@@ -1030,7 +1282,7 @@
         acceptAllDevices: true,
         optionalServices: [serviceUuid]
       });
-      subBtDeviceInfo.textContent = `已选择设备: ${subBtDevice.name || "Unknown Device"}`;
+      subBtDeviceInfo.textContent = `已选择设备：${subBtDevice.name || "Unknown Device"}`;
       subBtDevice.addEventListener("gattserverdisconnected", () => {
         subBtCharacteristic = null;
         if (subBtTimer) {
@@ -1038,8 +1290,8 @@
           subBtTimer = null;
         }
         void updateDeviceStatus(false);
-        setPillState(subDeviceState, "锁状态：不在线", false);
-        subBtDeviceInfo.textContent = `设备已断开: ${subBtDevice ? subBtDevice.name || "Unknown Device" : "Unknown Device"}`;
+        setPillState(subDeviceState, "锁状态：离线", false);
+        subBtDeviceInfo.textContent = `设备已断开：${subBtDevice ? subBtDevice.name || "Unknown Device" : "Unknown Device"}`;
       });
     }
 
@@ -1055,7 +1307,7 @@
       subBtCharacteristic = await service.getCharacteristic(characteristicUuid);
       await updateDeviceStatus(true);
       setPillState(subDeviceState, "锁状态：在线", true);
-      subBtDeviceInfo.textContent = `已连接设备: ${subBtDevice.name || "Unknown Device"}`;
+      subBtDeviceInfo.textContent = `已连接设备：${subBtDevice.name || "Unknown Device"}`;
       if (subBtTimer) clearInterval(subBtTimer);
       subBtTimer = setInterval(() => void safeBluetoothSend(), 1000);
       await safeBluetoothSend();
@@ -1075,7 +1327,7 @@
       try {
         await sendBluetoothState();
       } catch (error) {
-        subBtDeviceInfo.textContent = `发送失败: ${error.message}`;
+        subBtDeviceInfo.textContent = `发送失败：${error.message}`;
       }
     }
 
@@ -1097,7 +1349,7 @@
         setSession(payload.token);
         await refreshDashboard();
       } catch (error) {
-        authStatus.textContent = `注册失败: ${error.message}`;
+        authStatus.textContent = `注册失败：${error.message}`;
       }
     });
 
@@ -1114,7 +1366,7 @@
         setSession(payload.token);
         await refreshDashboard();
       } catch (error) {
-        authStatus.textContent = `登录失败: ${error.message}`;
+        authStatus.textContent = `登录失败：${error.message}`;
       }
     });
 
@@ -1130,7 +1382,7 @@
         });
         await refreshDashboard();
       } catch (error) {
-        authStatus.textContent = `保存关系失败: ${error.message}`;
+        authStatus.textContent = `保存关系失败：${error.message}`;
       }
     });
 
@@ -1162,7 +1414,7 @@
         });
         await refreshWorkbenchStates();
       } catch (error) {
-        authStatus.textContent = `保存失败: ${error.message}`;
+        authStatus.textContent = `保存失败：${error.message}`;
       }
     });
 
@@ -1179,7 +1431,7 @@
         });
         await refreshWorkbenchStates();
       } catch (error) {
-        authStatus.textContent = `立即开锁失败: ${error.message}`;
+        authStatus.textContent = `立即开锁失败：${error.message}`;
       }
     });
 
@@ -1187,7 +1439,7 @@
       try {
         await scanBluetoothDevice();
       } catch (error) {
-        subBtDeviceInfo.textContent = `搜索失败: ${error.message}`;
+        subBtDeviceInfo.textContent = `搜索失败：${error.message}`;
       }
     });
 
@@ -1195,7 +1447,7 @@
       try {
         await connectBluetooth();
       } catch (error) {
-        subBtDeviceInfo.textContent = `连接失败: ${error.message}`;
+        subBtDeviceInfo.textContent = `连接失败：${error.message}`;
       }
     });
 
@@ -1217,7 +1469,7 @@
         clearSession();
         await refreshMe();
       } catch (error) {
-        authStatus.textContent = `删号失败: ${error.message}`;
+        authStatus.textContent = `注销失败：${error.message}`;
       }
     });
 
