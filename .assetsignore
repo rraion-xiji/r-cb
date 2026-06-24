@@ -1,6 +1,7 @@
 .git
 .wrangler
 functions
+migrations
 schema.sql
 readme
 wrangler.toml

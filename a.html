@@ -6,11 +6,14 @@
   <title>CB Lock Portal</title>
   <style>
     :root {
-      --bg: #080808;
-      --panel: rgba(255, 255, 255, 0.95);
-      --ink: #101010;
-      --muted: #6c655e;
+      --bg: #0b0c0e;
+      --panel: rgba(255, 255, 255, 0.96);
+      --ink: #141414;
+      --muted: #6b655f;
       --cream: #f0e6d8;
+      --accent: #111;
+      --safe: #1d8b57;
+      --danger: #8f1f2f;
       --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
     }
 
@@ -19,8 +22,6 @@
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       background:
         radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 18%),
@@ -31,14 +32,15 @@
     }
 
     .shell {
-      width: min(980px, 100%);
+      width: min(1160px, 100%);
+      margin: 0 auto;
       padding: 28px;
       border-radius: 36px;
       background:
         radial-gradient(circle at top right, rgba(240, 230, 216, 0.22), transparent 26%),
         linear-gradient(180deg, rgba(28, 28, 28, 0.96), rgba(16, 16, 16, 0.98));
-      box-shadow: var(--shadow);
       border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: var(--shadow);
     }
 
     .hero {
@@ -57,46 +59,42 @@
       background: #000;
       padding: 14px;
       border: 2px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 8px 8px 0 rgba(255, 255, 255, 0.08);
     }
 
     h1 {
-      margin: 0 0 10px;
+      margin: 0 0 8px;
       font-size: clamp(32px, 4vw, 50px);
       line-height: 1;
       letter-spacing: -0.04em;
     }
 
-    .subtitle {
-      margin: 0;
-      color: rgba(255, 250, 243, 0.72);
+    .subtitle,
+    .foot {
+      color: rgba(255, 250, 243, 0.74);
       line-height: 1.6;
     }
 
-    .grid {
+    .layout {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1.2fr 0.8fr;
       gap: 18px;
     }
 
-    .card {
-      display: block;
-      text-decoration: none;
-      color: var(--ink);
-      padding: 24px;
-      border-radius: 28px;
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
       background: var(--panel);
-      border: 2px solid rgba(17, 17, 17, 0.88);
+      color: var(--ink);
+      padding: 22px;
+      border-radius: 28px;
+      border: 2px solid rgba(17, 17, 17, 0.86);
       box-shadow: 10px 10px 0 rgba(240, 230, 216, 0.9);
-      transition: transform 180ms ease, box-shadow 180ms ease;
     }
 
-    .card:hover {
-      transform: translateY(-3px) rotate(-0.3deg);
-      box-shadow: 14px 14px 0 rgba(240, 230, 216, 0.9);
-    }
-
-    .tag {
+    .chip {
       display: inline-flex;
       padding: 6px 10px;
       border-radius: 999px;
@@ -108,25 +106,103 @@
       margin-bottom: 14px;
     }
 
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 28px;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
 
-    .card p {
-      margin: 0;
-      color: var(--muted);
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 2px solid rgba(17, 17, 17, 0.86);
+      font-size: 15px;
+      background: #fffdfa;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    button,
+    .link-card {
+      border: 2px solid rgba(17, 17, 17, 0.88);
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      background: var(--cream);
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button.primary,
+    .link-card.primary {
+      background: #111;
+      color: #fffaf5;
+    }
+
+    button.danger {
+      background: #fff1f2;
+      color: var(--danger);
+    }
+
+    .status,
+    .profile,
+    .user-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 2px solid rgba(17, 17, 17, 0.1);
+      background: linear-gradient(180deg, #fffdfa, #f4eadc);
       line-height: 1.6;
     }
 
-    .foot {
-      margin-top: 20px;
-      color: rgba(255, 250, 243, 0.66);
+    .status {
+      color: var(--muted);
+    }
+
+    .profile strong {
+      display: inline-block;
+      min-width: 100px;
+    }
+
+    .links {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .user-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    .user-item {
+      background: #fff;
+    }
+
+    .muted {
+      color: var(--muted);
       font-size: 14px;
     }
 
-    @media (max-width: 760px) {
-      .hero,
+    @media (max-width: 920px) {
+      .layout,
       .grid {
         grid-template-columns: 1fr;
       }
@@ -139,25 +215,250 @@
       <img src="./logo.png" alt="Logo">
       <div>
         <h1>CB Lock Portal</h1>
-        <p class="subtitle">分成两个独立页面使用。DOM 页面负责锁控制与定时开锁，SUB 页面负责查看当前状态和剩余时间。</p>
+        <p class="subtitle">先注册产品用户，再使用同一账户进入 DOM 控制页和 SUB 查看页。每个账户有独立的锁状态，并带有自动删号期限。</p>
       </div>
     </section>
 
-    <section class="grid">
-      <a class="card" href="./dom.html">
-        <span class="tag">Puppy Control</span>
-        <h2>DOM 页面</h2>
-        <p>可上锁、开锁、设置自动开锁时间，并把状态同步给 SUB 页面。</p>
-      </a>
+    <section class="layout">
+      <section class="stack">
+        <section class="panel">
+          <div class="chip">Register</div>
+          <div class="grid">
+            <label>账户
+              <input id="registerAccount" type="text" autocomplete="username" placeholder="例如 puppy001">
+            </label>
+            <label>密码
+              <input id="registerPassword" type="password" autocomplete="new-password" placeholder="至少 6 位">
+            </label>
+            <label>DOM 字段
+              <input id="registerDom" type="text" placeholder="例如 dom-a01">
+            </label>
+            <label>SUB 字段
+              <input id="registerSub" type="text" placeholder="例如 sub-a01">
+            </label>
+            <label>自动删号天数
+              <input id="registerDeleteDays" type="number" min="1" max="365" value="30">
+            </label>
+          </div>
+          <div class="actions">
+            <button class="primary" id="registerBtn" type="button">注册并登录</button>
+          </div>
+        </section>
 
-      <a class="card" href="./sub.html">
-        <span class="tag">Puppy Watch</span>
-        <h2>SUB 页面</h2>
-        <p>只读查看锁状态、计划开锁时间和圆环倒计时，不提供控制操作。</p>
-      </a>
+        <section class="panel">
+          <div class="chip">Login</div>
+          <div class="grid">
+            <label>账户
+              <input id="loginAccount" type="text" autocomplete="username" placeholder="输入已注册账户">
+            </label>
+            <label>密码
+              <input id="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码">
+            </label>
+          </div>
+          <div class="actions">
+            <button class="primary" id="loginBtn" type="button">登录</button>
+            <button id="logoutBtn" type="button">退出登录</button>
+            <button class="danger" id="deleteBtn" type="button">删除当前账户</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="stack">
+        <section class="panel">
+          <div class="chip">Current User</div>
+          <div id="authStatus" class="status">未登录。</div>
+          <div id="profileCard" class="profile" hidden></div>
+          <div class="links">
+            <a class="link-card primary" href="./dom.html">打开 DOM 控制页</a>
+            <a class="link-card" href="./sub.html">打开 SUB 查看页</a>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="chip">User List</div>
+          <p class="muted">这里展示已注册的产品用户列表。只显示账户、DOM、SUB 与自动删除时间，不显示密码。</p>
+          <div id="userList" class="user-list"></div>
+        </section>
+      </aside>
     </section>
 
-    <p class="foot">建议先打开 `dom.html` 设定状态，再打开 `sub.html` 查看同步结果。</p>
+    <p class="foot">登录后，DOM 和 SUB 页面会直接复用当前浏览器里的会话令牌；同一账户下两页会绑定到同一份锁状态。</p>
   </main>
+
+  <script>
+    const SESSION_KEY = "cb-lock-session";
+    const registerAccount = document.getElementById("registerAccount");
+    const registerPassword = document.getElementById("registerPassword");
+    const registerDom = document.getElementById("registerDom");
+    const registerSub = document.getElementById("registerSub");
+    const registerDeleteDays = document.getElementById("registerDeleteDays");
+    const registerBtn = document.getElementById("registerBtn");
+    const loginAccount = document.getElementById("loginAccount");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+    const authStatus = document.getElementById("authStatus");
+    const profileCard = document.getElementById("profileCard");
+    const userList = document.getElementById("userList");
+
+    function setSession(token) {
+      localStorage.setItem(SESSION_KEY, token);
+    }
+
+    function getSession() {
+      return localStorage.getItem(SESSION_KEY);
+    }
+
+    function clearSession() {
+      localStorage.removeItem(SESSION_KEY);
+    }
+
+    async function request(path, options = {}) {
+      const headers = new Headers(options.headers || {});
+      headers.set("Accept", "application/json");
+      const token = getSession();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      const response = await fetch(path, { ...options, headers });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error || `Request failed: ${response.status}`);
+      }
+      return payload;
+    }
+
+    function renderProfile(user) {
+      if (!user) {
+        profileCard.hidden = true;
+        profileCard.innerHTML = "";
+        authStatus.textContent = "未登录。";
+        return;
+      }
+
+      authStatus.textContent = `已登录账户: ${user.account}`;
+      profileCard.hidden = false;
+      profileCard.innerHTML = `
+        <div><strong>账户</strong>${user.account}</div>
+        <div><strong>DOM</strong>${user.dom}</div>
+        <div><strong>SUB</strong>${user.sub}</div>
+        <div><strong>自动删号</strong>${user.autoDeleteDays} 天</div>
+        <div><strong>删除时间</strong>${user.deleteAt}</div>
+      `;
+    }
+
+    function renderUsers(users) {
+      if (!users.length) {
+        userList.innerHTML = '<div class="user-item">当前没有用户。</div>';
+        return;
+      }
+
+      userList.innerHTML = users.map((user) => `
+        <div class="user-item">
+          <div><strong>${user.account}</strong></div>
+          <div>DOM: ${user.dom}</div>
+          <div>SUB: ${user.sub}</div>
+          <div>自动删号: ${user.auto_delete_days} 天</div>
+          <div>删除时间: ${user.delete_at}</div>
+        </div>
+      `).join("");
+    }
+
+    async function refreshMe() {
+      const token = getSession();
+      if (!token) {
+        renderProfile(null);
+        userList.innerHTML = '<div class="user-item">登录后可查看用户列表。</div>';
+        return;
+      }
+
+      try {
+        const me = await request("/api/me");
+        renderProfile(me.user);
+        const list = await request("/api/users");
+        renderUsers(list.users || []);
+      } catch (error) {
+        clearSession();
+        renderProfile(null);
+        userList.innerHTML = `<div class="user-item">${error.message}</div>`;
+      }
+    }
+
+    registerBtn.addEventListener("click", async () => {
+      try {
+        const payload = await request("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account: registerAccount.value,
+            password: registerPassword.value,
+            dom: registerDom.value,
+            sub: registerSub.value,
+            autoDeleteDays: registerDeleteDays.value
+          })
+        });
+        setSession(payload.token);
+        renderProfile(payload.user);
+        await refreshMe();
+      } catch (error) {
+        authStatus.textContent = `注册失败: ${error.message}`;
+      }
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      try {
+        const payload = await request("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            account: loginAccount.value,
+            password: loginPassword.value
+          })
+        });
+        setSession(payload.token);
+        renderProfile(payload.user);
+        await refreshMe();
+      } catch (error) {
+        authStatus.textContent = `登录失败: ${error.message}`;
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      const token = getSession();
+      if (!token) {
+        renderProfile(null);
+        return;
+      }
+
+      try {
+        await request("/api/logout", { method: "POST" });
+      } catch {
+        // Ignore and clear local session anyway.
+      }
+      clearSession();
+      await refreshMe();
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      if (!getSession()) {
+        authStatus.textContent = "当前没有可删除的登录账户。";
+        return;
+      }
+      if (!confirm("删除当前账户后，关联的 DOM、SUB 和锁状态都会一起删除。是否继续？")) {
+        return;
+      }
+
+      try {
+        await request("/api/account", { method: "DELETE" });
+        clearSession();
+        await refreshMe();
+      } catch (error) {
+        authStatus.textContent = `删号失败: ${error.message}`;
+      }
+    });
+
+    refreshMe();
+  </script>
 </body>
 </html>

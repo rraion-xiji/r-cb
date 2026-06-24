@@ -12,9 +12,7 @@
       --cream: #f0e6d8;
       --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -25,9 +23,8 @@
         radial-gradient(circle at 85% 12%, rgba(240, 230, 216, 0.16), transparent 20%),
         linear-gradient(180deg, #090909 0%, #111111 100%);
     }
-
     .shell {
-      width: min(980px, calc(100vw - 32px));
+      width: min(1020px, calc(100vw - 32px));
       margin: 24px auto;
       padding: 28px;
       border-radius: 36px;
@@ -37,7 +34,6 @@
       border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: var(--shadow);
     }
-
     .hero {
       display: grid;
       grid-template-columns: 112px 1fr auto;
@@ -45,7 +41,6 @@
       align-items: center;
       margin-bottom: 28px;
     }
-
     .hero img {
       width: 112px;
       height: 112px;
@@ -55,24 +50,15 @@
       padding: 14px;
       border: 2px solid rgba(255, 255, 255, 0.9);
     }
-
     h1 {
       margin: 0 0 8px;
       font-size: clamp(30px, 4vw, 48px);
       line-height: 1;
       letter-spacing: -0.04em;
     }
-
     .subtitle,
-    .nav a {
-      color: rgba(255, 250, 243, 0.74);
-    }
-
-    .nav a {
-      text-decoration: none;
-      font-size: 14px;
-    }
-
+    .nav a { color: rgba(255, 250, 243, 0.74); }
+    .nav a { text-decoration: none; font-size: 14px; }
     .panel {
       display: grid;
       gap: 18px;
@@ -83,7 +69,6 @@
       border: 2px solid rgba(17, 17, 17, 0.86);
       box-shadow: 10px 10px 0 rgba(240, 230, 216, 0.9);
     }
-
     .chip {
       display: inline-flex;
       padding: 6px 10px;
@@ -95,7 +80,6 @@
       text-transform: uppercase;
       margin-bottom: 14px;
     }
-
     .status-flag {
       display: inline-flex;
       width: fit-content;
@@ -106,20 +90,12 @@
       border: 2px solid rgba(17, 17, 17, 0.16);
       background: rgba(17, 17, 17, 0.08);
     }
-
     .status-flag.unlocked {
       color: var(--safe);
       background: rgba(29, 139, 87, 0.12);
       border-color: rgba(29, 139, 87, 0.22);
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-
+    .profile,
     .ring-card,
     .metric,
     .bt-box {
@@ -127,55 +103,34 @@
       border-radius: 24px;
       background: linear-gradient(180deg, #fffdfa, #f4eadc);
     }
-
+    .profile {
+      padding: 14px 16px;
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
     .ring-card,
     .bt-box {
       display: grid;
       gap: 14px;
       padding: 18px 14px 14px;
     }
-
     .ring-cluster {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       width: 100%;
     }
-
-    .ring-unit {
-      display: grid;
-      justify-items: center;
-      gap: 8px;
-    }
-
-    .ring-wrap {
-      position: relative;
-      width: 104px;
-      height: 104px;
-    }
-
-    .ring-svg {
-      width: 104px;
-      height: 104px;
-      transform: rotate(-90deg);
-    }
-
-    .ring-track,
-    .ring-progress {
-      fill: none;
-      stroke-width: 8;
-    }
-
-    .ring-track {
-      stroke: rgba(17, 17, 17, 0.1);
-    }
-
-    .ring-progress {
-      stroke: #111;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 900ms linear;
-    }
-
+    .ring-unit { display: grid; justify-items: center; gap: 8px; }
+    .ring-wrap { position: relative; width: 104px; height: 104px; }
+    .ring-svg { width: 104px; height: 104px; transform: rotate(-90deg); }
+    .ring-track, .ring-progress { fill: none; stroke-width: 8; }
+    .ring-track { stroke: rgba(17, 17, 17, 0.1); }
+    .ring-progress { stroke: #111; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
     .ring-center {
       position: absolute;
       inset: 0;
@@ -184,54 +139,19 @@
       text-align: center;
       padding: 18px;
     }
-
-    .ring-value {
-      font-size: 24px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .ring-unit-label,
-    .ring-note,
-    .metric-label {
+    .ring-value { font-size: 24px; font-weight: 800; line-height: 1; }
+    .ring-unit-label, .ring-note, .metric-label {
       color: var(--muted);
       font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
-
-    .ring-unit-label {
-      font-size: 11px;
-      text-align: center;
-    }
-
-    .metric-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .metric {
-      padding: 16px 18px;
-    }
-
-    .metric-value {
-      margin-top: 8px;
-      font-size: 28px;
-      font-weight: 700;
-      line-height: 1.1;
-    }
-
-    .notice {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .bt-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
+    .ring-unit-label { font-size: 11px; text-align: center; }
+    .metric-list { display: grid; gap: 14px; }
+    .metric { padding: 16px 18px; }
+    .metric-value { margin-top: 8px; font-size: 28px; font-weight: 700; line-height: 1.1; }
+    .notice { color: var(--muted); line-height: 1.6; }
+    .bt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .bt-grid input[type="text"] {
       width: 100%;
       padding: 14px 16px;
@@ -240,13 +160,7 @@
       font-size: 14px;
       background: #fffdfa;
     }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
     button {
       border: 2px solid rgba(17, 17, 17, 0.88);
       border-radius: 16px;
@@ -257,31 +171,16 @@
       background: var(--cream);
       color: var(--ink);
     }
-
-    .primary {
-      background: #111;
-      color: #fffaf5;
-    }
-
-    .bt-status,
-    .bt-device {
+    .primary { background: #111; color: #fffaf5; }
+    .bt-status, .bt-device {
       padding: 12px 14px;
       border-radius: 16px;
       border: 2px solid rgba(17, 17, 17, 0.12);
       line-height: 1.5;
       font-size: 14px;
     }
-
-    .bt-status {
-      background: rgba(17, 17, 17, 0.05);
-      color: var(--muted);
-    }
-
-    .bt-device {
-      background: rgba(240, 230, 216, 0.5);
-      color: var(--ink);
-    }
-
+    .bt-status { background: rgba(17, 17, 17, 0.05); color: var(--muted); }
+    .bt-device { background: rgba(240, 230, 216, 0.5); color: var(--ink); }
     .bt-preview {
       margin: 0;
       padding: 14px;
@@ -294,13 +193,8 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
-
     @media (max-width: 860px) {
-      .hero,
-      .grid,
-      .bt-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero, .grid, .bt-grid, .ring-cluster { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -310,13 +204,14 @@
       <img src="./logo.png" alt="Logo">
       <div>
         <div class="chip">Puppy Watch</div>
-        <h1>SUB 页面</h1>
-        <p class="subtitle">SUB 从 Cloudflare API 读取状态，并把当前状态同步发送给钥匙盒。</p>
+        <h1>SUB 查看页</h1>
+        <p class="subtitle">SUB 只读取当前登录账户的共享状态，并可继续把状态同步给蓝牙设备。</p>
       </div>
-      <div class="nav"><a href="./a.html">返回入口</a> · <a href="./dom.html">打开 DOM 页面</a></div>
+      <div class="nav"><a href="./a.html">返回入口</a> / <a href="./dom.html">打开 DOM 页面</a></div>
     </section>
 
     <section class="panel">
+      <div id="profileCard" class="profile">正在读取账户信息...</div>
       <div id="statusFlag" class="status-flag">当前已上锁</div>
 
       <div class="grid">
@@ -353,7 +248,7 @@
               <div class="ring-unit-label">Seconds</div>
             </div>
           </div>
-          <div id="ringNote" class="ring-note">等待 DOM 页面设定时间。</div>
+          <div id="ringNote" class="ring-note">等待 DOM 设置时间。</div>
         </div>
 
         <div class="metric-list">
@@ -362,8 +257,12 @@
             <div class="metric-value">SUB</div>
           </div>
           <div class="metric">
+            <div class="metric-label">目标用户</div>
+            <div id="accountValue" class="metric-value" style="font-size:22px;">--</div>
+          </div>
+          <div class="metric">
             <div class="metric-label">预计开锁时间</div>
-            <div id="timeValue" class="metric-value" style="font-size:22px;">未设定</div>
+            <div id="timeValue" class="metric-value" style="font-size:22px;">未设置</div>
           </div>
           <div class="metric">
             <div class="metric-label">剩余时间</div>
@@ -372,12 +271,12 @@
         </div>
       </div>
 
-      <div class="notice">此页面通过 `/api/state` 读取共享状态。蓝牙连接成功后，会每秒把当前状态写入钥匙盒的特征值。</div>
+      <div class="notice">SUB 页面同样走已登录账户的会话，不再读取全局共享状态。</div>
 
       <div class="bt-box">
         <div>
           <div class="chip" style="margin-bottom:8px;">Keybox Link</div>
-          <div class="notice">如设备 UUID 固定，后续可以把下面两个输入框隐藏掉。当前先保留，方便和 ESP 固件对齐。</div>
+          <div class="notice">蓝牙能力保持不变，只是发送内容会改成当前账户的状态。</div>
         </div>
 
         <div class="bt-grid">
@@ -404,9 +303,12 @@
   </main>
 
   <script>
+    const SESSION_KEY = "cb-lock-session";
     const API_URL = "/api/state";
     const ringCircumference = 2 * Math.PI * 40;
+    const profileCard = document.getElementById("profileCard");
     const statusFlag = document.getElementById("statusFlag");
+    const accountValue = document.getElementById("accountValue");
     const timeValue = document.getElementById("timeValue");
     const countdownValue = document.getElementById("countdownValue");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
@@ -424,17 +326,44 @@
     const btStatus = document.getElementById("btStatus");
     const btPreview = document.getElementById("btPreview");
 
-    let currentState = {
-      locked: true,
-      unlockTime: null,
-      scheduledAt: null,
-      remainingTime: "--:--:--",
-      updatedAt: null,
-      updatedBy: "system"
-    };
+    let currentState = null;
     let btDevice = null;
     let btCharacteristic = null;
     let autoSendTimer = null;
+
+    function getSession() {
+      return localStorage.getItem(SESSION_KEY);
+    }
+
+    function clearSession() {
+      localStorage.removeItem(SESSION_KEY);
+    }
+
+    function redirectToPortal(message) {
+      clearSession();
+      window.location.href = `./a.html${message ? `#${encodeURIComponent(message)}` : ""}`;
+    }
+
+    async function request(path, options = {}) {
+      const token = getSession();
+      if (!token) {
+        redirectToPortal("请先登录");
+        throw new Error("未登录");
+      }
+
+      const headers = new Headers(options.headers || {});
+      headers.set("Accept", "application/json");
+      headers.set("Authorization", `Bearer ${token}`);
+      const response = await fetch(path, { ...options, headers });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (response.status === 401) {
+          redirectToPortal(payload.error || "登录已失效");
+        }
+        throw new Error(payload.error || `Request failed: ${response.status}`);
+      }
+      return payload;
+    }
 
     function pad(value) {
       return String(value).padStart(2, "0");
@@ -442,15 +371,6 @@
 
     function formatDate(date) {
       return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    }
-
-    async function fetchState() {
-      const response = await fetch(API_URL, { headers: { Accept: "application/json" } });
-      if (!response.ok) {
-        throw new Error(`读取状态失败: ${response.status}`);
-      }
-      currentState = await response.json();
-      return currentState;
     }
 
     function normalizeBluetoothUuid(value) {
@@ -465,8 +385,21 @@
       btDeviceInfo.textContent = message;
     }
 
+    function renderProfile(user) {
+      profileCard.innerHTML = `
+        <div><strong>账户:</strong> ${user.account}</div>
+        <div><strong>DOM 字段:</strong> ${user.dom}</div>
+        <div><strong>SUB 字段:</strong> ${user.sub}</div>
+        <div><strong>自动删号时间:</strong> ${user.deleteAt}</div>
+      `;
+      accountValue.textContent = user.account;
+    }
+
     function getPayloadFromState(state) {
       return {
+        account: state.user.account,
+        dom: state.user.dom,
+        sub: state.user.sub,
         locked: !!state.locked,
         unlockTime: state.unlockTime || null,
         remainingTime: state.remainingTime || "--:--:--",
@@ -476,6 +409,9 @@
     }
 
     function refreshPayloadPreview() {
+      if (!currentState) {
+        return;
+      }
       btPreview.textContent = JSON.stringify(getPayloadFromState(currentState), null, 2);
     }
 
@@ -523,7 +459,7 @@
       const server = await btDevice.gatt.connect();
       const service = await server.getPrimaryService(serviceUuid);
       btCharacteristic = await service.getCharacteristic(characteristicUuid);
-      setBtStatus(`已连接: ${btDevice.name || "Unknown Device"}，将每秒发送状态。`);
+      setBtStatus(`已连接 ${btDevice.name || "Unknown Device"}，将每秒发送 ${currentState.user.account} 的状态。`);
       if (autoSendTimer) {
         clearInterval(autoSendTimer);
       }
@@ -534,7 +470,7 @@
     }
 
     async function sendBluetoothState() {
-      if (!btCharacteristic) {
+      if (!btCharacteristic || !currentState) {
         return;
       }
       const payload = getPayloadFromState(currentState);
@@ -545,7 +481,7 @@
       } else {
         await btCharacteristic.writeValue(encoded);
       }
-      setBtStatus(`已连接: ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}，每秒发送中。`);
+      setBtStatus(`已连接 ${btDevice ? btDevice.name || "Unknown Device" : "Unknown Device"}，每秒发送中。`);
     }
 
     async function safeBluetoothSend() {
@@ -569,7 +505,7 @@
         ringHoursValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
         ringMinutesValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
         ringSecondsValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
-        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "等待 DOM 页面设定时间。";
+        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "等待 DOM 设置时间。";
         return;
       }
 
@@ -578,12 +514,9 @@
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
       const hoursProgressBase = Math.max(1, Math.ceil(totalMs / 3600000));
-      const hoursProgress = Math.max(0, Math.min(1, totalHours / hoursProgressBase));
-      const minutesProgress = Math.max(0, Math.min(1, minutes / 59));
-      const secondsProgress = Math.max(0, Math.min(1, seconds / 59));
-      setRingProgress(ringHoursProgress, hoursProgress);
-      setRingProgress(ringMinutesProgress, minutesProgress);
-      setRingProgress(ringSecondsProgress, secondsProgress);
+      setRingProgress(ringHoursProgress, Math.max(0, Math.min(1, totalHours / hoursProgressBase)));
+      setRingProgress(ringMinutesProgress, Math.max(0, Math.min(1, minutes / 59)));
+      setRingProgress(ringSecondsProgress, Math.max(0, Math.min(1, seconds / 59)));
       ringHoursValue.textContent = pad(Math.min(totalHours, 99));
       ringMinutesValue.textContent = pad(minutes);
       ringSecondsValue.textContent = pad(seconds);
@@ -591,12 +524,14 @@
     }
 
     function renderState(state) {
+      currentState = state;
+      renderProfile(state.user);
       refreshPayloadPreview();
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);
 
       if (!state.unlockTime) {
-        timeValue.textContent = "未设定";
+        timeValue.textContent = "未设置";
         countdownValue.textContent = "--:--:--";
         syncRing(null, null);
         return;
@@ -605,7 +540,7 @@
       const autoUnlockAt = new Date(state.unlockTime);
       const scheduledAt = state.scheduledAt ? new Date(state.scheduledAt) : null;
       const remainingMs = autoUnlockAt.getTime() - Date.now();
-      timeValue.textContent = Number.isNaN(autoUnlockAt.getTime()) ? "未设定" : formatDate(autoUnlockAt);
+      timeValue.textContent = Number.isNaN(autoUnlockAt.getTime()) ? "未设置" : formatDate(autoUnlockAt);
       countdownValue.textContent = state.remainingTime || "--:--:--";
       const totalMs = scheduledAt && !Number.isNaN(scheduledAt.getTime())
         ? Math.max(autoUnlockAt.getTime() - scheduledAt.getTime(), 0)
@@ -615,7 +550,7 @@
 
     async function refreshState() {
       try {
-        const state = await fetchState();
+        const state = await request(API_URL);
         renderState(state);
       } catch (error) {
         setBtStatus(`同步失败: ${error.message}`);
