@@ -12,7 +12,9 @@
       --cream: #181614;
       --shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -23,6 +25,7 @@
         radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.04), transparent 20%),
         linear-gradient(180deg, #040404 0%, #0c0c0c 100%);
     }
+
     .shell {
       width: min(1120px, calc(100vw - 32px));
       margin: 24px auto;
@@ -34,6 +37,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: var(--shadow);
     }
+
     .hero {
       display: grid;
       grid-template-columns: 112px 1fr auto;
@@ -41,6 +45,7 @@
       align-items: center;
       margin-bottom: 28px;
     }
+
     .hero img {
       width: 112px;
       height: 112px;
@@ -50,20 +55,24 @@
       padding: 14px;
       border: 2px solid rgba(255, 255, 255, 0.9);
     }
+
     h1 {
       margin: 0 0 8px;
       font-size: clamp(30px, 4vw, 48px);
       line-height: 1;
       letter-spacing: -0.04em;
     }
+
     .subtitle,
     .nav a { color: rgba(243, 239, 232, 0.72); }
     .nav a { text-decoration: none; font-size: 14px; }
+
     .layout {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
       gap: 20px;
     }
+
     .panel {
       background: rgba(18, 18, 18, 0.96);
       color: var(--ink);
@@ -72,31 +81,21 @@
       padding: 22px;
       box-shadow: 0 18px 38px rgba(0, 0, 0, 0.34);
     }
-    .chip {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #f3efe8;
-      color: #111;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
+
     .control-box,
     .metric,
-    .ring-card,
-    .log li,
-    .profile {
+    .ring-card {
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px;
       background: linear-gradient(180deg, #1a1a1a, #111111);
     }
+
     .control-box {
       display: grid;
       gap: 16px;
       padding: 18px;
     }
+
     .field-row,
     .actions {
       display: flex;
@@ -105,17 +104,19 @@
       align-items: center;
       justify-content: space-between;
     }
-    label strong,
-    .hint-strong {
+
+    label strong {
       display: block;
       margin-bottom: 4px;
       font-size: 15px;
     }
+
     .hint {
       color: var(--muted);
       font-size: 13px;
       line-height: 1.5;
     }
+
     input[type="datetime-local"] {
       width: min(100%, 290px);
       padding: 14px 16px;
@@ -125,30 +126,7 @@
       background: #0c0c0c;
       color: var(--ink);
     }
-    .switch { position: relative; width: 72px; height: 40px; flex: 0 0 auto; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      inset: 0;
-      border-radius: 999px;
-      background: #3a3a3a;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      cursor: pointer;
-    }
-    .slider::before {
-      content: "";
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      left: 5px;
-      top: 3px;
-      border-radius: 50%;
-      background: #f3efe8;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      transition: transform 180ms ease;
-    }
-    .switch input:checked + .slider { background: #f3efe8; }
-    .switch input:checked + .slider::before { transform: translateX(30px); }
+
     button {
       border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: 16px;
@@ -159,15 +137,52 @@
       background: var(--cream);
       color: var(--ink);
     }
-    .primary { background: #f3efe8; color: #111; }
-    .ring-card { display: grid; gap: 14px; padding: 18px 14px 14px; }
-    .ring-cluster { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; }
-    .ring-unit { display: grid; justify-items: center; gap: 8px; }
-    .ring-wrap { position: relative; width: 104px; height: 104px; }
-    .ring-svg { width: 104px; height: 104px; transform: rotate(-90deg); }
-    .ring-track, .ring-progress { fill: none; stroke-width: 8; }
+
+    .primary {
+      background: #f3efe8;
+      color: #111;
+    }
+
+    .ring-card {
+      display: grid;
+      gap: 14px;
+      padding: 18px 14px 14px;
+    }
+
+    .ring-cluster {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+    }
+
+    .ring-unit {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: 104px;
+      height: 104px;
+    }
+
+    .ring-svg {
+      width: 104px;
+      height: 104px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track,
+    .ring-progress {
+      fill: none;
+      stroke-width: 8;
+    }
+
     .ring-track { stroke: rgba(255, 255, 255, 0.08); }
     .ring-progress { stroke: #f3efe8; stroke-linecap: round; transition: stroke-dashoffset 900ms linear; }
+
     .ring-center {
       position: absolute;
       inset: 0;
@@ -177,12 +192,43 @@
       padding: 18px;
       color: var(--ink);
     }
-    .ring-value { font-size: 24px; font-weight: 800; line-height: 1; }
-    .ring-unit-label, .ring-note, .metric-label { color: var(--muted); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
-    .ring-unit-label { font-size: 11px; text-align: center; }
-    .metric-grid { display: grid; gap: 14px; }
-    .metric { padding: 16px 18px; }
-    .metric-value { margin-top: 8px; font-size: 28px; font-weight: 700; line-height: 1.1; }
+
+    .ring-value {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .ring-unit-label,
+    .ring-note,
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .ring-unit-label {
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .metric-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 16px 18px;
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
     .status-flag {
       display: inline-flex;
       width: fit-content;
@@ -193,17 +239,19 @@
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(255, 255, 255, 0.06);
     }
+
     .status-flag.unlocked {
       color: var(--safe);
       background: rgba(121, 215, 157, 0.12);
       border-color: rgba(121, 215, 157, 0.28);
     }
-    .log { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-    .log li { padding: 12px 14px; color: var(--muted); line-height: 1.5; }
-    .log time { color: var(--ink); font-weight: 700; margin-right: 8px; }
-    .profile { padding: 14px 16px; line-height: 1.6; }
+
     @media (max-width: 860px) {
-      .hero, .layout, .ring-cluster { grid-template-columns: 1fr; }
+      .hero,
+      .layout,
+      .ring-cluster {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -212,9 +260,9 @@
     <section class="hero">
       <img src="./dom.png" alt="DOM Logo">
       <div>
-        <div class="chip">Puppy Control</div>
+        <div style="display:inline-flex;padding:6px 10px;border-radius:999px;background:#f3efe8;color:#111;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;">Puppy Control</div>
         <h1>DOM 控制页</h1>
-        <p class="subtitle">当前页面只控制已登录账户自己的锁状态，DOM 和 SUB 会共享同一份用户状态。</p>
+        <p class="subtitle">DOM 页面只负责给目标 SUB 账户设置开锁策略与立即开锁，不再展示冗余资料区和日志区。</p>
       </div>
       <div class="nav"><a href="./index.html">返回入口</a> / <a href="./sub.html">打开 SUB 页面</a></div>
     </section>
@@ -222,23 +270,11 @@
     <section class="layout">
       <section class="panel">
         <h2>控制面板</h2>
-        <div id="profileCard" class="profile">正在读取账户信息...</div>
         <div class="control-box" style="margin-top:16px;">
-          <div class="field-row">
-            <div>
-              <span class="hint-strong">锁状态</span>
-              <div class="hint">切换后点击“应用策略”，只会写入当前登录账户的独立状态。</div>
-            </div>
-            <label class="switch" aria-label="切换锁状态">
-              <input id="lockToggle" type="checkbox" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-
           <div class="field-row">
             <label for="unlockTime">
               <strong>自动开锁时间</strong>
-              <span class="hint">到点后服务端会把当前账户的状态自动切为已开锁。</span>
+              <span class="hint">到点后服务端会把目标 SUB 账户的状态自动切为已开锁。</span>
             </label>
             <input id="unlockTime" type="datetime-local">
           </div>
@@ -295,6 +331,10 @@
             <div class="metric-value">DOM</div>
           </div>
           <div class="metric">
+            <div class="metric-label">当前 DOM</div>
+            <div id="actorValue" class="metric-value" style="font-size:22px;">--</div>
+          </div>
+          <div class="metric">
             <div class="metric-label">目标用户</div>
             <div id="accountValue" class="metric-value" style="font-size:22px;">--</div>
           </div>
@@ -307,10 +347,6 @@
             <div id="countdownValue" class="metric-value">--:--:--</div>
           </div>
         </div>
-
-        <ul class="log" id="activityLog" style="margin-top:16px;">
-          <li><time>系统</time>等待同步用户状态。</li>
-        </ul>
       </aside>
     </section>
   </main>
@@ -319,12 +355,11 @@
     const SESSION_KEY = "cb-lock-session";
     const API_URL = "/api/state?mode=dom_control";
     const ringCircumference = 2 * Math.PI * 40;
-    const profileCard = document.getElementById("profileCard");
-    const lockToggle = document.getElementById("lockToggle");
     const unlockTime = document.getElementById("unlockTime");
     const applyBtn = document.getElementById("applyBtn");
     const unlockNowBtn = document.getElementById("unlockNowBtn");
     const statusFlag = document.getElementById("statusFlag");
+    const actorValue = document.getElementById("actorValue");
     const accountValue = document.getElementById("accountValue");
     const timeValue = document.getElementById("timeValue");
     const countdownValue = document.getElementById("countdownValue");
@@ -335,7 +370,6 @@
     const ringMinutesValue = document.getElementById("ringMinutesValue");
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
-    const activityLog = document.getElementById("activityLog");
 
     let currentState = null;
 
@@ -381,18 +415,6 @@
       return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
-    function appendLog(message) {
-      const item = document.createElement("li");
-      const stamp = document.createElement("time");
-      stamp.textContent = new Date().toLocaleTimeString("zh-CN", { hour12: false });
-      item.appendChild(stamp);
-      item.append(` ${message}`);
-      activityLog.prepend(item);
-      while (activityLog.children.length > 6) {
-        activityLog.removeChild(activityLog.lastChild);
-      }
-    }
-
     function setRingProgress(element, progress) {
       element.style.strokeDasharray = `${ringCircumference}`;
       element.style.strokeDashoffset = `${ringCircumference * (1 - progress)}`;
@@ -406,7 +428,7 @@
         ringHoursValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
         ringMinutesValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
         ringSecondsValue.textContent = remainingMs === 0 && totalMs ? "00" : "--";
-        ringNote.textContent = totalMs ? "开锁时间已到，圆环计时完成。" : "还没有设置自动开锁时间。";
+        ringNote.textContent = totalMs ? "开锁时间已到，倒计时完成。" : "还没有设置自动开锁时间。";
         return;
       }
 
@@ -424,29 +446,15 @@
       ringNote.textContent = `距离自动开锁还有 ${countdownValue.textContent}。`;
     }
 
-    function renderProfile(actor, subject) {
-      if (!actor.sub) {
-        redirectToPortal("当前账户不是 DOM 角色");
-        return;
-      }
-      profileCard.innerHTML = `
-        <div><strong>当前账户:</strong> ${actor.account}</div>
-        <div><strong>角色:</strong> DOM</div>
-        <div><strong>绑定 SUB:</strong> ${actor.sub}</div>
-        <div><strong>目标状态账户:</strong> ${subject.account}</div>
-        <div><strong>删除方式:</strong> 仅支持手动删除</div>
-      `;
-      accountValue.textContent = subject.account;
-    }
-
     function renderState(state) {
       currentState = state;
       if (!state.actor?.sub) {
         redirectToPortal("当前账户不能打开 DOM 控制页");
         return;
       }
-      renderProfile(state.actor, state.user);
-      lockToggle.checked = !!state.locked;
+
+      actorValue.textContent = state.actor.account;
+      accountValue.textContent = state.user.account;
       statusFlag.textContent = state.locked ? "当前已上锁" : "当前已开锁";
       statusFlag.classList.toggle("unlocked", !state.locked);
 
@@ -481,7 +489,7 @@
         const state = await request(API_URL);
         renderState(state);
       } catch (error) {
-        appendLog(`同步失败: ${error.message}`);
+        ringNote.textContent = `同步失败: ${error.message}`;
       }
     }
 
@@ -491,7 +499,7 @@
         if (unlockTime.value) {
           const unlockDate = new Date(unlockTime.value);
           if (Number.isNaN(unlockDate.getTime()) || unlockDate.getTime() <= Date.now()) {
-            appendLog("开锁时间无效或早于当前时间。");
+            ringNote.textContent = "开锁时间无效或早于当前时间。";
             return;
           }
           unlockTimeValue = unlockDate.toISOString();
@@ -501,15 +509,17 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            locked: lockToggle.checked,
+            locked: true,
             unlockTime: unlockTimeValue,
             source: "dom"
           })
         });
-        appendLog(unlockTimeValue ? `已更新 ${state.user.account} 的开锁时间为 ${formatDate(new Date(unlockTimeValue))}。` : `已更新 ${state.user.account} 的状态，未设置自动开锁。`);
+        ringNote.textContent = unlockTimeValue
+          ? `已更新 ${state.user.account} 的开锁时间为 ${formatDate(new Date(unlockTimeValue))}。`
+          : `已更新 ${state.user.account} 的状态，未设置自动开锁。`;
         renderState(state);
       } catch (error) {
-        appendLog(`保存失败: ${error.message}`);
+        ringNote.textContent = `保存失败: ${error.message}`;
       }
     });
 
@@ -524,10 +534,10 @@
             source: "dom"
           })
         });
-        appendLog(`已立即开锁 ${state.user.account}。`);
+        ringNote.textContent = `已立即开锁 ${state.user.account}。`;
         renderState(state);
       } catch (error) {
-        appendLog(`立即开锁失败: ${error.message}`);
+        ringNote.textContent = `立即开锁失败: ${error.message}`;
       }
     });
 
