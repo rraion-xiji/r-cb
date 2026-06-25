@@ -284,7 +284,6 @@ async function loadState(db, user) {
        lock_state.unlock_time,
        lock_state.scheduled_at,
        lock_state.dom_message,
-       lock_state.sub_message,
        lock_state.updated_by,
        lock_state.updated_at,
        device_status.is_online,
@@ -322,7 +321,6 @@ async function loadState(db, user) {
       scheduledAt: null,
       remainingTime: "--:--:--",
       domMessage: record.dom_message || "",
-      subMessage: record.sub_message || "",
       deviceOnline: Number(record.is_online) === 1,
       deviceUpdatedAt: record.device_updated_at || null,
       updatedAt: currentIso,
@@ -337,7 +335,6 @@ async function loadState(db, user) {
     scheduledAt: record.scheduled_at || null,
     remainingTime: remainingTimeString(unlockTime),
     domMessage: record.dom_message || "",
-    subMessage: record.sub_message || "",
     deviceOnline: Number(record.is_online) === 1,
     deviceUpdatedAt: record.device_updated_at || null,
     updatedAt: record.updated_at,
@@ -606,23 +603,6 @@ async function handlePostState(request, env) {
   const body = await parseJson(request);
   const source = typeof body.source === "string" && body.source ? body.source : "unknown";
   const domMessage = typeof body.domMessage === "string" ? body.domMessage.trim() : null;
-  const subMessage = typeof body.subMessage === "string" ? body.subMessage.trim() : null;
-
-  if (mode === "sub_view") {
-    const currentIso = nowIso();
-    await ensureUserState(env.DB, subject.id);
-    await env.DB.prepare(
-      `UPDATE lock_state
-       SET sub_message = ?, updated_by = ?, updated_at = ?
-       WHERE user_id = ?`
-    ).bind(subMessage || "", source, currentIso, subject.id).run();
-
-    const state = await loadState(env.DB, subject);
-    return json({
-      ...state,
-      actor: serializeUser(user)
-    });
-  }
 
   if (mode !== "dom_control") {
     return errorResponse(403, "Unsupported state update mode");

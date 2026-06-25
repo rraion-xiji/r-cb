@@ -514,13 +514,6 @@
           <section class="status-card">
             <div class="message-grid">
               <div class="message-box">
-                <strong>给 DOM 的留言</strong>
-                <textarea id="messageInput" placeholder="输入要发给 DOM 的留言"></textarea>
-                <div class="message-actions">
-                  <button id="saveMessageBtn" class="primary" type="button">保存留言</button>
-                </div>
-              </div>
-              <div class="message-box">
                 <strong>DOM 给你的留言</strong>
                 <textarea id="receivedMessage" readonly placeholder="DOM 的留言会显示在这里"></textarea>
               </div>
@@ -586,8 +579,6 @@
     const deviceState = document.getElementById("deviceState");
     const scanBtBtn = document.getElementById("scanBtBtn");
     const connectBtBtn = document.getElementById("connectBtBtn");
-    const messageInput = document.getElementById("messageInput");
-    const saveMessageBtn = document.getElementById("saveMessageBtn");
     const receivedMessage = document.getElementById("receivedMessage");
     const btDeviceInfo = document.getElementById("btDeviceInfo");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
@@ -715,7 +706,6 @@
         unlockTime: state.unlockTime || null,
         remainingTime: state.remainingTime || "--:--:--",
         domMessage: state.domMessage || "",
-        subMessage: state.subMessage || "",
         source: "sub",
         sentAt: new Date().toISOString()
       };
@@ -792,9 +782,6 @@
       heroName.textContent = state.actor.account;
       heroSubtitle.textContent = `已绑定 DOM：${state.user.dom || "未设置"}`;
       targetTitle.textContent = `DOM : ${state.user.dom || "--"}`;
-      if (document.activeElement !== messageInput) {
-        messageInput.value = state.subMessage || "";
-      }
       receivedMessage.value = state.domMessage || "";
       setPillState(statusFlag, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
       setPillState(deviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
@@ -834,24 +821,6 @@
         await connectBluetooth();
       } catch (error) {
         setBtDeviceInfo(`连接失败: ${error.message}`);
-      }
-    });
-
-    saveMessageBtn.addEventListener("click", async () => {
-      try {
-        const state = await request(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subMessage: messageInput.value,
-            source: "sub"
-          })
-        });
-        setBtDeviceInfo("留言已同步给 DOM。");
-        renderState(state);
-        await safeBluetoothSend();
-      } catch (error) {
-        setBtDeviceInfo(`留言保存失败: ${error.message}`);
       }
     });
 

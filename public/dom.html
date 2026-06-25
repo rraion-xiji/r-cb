@@ -235,6 +235,10 @@
       margin-bottom: 18px;
     }
 
+    .control-head + .control-actions {
+      display: none;
+    }
+
     .message-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -535,14 +539,12 @@
               <div class="message-box">
                 <strong>给 SUB 的留言</strong>
                 <textarea id="messageInput" placeholder="输入要一起发给 SUB 的留言"></textarea>
-                <div class="message-actions">
-                  <button id="saveMessageBtn" class="action-button secondary" type="button">保存留言</button>
-                </div>
               </div>
-              <div class="message-box">
-                <strong>SUB 给你的留言</strong>
-                <textarea id="receivedMessage" readonly placeholder="SUB 的留言会显示在这里"></textarea>
-              </div>
+            </div>
+
+            <div class="control-actions">
+              <button id="applyBtn" class="action-button primary" type="button">搴旂敤绛栫暐</button>
+              <button id="unlockNowBtn" class="action-button secondary" type="button">绔嬪嵆寮€閿?/button>
             </div>
 
             <div class="ring-card">
@@ -601,11 +603,9 @@
     const deviceState = document.getElementById("deviceState");
     const lockState = document.getElementById("lockState");
     const unlockTime = document.getElementById("unlockTime");
-    const applyBtn = document.getElementById("applyBtn");
-    const unlockNowBtn = document.getElementById("unlockNowBtn");
+    const applyBtn = document.querySelectorAll("#applyBtn")[1] || document.getElementById("applyBtn");
+    const unlockNowBtn = document.querySelectorAll("#unlockNowBtn")[1] || document.getElementById("unlockNowBtn");
     const messageInput = document.getElementById("messageInput");
-    const saveMessageBtn = document.getElementById("saveMessageBtn");
-    const receivedMessage = document.getElementById("receivedMessage");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
     const ringMinutesProgress = document.getElementById("ringMinutesProgress");
     const ringSecondsProgress = document.getElementById("ringSecondsProgress");
@@ -614,6 +614,8 @@
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
     let currentState = null;
+    applyBtn.textContent = "应用策略";
+    unlockNowBtn.textContent = "立即开锁";
 
     function getSession() {
       return sessionStorage.getItem(SESSION_KEY);
@@ -713,7 +715,6 @@
       if (document.activeElement !== messageInput) {
         messageInput.value = state.domMessage || "";
       }
-      receivedMessage.value = state.subMessage || "";
       setPillState(deviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
       setPillState(lockState, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
 
@@ -763,6 +764,7 @@
           body: JSON.stringify({
             locked: true,
             unlockTime: unlockTimeValue,
+            domMessage: messageInput.value,
             source: "dom"
           })
         });
@@ -790,25 +792,6 @@
         renderState(state);
       } catch (error) {
         ringNote.textContent = `立即开锁失败: ${error.message}`;
-      }
-    });
-
-    saveMessageBtn.addEventListener("click", async () => {
-      try {
-        const state = await request(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            locked: currentState ? !!currentState.locked : true,
-            unlockTime: currentState ? currentState.unlockTime : null,
-            domMessage: messageInput.value,
-            source: "dom"
-          })
-        });
-        ringNote.textContent = "留言已同步给 SUB。";
-        renderState(state);
-      } catch (error) {
-        ringNote.textContent = `留言保存失败: ${error.message}`;
       }
     });
 
