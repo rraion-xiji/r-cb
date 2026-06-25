@@ -214,6 +214,54 @@
       margin-bottom: 18px;
     }
 
+    .message-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .message-box {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .message-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .message-box textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid rgba(91, 73, 49, 0.24);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #fffdfa;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+    }
+
+    .message-box textarea:focus {
+      border-color: rgba(20, 17, 15, 0.6);
+      box-shadow: 0 0 0 3px rgba(20, 17, 15, 0.08);
+    }
+
+    .message-box textarea[readonly] {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .message-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
     .ring-card {
       padding: 18px 14px 14px;
     }
@@ -374,6 +422,10 @@
         justify-content: stretch;
       }
 
+      .message-grid {
+        grid-template-columns: 1fr;
+      }
+
       .nav-button,
       button {
         width: 100%;
@@ -460,6 +512,20 @@
           </section>
 
           <section class="status-card">
+            <div class="message-grid">
+              <div class="message-box">
+                <strong>给 DOM 的留言</strong>
+                <textarea id="messageInput" placeholder="输入要发给 DOM 的留言"></textarea>
+                <div class="message-actions">
+                  <button id="saveMessageBtn" class="primary" type="button">保存留言</button>
+                </div>
+              </div>
+              <div class="message-box">
+                <strong>DOM 给你的留言</strong>
+                <textarea id="receivedMessage" readonly placeholder="DOM 的留言会显示在这里"></textarea>
+              </div>
+            </div>
+
             <div class="ring-card">
               <div class="ring-cluster">
                 <div class="ring-unit">
@@ -520,6 +586,9 @@
     const deviceState = document.getElementById("deviceState");
     const scanBtBtn = document.getElementById("scanBtBtn");
     const connectBtBtn = document.getElementById("connectBtBtn");
+    const messageInput = document.getElementById("messageInput");
+    const saveMessageBtn = document.getElementById("saveMessageBtn");
+    const receivedMessage = document.getElementById("receivedMessage");
     const btDeviceInfo = document.getElementById("btDeviceInfo");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
     const ringMinutesProgress = document.getElementById("ringMinutesProgress");
@@ -645,6 +714,8 @@
         locked: !!state.locked,
         unlockTime: state.unlockTime || null,
         remainingTime: state.remainingTime || "--:--:--",
+        domMessage: state.domMessage || "",
+        subMessage: state.subMessage || "",
         source: "sub",
         sentAt: new Date().toISOString()
       };
@@ -721,6 +792,10 @@
       heroName.textContent = state.actor.account;
       heroSubtitle.textContent = `已绑定 DOM：${state.user.dom || "未设置"}`;
       targetTitle.textContent = `DOM : ${state.user.dom || "--"}`;
+      if (document.activeElement !== messageInput) {
+        messageInput.value = state.subMessage || "";
+      }
+      receivedMessage.value = state.domMessage || "";
       setPillState(statusFlag, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
       setPillState(deviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
 
@@ -759,6 +834,24 @@
         await connectBluetooth();
       } catch (error) {
         setBtDeviceInfo(`连接失败: ${error.message}`);
+      }
+    });
+
+    saveMessageBtn.addEventListener("click", async () => {
+      try {
+        const state = await request(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subMessage: messageInput.value,
+            source: "sub"
+          })
+        });
+        setBtDeviceInfo("留言已同步给 DOM。");
+        renderState(state);
+        await safeBluetoothSend();
+      } catch (error) {
+        setBtDeviceInfo(`留言保存失败: ${error.message}`);
       }
     });
 

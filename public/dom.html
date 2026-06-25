@@ -235,6 +235,54 @@
       margin-bottom: 18px;
     }
 
+    .message-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .message-box {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .message-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .message-box textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid rgba(91, 73, 49, 0.24);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #fffdfa;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+    }
+
+    .message-box textarea:focus {
+      border-color: rgba(20, 17, 15, 0.6);
+      box-shadow: 0 0 0 3px rgba(20, 17, 15, 0.08);
+    }
+
+    .message-box textarea[readonly] {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .message-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
     .action-button.primary {
       background: #f6ecda;
     }
@@ -381,6 +429,10 @@
         align-items: stretch;
       }
 
+      .message-grid {
+        grid-template-columns: 1fr;
+      }
+
       .control-head input[type="datetime-local"],
       .nav-button,
       .action-button {
@@ -479,6 +531,20 @@
               <button id="unlockNowBtn" class="action-button secondary" type="button">立即开锁</button>
             </div>
 
+            <div class="message-grid">
+              <div class="message-box">
+                <strong>给 SUB 的留言</strong>
+                <textarea id="messageInput" placeholder="输入要一起发给 SUB 的留言"></textarea>
+                <div class="message-actions">
+                  <button id="saveMessageBtn" class="action-button secondary" type="button">保存留言</button>
+                </div>
+              </div>
+              <div class="message-box">
+                <strong>SUB 给你的留言</strong>
+                <textarea id="receivedMessage" readonly placeholder="SUB 的留言会显示在这里"></textarea>
+              </div>
+            </div>
+
             <div class="ring-card">
               <div class="ring-cluster">
                 <div class="ring-unit">
@@ -537,6 +603,9 @@
     const unlockTime = document.getElementById("unlockTime");
     const applyBtn = document.getElementById("applyBtn");
     const unlockNowBtn = document.getElementById("unlockNowBtn");
+    const messageInput = document.getElementById("messageInput");
+    const saveMessageBtn = document.getElementById("saveMessageBtn");
+    const receivedMessage = document.getElementById("receivedMessage");
     const ringHoursProgress = document.getElementById("ringHoursProgress");
     const ringMinutesProgress = document.getElementById("ringMinutesProgress");
     const ringSecondsProgress = document.getElementById("ringSecondsProgress");
@@ -544,6 +613,7 @@
     const ringMinutesValue = document.getElementById("ringMinutesValue");
     const ringSecondsValue = document.getElementById("ringSecondsValue");
     const ringNote = document.getElementById("ringNote");
+    let currentState = null;
 
     function getSession() {
       return sessionStorage.getItem(SESSION_KEY);
@@ -631,6 +701,7 @@
     }
 
     function renderState(state) {
+      currentState = state;
       if (!state.actor?.sub) {
         redirectToPortal("当前账户不能打开 DOM 控制页");
         return;
@@ -639,6 +710,10 @@
       heroName.textContent = state.actor.account;
       heroSubtitle.textContent = `绑定 SUB：${state.user.account}`;
       targetTitle.textContent = `SUB : ${state.user.account}`;
+      if (document.activeElement !== messageInput) {
+        messageInput.value = state.domMessage || "";
+      }
+      receivedMessage.value = state.subMessage || "";
       setPillState(deviceState, `锁状态：${state.deviceOnline ? "在线" : "离线"}`, state.deviceOnline);
       setPillState(lockState, state.locked ? "当前已上锁" : "当前已开锁", !state.locked);
 
@@ -715,6 +790,25 @@
         renderState(state);
       } catch (error) {
         ringNote.textContent = `立即开锁失败: ${error.message}`;
+      }
+    });
+
+    saveMessageBtn.addEventListener("click", async () => {
+      try {
+        const state = await request(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            locked: currentState ? !!currentState.locked : true,
+            unlockTime: currentState ? currentState.unlockTime : null,
+            domMessage: messageInput.value,
+            source: "dom"
+          })
+        });
+        ringNote.textContent = "留言已同步给 SUB。";
+        renderState(state);
+      } catch (error) {
+        ringNote.textContent = `留言保存失败: ${error.message}`;
       }
     });
 

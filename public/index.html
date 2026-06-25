@@ -169,6 +169,7 @@
     }
 
     input,
+    textarea,
     .work-input {
       width: 100%;
       padding: 15px 16px;
@@ -181,6 +182,7 @@
     }
 
     input:focus,
+    textarea:focus,
     .work-input:focus {
       border-color: rgba(20, 17, 15, 0.6);
       box-shadow: 0 0 0 3px rgba(20, 17, 15, 0.08);
@@ -403,6 +405,22 @@
       align-items: end;
     }
 
+    .message-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .message-box {
+      display: grid;
+      gap: 8px;
+    }
+
+    .message-box textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
     .ring-card {
       padding: 18px;
       border-radius: 24px;
@@ -504,6 +522,7 @@
     @media (max-width: 1040px) {
       .dashboard-grid,
       .work-field-row,
+      .message-grid,
       .fields.two {
         grid-template-columns: 1fr;
       }
@@ -766,6 +785,18 @@
                     <button id="domUnlockNowBtn" class="small-button" type="button">立即开锁</button>
                   </div>
 
+                  <div class="message-grid">
+                    <label class="message-box">给 SUB 的留言
+                      <textarea id="domMessageInput" placeholder="输入要一起发给 SUB 的留言"></textarea>
+                    </label>
+                    <label class="message-box">SUB 给你的留言
+                      <textarea id="domReceivedMessage" readonly placeholder="SUB 的留言会显示在这里"></textarea>
+                    </label>
+                  </div>
+                  <div class="work-actions">
+                    <button id="domSaveMessageBtn" class="small-button" type="button">保存留言</button>
+                  </div>
+
                   <div class="ring-card">
                     <div class="ring-cluster">
                       <div class="ring-unit">
@@ -815,6 +846,18 @@
                 </div>
 
                 <div class="stage-card">
+                  <div class="message-grid">
+                    <label class="message-box">给 DOM 的留言
+                      <textarea id="subMessageInput" placeholder="输入要发给 DOM 的留言"></textarea>
+                    </label>
+                    <label class="message-box">DOM 给你的留言
+                      <textarea id="subReceivedMessage" readonly placeholder="DOM 的留言会显示在这里"></textarea>
+                    </label>
+                  </div>
+                  <div class="work-actions">
+                    <button id="subSaveMessageBtn" class="small-button" type="button">保存留言</button>
+                  </div>
+
                   <div class="ring-card" style="margin:0;">
                     <div class="ring-cluster">
                       <div class="ring-unit">
@@ -907,6 +950,9 @@
     const domUnlockTime = document.getElementById("domUnlockTime");
     const domApplyBtn = document.getElementById("domApplyBtn");
     const domUnlockNowBtn = document.getElementById("domUnlockNowBtn");
+    const domMessageInput = document.getElementById("domMessageInput");
+    const domReceivedMessage = document.getElementById("domReceivedMessage");
+    const domSaveMessageBtn = document.getElementById("domSaveMessageBtn");
     const domDeviceState = document.getElementById("domDeviceState");
     const domRingHoursProgress = document.getElementById("domRingHoursProgress");
     const domRingMinutesProgress = document.getElementById("domRingMinutesProgress");
@@ -918,6 +964,9 @@
 
     const subLockState = document.getElementById("subLockState");
     const subDeviceState = document.getElementById("subDeviceState");
+    const subMessageInput = document.getElementById("subMessageInput");
+    const subReceivedMessage = document.getElementById("subReceivedMessage");
+    const subSaveMessageBtn = document.getElementById("subSaveMessageBtn");
     const subScanBtBtn = document.getElementById("subScanBtBtn");
     const subConnectBtBtn = document.getElementById("subConnectBtBtn");
     const subBtDeviceInfo = document.getElementById("subBtDeviceInfo");
@@ -931,6 +980,7 @@
 
     let currentUser = null;
     let currentUsers = [];
+    let currentDomState = null;
     let currentSubState = null;
     let subBtDevice = null;
     let subBtCharacteristic = null;
@@ -1184,6 +1234,8 @@
         locked: !!state.locked,
         unlockTime: state.unlockTime || null,
         remainingTime: state.remainingTime || "--:--:--",
+        domMessage: state.domMessage || "",
+        subMessage: state.subMessage || "",
         source: "sub",
         sentAt: new Date().toISOString()
       };
@@ -1366,6 +1418,65 @@
       }
     });
 
+    async function refreshMessagePanels() {
+      if (!currentUser) return;
+      const role = getUserRole(currentUser);
+
+      if (role === "DOM") {
+        const state = await request(API_DOM_STATE);
+        currentDomState = state;
+        if (document.activeElement !== domMessageInput) {
+          domMessageInput.value = state.domMessage || "";
+        }
+        domReceivedMessage.value = state.subMessage || "";
+      }
+
+      if (role === "SUB") {
+        const state = await request(API_SUB_STATE);
+        currentSubState = state;
+        if (document.activeElement !== subMessageInput) {
+          subMessageInput.value = state.subMessage || "";
+        }
+        subReceivedMessage.value = state.domMessage || "";
+      }
+    }
+
+    domSaveMessageBtn.addEventListener("click", async () => {
+      try {
+        const state = currentDomState || await request(API_DOM_STATE);
+        await request(API_DOM_STATE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            locked: !!state.locked,
+            unlockTime: state.unlockTime || null,
+            domMessage: domMessageInput.value,
+            source: "dom"
+          })
+        });
+        await refreshMessagePanels();
+      } catch (error) {
+        authStatus.textContent = `留言保存失败：${error.message}`;
+      }
+    });
+
+    subSaveMessageBtn.addEventListener("click", async () => {
+      try {
+        await request(API_SUB_STATE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subMessage: subMessageInput.value,
+            source: "sub"
+          })
+        });
+        await refreshMessagePanels();
+        await safeBluetoothSend();
+      } catch (error) {
+        authStatus.textContent = `留言保存失败：${error.message}`;
+      }
+    });
+
     logoutBtn.addEventListener("click", async () => {
       try {
         await request("/api/logout", { method: "POST" });
@@ -1397,6 +1508,7 @@
     setInterval(() => {
       if (getSession() && !dashboard.hidden) {
         void refreshWorkbenchStates().catch(() => {});
+        void refreshMessagePanels().catch(() => {});
       }
     }, 1000);
   </script>

@@ -144,10 +144,28 @@ async function cleanupExpiredRecords(db) {
   await db.prepare("DELETE FROM sessions WHERE expires_at <= ?").bind(now).run();
 }
 
+let lockStateSchemaReady = false;
+
+async function ensureLockStateSchema(db) {
+  if (lockStateSchemaReady) return;
+  const columns = await db.prepare("PRAGMA table_info(lock_state)").all();
+  const existing = new Set((columns.results || []).map((column) => column.name));
+
+  if (!existing.has("dom_message")) {
+    await db.prepare("ALTER TABLE lock_state ADD COLUMN dom_message TEXT NOT NULL DEFAULT ''").run();
+  }
+  if (!existing.has("sub_message")) {
+    await db.prepare("ALTER TABLE lock_state ADD COLUMN sub_message TEXT NOT NULL DEFAULT ''").run();
+  }
+
+  lockStateSchemaReady = true;
+}
+
 async function ensureUserState(db, userId) {
+  await ensureLockStateSchema(db);
   await db.prepare(
-    `INSERT OR IGNORE INTO lock_state (user_id, locked, unlock_time, scheduled_at, updated_by, updated_at)
-     VALUES (?, 1, NULL, NULL, 'system', datetime('now'))`
+    `INSERT OR IGNORE INTO lock_state (user_id, locked, unlock_time, scheduled_at, updated_by, updated_at, dom_message, sub_message)
+     VALUES (?, 1, NULL, NULL, 'system', datetime('now'), '', '')`
   ).bind(userId).run();
 }
 
@@ -265,6 +283,8 @@ async function loadState(db, user) {
        lock_state.locked,
        lock_state.unlock_time,
        lock_state.scheduled_at,
+       lock_state.dom_message,
+       lock_state.sub_message,
        lock_state.updated_by,
        lock_state.updated_at,
        device_status.is_online,
@@ -301,6 +321,8 @@ async function loadState(db, user) {
       unlockTime: null,
       scheduledAt: null,
       remainingTime: "--:--:--",
+      domMessage: record.dom_message || "",
+      subMessage: record.sub_message || "",
       deviceOnline: Number(record.is_online) === 1,
       deviceUpdatedAt: record.device_updated_at || null,
       updatedAt: currentIso,
@@ -314,6 +336,8 @@ async function loadState(db, user) {
     unlockTime,
     scheduledAt: record.scheduled_at || null,
     remainingTime: remainingTimeString(unlockTime),
+    domMessage: record.dom_message || "",
+    subMessage: record.sub_message || "",
     deviceOnline: Number(record.is_online) === 1,
     deviceUpdatedAt: record.device_updated_at || null,
     updatedAt: record.updated_at,
@@ -578,14 +602,34 @@ async function handleGetState(request, env) {
 async function handlePostState(request, env) {
   const { user } = await authenticate(request, env.DB);
   const mode = new URL(request.url).searchParams.get("mode") || "";
-  if (mode !== "dom_control") {
-    return errorResponse(403, "Only DOM control mode can update state");
-  }
   const subject = await resolveStateSubject(env.DB, user, mode);
   const body = await parseJson(request);
+  const source = typeof body.source === "string" && body.source ? body.source : "unknown";
+  const domMessage = typeof body.domMessage === "string" ? body.domMessage.trim() : null;
+  const subMessage = typeof body.subMessage === "string" ? body.subMessage.trim() : null;
+
+  if (mode === "sub_view") {
+    const currentIso = nowIso();
+    await ensureUserState(env.DB, subject.id);
+    await env.DB.prepare(
+      `UPDATE lock_state
+       SET sub_message = ?, updated_by = ?, updated_at = ?
+       WHERE user_id = ?`
+    ).bind(subMessage || "", source, currentIso, subject.id).run();
+
+    const state = await loadState(env.DB, subject);
+    return json({
+      ...state,
+      actor: serializeUser(user)
+    });
+  }
+
+  if (mode !== "dom_control") {
+    return errorResponse(403, "Unsupported state update mode");
+  }
+
   const locked = body.locked ? 1 : 0;
   const unlockTime = body.unlockTime || null;
-  const source = typeof body.source === "string" && body.source ? body.source : "unknown";
 
   if (unlockTime) {
     const parsed = new Date(unlockTime);
@@ -595,14 +639,21 @@ async function handlePostState(request, env) {
   }
 
   const currentIso = nowIso();
-  const scheduledAt = unlockTime ? currentIso : null;
   await ensureUserState(env.DB, subject.id);
+  const existingState = await env.DB.prepare(
+    `SELECT unlock_time, scheduled_at
+     FROM lock_state
+     WHERE user_id = ?`
+  ).bind(subject.id).first();
+  const scheduledAt = unlockTime
+    ? (existingState?.unlock_time === unlockTime ? existingState?.scheduled_at || currentIso : currentIso)
+    : null;
   await env.DB.batch([
     env.DB.prepare(
       `UPDATE lock_state
-       SET locked = ?, unlock_time = ?, scheduled_at = ?, updated_by = ?, updated_at = ?
+       SET locked = ?, unlock_time = ?, scheduled_at = ?, dom_message = ?, updated_by = ?, updated_at = ?
        WHERE user_id = ?`
-    ).bind(locked, unlockTime, scheduledAt, source, currentIso, subject.id),
+    ).bind(locked, unlockTime, scheduledAt, domMessage || "", source, currentIso, subject.id),
     env.DB.prepare(
       `INSERT INTO lock_events (user_id, event_type, locked, unlock_time, remaining_time, source, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`

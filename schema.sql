@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS lock_state (
   locked INTEGER NOT NULL,
   unlock_time TEXT,
   scheduled_at TEXT,
+  dom_message TEXT NOT NULL DEFAULT '',
+  sub_message TEXT NOT NULL DEFAULT '',
   updated_by TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
