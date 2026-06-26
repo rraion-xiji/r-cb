@@ -14,6 +14,15 @@ function errorResponse(status, message) {
   return json({ error: message }, { status });
 }
 
+function serviceResponse() {
+  return json({
+    name: "cb_web",
+    role: "api_server",
+    ui: false,
+    status: "ok"
+  });
+}
+
 function pad(value) {
   return String(value).padStart(2, "0");
 }
@@ -694,10 +703,10 @@ export default {
         });
       }
       if (url.pathname === "/") {
-        return env.ASSETS.fetch(new Request(new URL("/index.html", request.url), request));
+        return serviceResponse();
       }
 
-      return env.ASSETS.fetch(request);
+      return errorResponse(404, "Not Found");
     } catch (error) {
       if (error instanceof Response) {
         return error;

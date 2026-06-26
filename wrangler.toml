@@ -2,10 +2,6 @@ name = "cb-lock-console"
 compatibility_date = "2026-06-24"
 main = "worker.js"
 
-[assets]
-directory = "./public"
-binding = "ASSETS"
-
 [[d1_databases]]
 binding = "DB"
 database_name = "cb-lock-db"
