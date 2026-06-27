@@ -43,7 +43,11 @@ CREATE TABLE IF NOT EXISTS lock_events_v2 (
 
 INSERT OR IGNORE INTO lock_state_v2 (user_id, locked, unlock_time, scheduled_at, updated_by, updated_at)
 SELECT user_id, locked, unlock_time, scheduled_at, updated_by, updated_at
-FROM lock_state_v2;
+FROM lock_state;
+
+INSERT OR IGNORE INTO lock_events_v2 (id, user_id, event_type, locked, unlock_time, remaining_time, source, created_at)
+SELECT id, user_id, event_type, locked, unlock_time, remaining_time, source, created_at
+FROM lock_events;
 
 DROP TABLE IF EXISTS lock_state;
 ALTER TABLE lock_state_v2 RENAME TO lock_state;
