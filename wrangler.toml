@@ -1,4 +1,4 @@
-name = "cb-lock-console"
+name = "r-cb"
 compatibility_date = "2026-06-24"
 main = "worker.js"
 
