@@ -611,42 +611,68 @@ async function handlePostState(request, env) {
   const subject = await resolveStateSubject(env.DB, user, mode);
   const body = await parseJson(request);
   const source = typeof body.source === "string" && body.source ? body.source : "unknown";
+  const updateType = typeof body.updateType === "string" && body.updateType ? body.updateType : "state";
   const domMessage = typeof body.domMessage === "string" ? body.domMessage.trim() : null;
 
   if (mode !== "dom_control") {
     return errorResponse(403, "Unsupported state update mode");
   }
 
-  const locked = body.locked ? 1 : 0;
-  const unlockTime = body.unlockTime || null;
-
-  if (unlockTime) {
-    const parsed = new Date(unlockTime);
-    if (Number.isNaN(parsed.getTime())) {
-      return errorResponse(400, "unlockTime must be a valid ISO datetime");
-    }
-  }
-
   const currentIso = nowIso();
   await ensureUserState(env.DB, subject.id);
   const existingState = await env.DB.prepare(
-    `SELECT unlock_time, scheduled_at
+    `SELECT locked, unlock_time, scheduled_at, dom_message
      FROM lock_state
      WHERE user_id = ?`
   ).bind(subject.id).first();
-  const scheduledAt = unlockTime
-    ? (existingState?.unlock_time === unlockTime ? existingState?.scheduled_at || currentIso : currentIso)
-    : null;
+
+  let locked = Number(existingState?.locked) === 1 ? 1 : 0;
+  let unlockTime = existingState?.unlock_time || null;
+  let scheduledAt = existingState?.scheduled_at || null;
+  let nextDomMessage = existingState?.dom_message || "";
+  let eventType = "state_update";
+
+  if (updateType === "schedule") {
+    locked = body.locked == false ? 0 : 1;
+    unlockTime = body.unlockTime || null;
+    if (unlockTime) {
+      const parsed = new Date(unlockTime);
+      if (Number.isNaN(parsed.getTime())) {
+        return errorResponse(400, "unlockTime must be a valid ISO datetime");
+      }
+    }
+    scheduledAt = unlockTime
+      ? (existingState?.unlock_time === unlockTime ? existingState?.scheduled_at || currentIso : currentIso)
+      : null;
+    eventType = locked === 1 ? "schedule_update" : "unlock";
+  } else if (updateType === "message") {
+    nextDomMessage = domMessage || "";
+    eventType = "message_update";
+  } else {
+    locked = body.locked ? 1 : 0;
+    unlockTime = body.unlockTime || null;
+    if (unlockTime) {
+      const parsed = new Date(unlockTime);
+      if (Number.isNaN(parsed.getTime())) {
+        return errorResponse(400, "unlockTime must be a valid ISO datetime");
+      }
+    }
+    scheduledAt = unlockTime
+      ? (existingState?.unlock_time === unlockTime ? existingState?.scheduled_at || currentIso : currentIso)
+      : null;
+    nextDomMessage = domMessage || "";
+  }
+
   await env.DB.batch([
     env.DB.prepare(
       `UPDATE lock_state
        SET locked = ?, unlock_time = ?, scheduled_at = ?, dom_message = ?, updated_by = ?, updated_at = ?
        WHERE user_id = ?`
-    ).bind(locked, unlockTime, scheduledAt, domMessage || "", source, currentIso, subject.id),
+    ).bind(locked, unlockTime, scheduledAt, nextDomMessage, source, currentIso, subject.id),
     env.DB.prepare(
       `INSERT INTO lock_events (user_id, event_type, locked, unlock_time, remaining_time, source, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).bind(subject.id, "state_update", locked, unlockTime, remainingTimeString(unlockTime), source, currentIso)
+    ).bind(subject.id, eventType, locked, unlockTime, remainingTimeString(unlockTime), source, currentIso)
   ]);
 
   const state = await loadState(env.DB, subject);
